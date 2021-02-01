@@ -1,0 +1,32 @@
+# Intégration continu, PgSQL, Java 11, Maven Build, SonarCloud
+name: PostgreSQL + JDK 11 + Maven build + SonarCloud
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  runner-job:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+         image: postgres
+         env:
+           POSTGRES_DB: osa
+           POSTGRES_USER: dbuser
+           POSTGRES_PASSWORD: OsaAdmin1234
+         ports:
+           - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build with Maven
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
