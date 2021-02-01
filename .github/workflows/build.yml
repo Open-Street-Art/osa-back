@@ -4,7 +4,7 @@ name: PostgreSQL + JDK 11 + Maven build + SonarCloud
 on:
   push:
     branches:
-      - feature/ci
+      - feature/**
       - develop
   pull_request:
     branches:
