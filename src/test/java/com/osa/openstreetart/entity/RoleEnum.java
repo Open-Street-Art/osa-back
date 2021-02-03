@@ -1,3 +1,5 @@
+package com.osa.openstreetart.entity;
+
 public enum RoleEnum {
 	VISITOR(1),
 	USER(2),
