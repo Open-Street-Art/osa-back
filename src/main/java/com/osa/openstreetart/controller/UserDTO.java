@@ -33,11 +33,11 @@ public class UserDTO {
         this.password = password;       
     }
 
-    public List<String> getRole() {
+    public List<String> getRoles() {
         return roles;        
     }
 
-    public void setRole(List<String> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;        
     }
 }

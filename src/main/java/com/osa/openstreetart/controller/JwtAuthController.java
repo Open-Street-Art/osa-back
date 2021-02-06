@@ -19,10 +19,21 @@ public class JwtAuthController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> postRegister(@RequestBody UserDTD user) throws Exception {
-        if (userRepo.findByEmail(user.getEmail()) != null)
+        if (userRepo.findByEmail(user.getEmail()) != null) {
 			return new ResponseEntity<>("User already existing.", HttpStatus.BAD_REQUEST);
-		if (user.getPassword().length() < UserEntity.PSW_MIN_LENGTH)
+        }
+        if (user.getUsername().length <= 4) {
+			return new ResponseEntity<>("Username too short.", HttpStatus.BAD_REQUEST);
+        }
+		if (user.getPassword().length() < 8) {
 			return new ResponseEntity<>("Password too short.", HttpStatus.BAD_REQUEST);
+        }
+        if (user.getRoles().length <= 0 ) {
+			return new ResponseEntity<>("Role not define.", HttpStatus.BAD_REQUEST);
+        }
+        if (user.getRoles().length <= 0 && user.getRoles().length > 2) {
+			return new ResponseEntity<>("Shoose User or Artist.", HttpStatus.BAD_REQUEST);
+        }
 		return ResponseEntity.ok(jwtService.save(user));
     }
     
