@@ -12,7 +12,6 @@ import javax.persistence.CollectionTable;
 import javax.persistence.OneToMany;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-
 import lombok.Data;
 
 @Data
