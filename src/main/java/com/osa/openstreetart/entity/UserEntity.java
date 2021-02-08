@@ -1,8 +1,6 @@
 package com.osa.openstreetart.entity;
 
 import java.util.Collection;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,12 +38,14 @@ public class UserEntity {
     
 	@ElementCollection(targetClass = RoleEnum.class)
 	@CollectionTable(name="role_enum")
+	// TODO : persister l'enum en string
 	private Collection<RoleEnum> roles;
 
 	@OneToMany
-	@JoinTable(name="fav_artists",
-	joinColumns=@JoinColumn(name="user_id"),
-	inverseJoinColumns=@JoinColumn(name="artist_id")
+	@JoinTable(
+		name="fav_artists",
+		joinColumns=@JoinColumn(name="user_id"),
+		inverseJoinColumns=@JoinColumn(name="artist_id")
 	)
 	private Collection<UserEntity> favArtists;
 	
