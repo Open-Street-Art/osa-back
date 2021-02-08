@@ -14,6 +14,8 @@ import com.osa.openstreetart.dto.UserRegisterDto;
 
 @Service
 public class JwtService implements UserDetailsService{
+     static public final int PSW_MIN_LENGTH = 8;
+     
      @Autowired
      private UserRepository userRepository;
 
@@ -21,21 +23,21 @@ public class JwtService implements UserDetailsService{
 	private PasswordEncoder bcryptEncoder;
 
      @Override
-     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
+     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
           UserEntity user = null;
           try {
-               user = userRepository.findByEmail(email);
+               user = userRepository.findByUsername(username);
                return new org.springframework.security.core.userdetails
-               .User(user.getEmail(), user.getPassword(), new ArrayList<>());
+               .User(user.getUsername(), user.getPassword(), new ArrayList<>());
           } catch (Exception e) {
-               throw new UsernameNotFoundException("User with email: " + email + "not found");
+               throw new UsernameNotFoundException("Username: " + username + "not found");
           }
      }
 
      public UserEntity save(UserRegisterDto user) {
           UserEntity newUser = new UserEntity();
           newUser.setEmail(user.getEmail());
-          newUser.setUsername(user.getEmail());
+          newUser.setUsername(user.getUsername());
 
           //hasher le mot de passe avec bcrypt
           newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
