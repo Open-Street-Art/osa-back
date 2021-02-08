@@ -1,16 +1,14 @@
 package com.osa.openstreetart.controller;
 
-
 import com.osa.openstreetart.entity;
-import com.osa.openstreetart.service;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
-
-@RestController
-@CrossOrigin
-public class JwtAuthController {
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
     @Autowired
 	private UserRepository userRepo;
 
@@ -18,8 +16,11 @@ public class JwtAuthController {
 	private JwtService jwtService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<?> postRegister(@RequestBody UserDTD user) throws Exception {
+    public ResponseEntity<?> postRegister(@RequestBody UserRegisterDto user) throws Exception {
         if (userRepo.findByEmail(user.getEmail()) != null) {
+			return new ResponseEntity<>("E-mail already existing.", HttpStatus.BAD_REQUEST);
+        }
+        if (userRepo.findByEmail(user.getUsername != null) {
 			return new ResponseEntity<>("User already existing.", HttpStatus.BAD_REQUEST);
         }
         if (user.getUsername().length <= 4) {
@@ -37,4 +38,17 @@ public class JwtAuthController {
 		return ResponseEntity.ok(jwtService.save(user));
     }
     
+    @RequestMapping(value = "/authenticate", method=RequestMethod.POST)
+	public ResponseEntity<?> postAuthenticate(@RequestBody JwtRequest request) throws Exception {
+		try {
+			authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+		} catch (DisabledException e) {
+			throw new Exception("USER_DISABLED", e);
+		} catch (BadCredentialsException e) {
+			throw new Exception("INVALID_CREDENTIALS", e);
+		}
+		final UserDetails userDetails = jwtService.loadUserByUsername(request.getEmail());
+		final String token = jwtUtil.generateToken(userDetails);
+		return ResponseEntity.ok(new JwtResponse(token));
+	}
 }
