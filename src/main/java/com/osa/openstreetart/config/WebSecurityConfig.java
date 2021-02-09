@@ -15,8 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.osa.openstreetart.service.JwtService;
-import com.osa.openstreetart.util.JwtAuthenticationEntryPoint;
 import com.osa.openstreetart.util.JwtFilter;
+import com.osa.openstreetart.util.JwtAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -33,7 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		"/swagger-ui.html",
 		"/webjars/**",
 		// API
-		"/api/register"
+		"/api/register",
+		"/api/authenticate"
 	};
 
 	@Autowired

@@ -17,6 +17,7 @@ import lombok.Data;
 @Data
 @Entity
 public class UserEntity {
+	static public final int PSW_MIN_LENGTH = 8;
 
 	@Id
 	@GeneratedValue
@@ -38,7 +39,7 @@ public class UserEntity {
 	private boolean isPublic;
     
 	@ElementCollection(targetClass = RoleEnum.class)
-	@CollectionTable(name="role_enum")
+	@CollectionTable(name="user_roles")
 	@Enumerated(EnumType.STRING)
 	private Collection<RoleEnum> roles;
 

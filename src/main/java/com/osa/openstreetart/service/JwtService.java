@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Collections;
 
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.UserRepository;
@@ -17,8 +18,6 @@ import com.osa.openstreetart.dto.UserRegisterDto;
 
 @Service
 public class JwtService implements UserDetailsService{
-
-    static public final int PSW_MIN_LENGTH = 8;
 
 	@Autowired
 	private UserRepository userRepo;
@@ -31,19 +30,26 @@ public class JwtService implements UserDetailsService{
 		Optional<UserEntity> optionalUser = userRepo.findByEmail(username);
 		if (optionalUser.isPresent()) {
 			UserEntity user = optionalUser.get();
-			return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
+            //Question? user.getEmail() ou user.getUsername()
+
+            //TODO: mettre les roles du user dans le userDetails pour les passer dans le jwt token
+			return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
 		} else {
 			throw new UsernameNotFoundException("User not found with email: " + username);
 		}
-     }
+    }
 
-     public UserEntity save(UserRegisterDto user) {
-          UserEntity newUser = new UserEntity();
-          newUser.setEmail(user.getEmail());
-          newUser.setUsername(user.getUsername());
+    public UserEntity save(UserRegisterDto user) {
 
-          //hasher le mot de passe avec bcrypt
-          newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-          return userRepo.save(newUser);
-     }
+        //Note: à nettoyer après pour utiliser le modelmapper
+        UserEntity newUser = new UserEntity();
+        newUser.setEmail(user.getEmail());
+        newUser.setUsername(user.getUsername());
+        newUser.setRoles(Collections.singleton(user.getRole()));
+
+        //hasher le mot de passe avec bcrypt
+        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+
+        return userRepo.save(newUser);
+    }
 }
