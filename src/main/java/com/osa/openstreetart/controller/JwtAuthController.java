@@ -3,7 +3,7 @@ package com.osa.openstreetart.controller;
 import com.osa.openstreetart.dto.UserRegisterDto;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.UserRepository;
-import com.osa.openstreetart.server.JwtReponse;
+import com.osa.openstreetart.server.JwtResponse;
 import com.osa.openstreetart.server.JwtRequest;
 import com.osa.openstreetart.server.JwtResponse;
 import com.osa.openstreetart.service.JwtService;
