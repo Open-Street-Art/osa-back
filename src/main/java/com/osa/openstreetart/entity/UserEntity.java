@@ -3,6 +3,8 @@ package com.osa.openstreetart.entity;
 import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ElementCollection;
@@ -37,7 +39,7 @@ public class UserEntity {
     
 	@ElementCollection(targetClass = RoleEnum.class)
 	@CollectionTable(name="role_enum")
-	// TODO : persister l'enum en string
+	@Enumerated(EnumType.STRING)
 	private Collection<RoleEnum> roles;
 
 	@OneToMany

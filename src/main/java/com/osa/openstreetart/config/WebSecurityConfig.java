@@ -17,13 +17,23 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.util.JwtAuthenticationEntryPoint;
 import com.osa.openstreetart.util.JwtFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] ROUTES_WHITELIST = {
-		"/register"
+		// SWAGGER
+		"/v2/api-docs",
+		"/swagger-resources",
+		"/swagger-resources/**",
+		"/configuration/ui",
+		"/configuration/security",
+		"/swagger-ui.html",
+		"/webjars/**",
+		// API
+		"/api/register"
 	};
 
 	@Autowired
