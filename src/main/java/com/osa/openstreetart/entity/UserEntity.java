@@ -1,12 +1,15 @@
 package com.osa.openstreetart.entity;
 
-import java.util.List;
-
+import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
+import javax.persistence.ElementCollection;
+import javax.persistence.CollectionTable;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import lombok.Data;
 
 @Data
@@ -31,12 +34,19 @@ public class UserEntity {
 	private byte[] profilePicture;
 
 	private boolean isPublic;
+    
+	@ElementCollection(targetClass = RoleEnum.class)
+	@CollectionTable(name="role_enum")
+	// TODO : persister l'enum en string
+	private Collection<RoleEnum> roles;
 
-	// TODO : Relation OneToMany sur l'enum
-	// private List<RoleEnum> roles;
-
-	// TODO : Relation OnetoMany
-	// private List<UserEntity> favArtists;
+	@OneToMany
+	@JoinTable(
+		name="fav_artists",
+		joinColumns=@JoinColumn(name="user_id"),
+		inverseJoinColumns=@JoinColumn(name="artist_id")
+	)
+	private Collection<UserEntity> favArtists;
 	
     // TODO implémentation des classes  CityEntity, ArtEntity
     //List<CityEntity> favCities
