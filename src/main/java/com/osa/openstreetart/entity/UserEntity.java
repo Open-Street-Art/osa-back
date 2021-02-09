@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ElementCollection;
@@ -17,6 +18,8 @@ import lombok.Data;
 @Data
 @Entity
 public class UserEntity {
+
+	static public final int USERNAME_MIN_LENGTH = 3;
 	static public final int PSW_MIN_LENGTH = 8;
 
 	@Id
@@ -38,9 +41,10 @@ public class UserEntity {
 
 	private boolean isPublic;
     
-	@ElementCollection(targetClass = RoleEnum.class)
-	@CollectionTable(name="user_roles")
+	@ElementCollection(targetClass = RoleEnum.class, fetch = FetchType.EAGER)
+	@CollectionTable(name="user_roles", joinColumns = @JoinColumn(name = "user_id"))
 	@Enumerated(EnumType.STRING)
+	@Column(name = "role")
 	private Collection<RoleEnum> roles;
 
 	@OneToMany

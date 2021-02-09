@@ -30,8 +30,8 @@ public class UserController {
 
 	@PatchMapping(value = "/user/email")
 	public ResponseEntity<String> patchUserEmail(@RequestHeader(value="Authorization") String token, @RequestBody String newMail) throws Exception {
-		String email = jwtUtil.getUsernameFromToken(token.substring(7));
-		Optional<UserEntity> optionalUser = userRepo.findByEmail(email);
+		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
+		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
 		
 		if (!optionalUser.isPresent())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No user found.");
@@ -41,6 +41,7 @@ public class UserController {
 
 		optionalUser.get().setEmail(newMail);
 		userRepo.save(optionalUser.get());
+		
 		return ResponseEntity.ok("Email changed.");
 	}
 

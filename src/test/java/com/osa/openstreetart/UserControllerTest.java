@@ -46,7 +46,7 @@ public class UserControllerTest {
 		userRepo.save(user);
 
 		// Génération d'un token JWT pour utiliser la route
-		UserDetails userDetails = jwtService.loadUserByUsername(user.getEmail());
+		UserDetails userDetails = jwtService.loadUserByUsername(user.getUsername());
 		String token = jwtUtil.generateToken(userDetails);
 
 		// Changement de l'email

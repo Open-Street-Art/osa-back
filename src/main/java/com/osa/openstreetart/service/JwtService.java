@@ -1,6 +1,8 @@
 package com.osa.openstreetart.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,11 +12,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Collections;
+import java.util.List;
 
+import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.UserRepository;
-import com.osa.openstreetart.dto.UserRegisterDto;
+import com.osa.openstreetart.tranformator.UserRegisterTransformator;
+import com.osa.openstreetart.dto.UserRegisterDTO;
 
 @Service
 public class JwtService implements UserDetailsService{
@@ -22,34 +26,29 @@ public class JwtService implements UserDetailsService{
 	@Autowired
 	private UserRepository userRepo;
 
-    @Autowired
+	@Autowired
 	private PasswordEncoder bcryptEncoder;
 
-     @Override
-     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-		Optional<UserEntity> optionalUser = userRepo.findByEmail(username);
-		if (optionalUser.isPresent()) {
-			UserEntity user = optionalUser.get();
-            //Question? user.getEmail() ou user.getUsername()
+	@Autowired
+	private UserRegisterTransformator userTransf;
 
-            //TODO: mettre les roles du user dans le userDetails pour les passer dans le jwt token
-			return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
-		} else {
+	 @Override
+	 public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+		Optional<UserEntity> optUser = userRepo.findByUsername(username);
+		if (!optUser.isPresent())
 			throw new UsernameNotFoundException("User not found with email: " + username);
-		}
-    }
 
-    public UserEntity save(UserRegisterDto user) {
+		List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+		for (RoleEnum role : optUser.get().getRoles())
+			roles.add(new SimpleGrantedAuthority(role.name()));
 
-        //Note: à nettoyer après pour utiliser le modelmapper
-        UserEntity newUser = new UserEntity();
-        newUser.setEmail(user.getEmail());
-        newUser.setUsername(user.getUsername());
-        newUser.setRoles(Collections.singleton(user.getRole()));
+		return new User(optUser.get().getUsername(), optUser.get().getPassword(), roles);
+	}
 
-        //hasher le mot de passe avec bcrypt
-        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+	public UserEntity save(UserRegisterDTO user) {
+		UserEntity newUser = userTransf.dtoToModel(user);
+		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+		return userRepo.save(newUser);
+	}
 
-        return userRepo.save(newUser);
-    }
 }
