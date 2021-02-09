@@ -1,6 +1,7 @@
 package com.osa.openstreetart.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,30 +9,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
+
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.dto.UserRegisterDto;
 
 @Service
 public class JwtService implements UserDetailsService{
-     static public final int PSW_MIN_LENGTH = 8;
-     
-     @Autowired
-     private UserRepository userRepository;
 
-     @Autowired
+    static public final int PSW_MIN_LENGTH = 8;
+
+	@Autowired
+	private UserRepository userRepo;
+
+    @Autowired
 	private PasswordEncoder bcryptEncoder;
 
      @Override
      public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-          UserEntity user = null;
-          try {
-               user = userRepository.findByUsername(username);
-               return new org.springframework.security.core.userdetails
-               .User(user.getUsername(), user.getPassword(), new ArrayList<>());
-          } catch (Exception e) {
-               throw new UsernameNotFoundException("Username: " + username + "not found");
-          }
+		Optional<UserEntity> optionalUser = userRepo.findByEmail(username);
+		if (optionalUser.isPresent()) {
+			UserEntity user = optionalUser.get();
+			return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
+		} else {
+			throw new UsernameNotFoundException("User not found with email: " + username);
+		}
      }
 
      public UserEntity save(UserRegisterDto user) {
@@ -41,6 +44,6 @@ public class JwtService implements UserDetailsService{
 
           //hasher le mot de passe avec bcrypt
           newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-          return userRepository.save(newUser);
+          return userRepo.save(newUser);
      }
 }

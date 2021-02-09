@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.util.JwtAuthenticationEntryPoint;
 import com.osa.openstreetart.util.JwtFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
