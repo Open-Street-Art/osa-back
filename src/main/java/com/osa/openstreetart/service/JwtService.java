@@ -48,11 +48,7 @@ public class JwtService implements UserDetailsService{
 	public UserEntity save(UserRegisterDTO user) {
 		UserEntity newUser = userTransf.dtoToModel(user);
 		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-
-		// aucun configuration n'est fait pour mapper UserRgisterDto.role à UserEntity.roles
-		// vu que ce ne sont pas les mêmes noms d'attributs
 		return userRepo.save(newUser);
 	}
 
 }
- 
