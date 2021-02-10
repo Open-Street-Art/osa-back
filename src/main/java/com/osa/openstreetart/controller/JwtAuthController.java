@@ -3,6 +3,8 @@ package com.osa.openstreetart.controller;
 import com.osa.openstreetart.dto.JwtDTO;
 import com.osa.openstreetart.dto.UserLoginDTO;
 import com.osa.openstreetart.dto.UserRegisterDTO;
+import com.osa.openstreetart.exceptions.OSA400Exception;
+import com.osa.openstreetart.exceptions.OSA409Exception;
 import com.osa.openstreetart.service.UserService;
 import com.osa.openstreetart.util.ApiRestController;
 
@@ -18,13 +20,14 @@ public class JwtAuthController {
 	private UserService userService;
 
 	@PostMapping(value = "/register")
-	public ResponseEntity<String> postRegister(@RequestBody UserRegisterDTO user) throws Exception {
+	public ResponseEntity<String> postRegister(@RequestBody UserRegisterDTO user)
+			throws OSA409Exception, OSA400Exception {
 		userService.register(user);
 		return ResponseEntity.ok("User registered.");
 	}
 
 	@PostMapping(value = "/authenticate")
-	public ResponseEntity<JwtDTO> postAuthenticate(@RequestBody UserLoginDTO request) throws Exception {
+	public ResponseEntity<JwtDTO> postAuthenticate(@RequestBody UserLoginDTO request) {
 		final String token = userService.login(request);
 		return ResponseEntity.ok(new JwtDTO(token));
 	}
