@@ -12,8 +12,13 @@ Lancement du projet
 mvn spring-boot:run
 ```
 
+Lancement des tests unitaires
+```
+mvn test
+```
+
 Lancement du projet en arrière plan
-````
+```
 mvn spring-boot:start
 ```
 

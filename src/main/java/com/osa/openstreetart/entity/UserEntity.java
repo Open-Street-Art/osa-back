@@ -54,7 +54,12 @@ public class UserEntity {
 		inverseJoinColumns=@JoinColumn(name="artist_id")
 	)
 	private Collection<UserEntity> favArtists;
-	
+
+	// Collection de références pour accéder aux oeuvres d'un artiste
+	// depuis son entité.
+	@OneToMany(mappedBy = "author")
+	private Collection<ArtEntity> arts;
+
     // TODO implémentation des classes  CityEntity, ArtEntity
     //List<CityEntity> favCities
 	//List<ArtEntity>favArts;
