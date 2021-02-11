@@ -4,7 +4,6 @@ import com.osa.openstreetart.entity.UserEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.dto.UserLoginDTO;
 import com.osa.openstreetart.repository.UserRepository;
-import com.osa.openstreetart.tranformator.UserRegisterTransformator;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
