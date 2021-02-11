@@ -21,7 +21,7 @@ public class JwtUtil implements Serializable {
 
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
-	public static final String AUTHORITIES_KEY = "scopes";
+	public static final String AUTHORITIES_KEY = "roles";
 
 	@Value("${jwt.secret}")
 	private String secret;
@@ -32,6 +32,10 @@ public class JwtUtil implements Serializable {
 
 	public Date getExpirationDateFromToken(String token) {
 		return getClaimFromToken(token, Claims::getExpiration);
+	}
+
+	public String getRolesFromToken(String token) {
+		return (String) getAllClaimsFromToken(token).get(AUTHORITIES_KEY);
 	}
 
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {

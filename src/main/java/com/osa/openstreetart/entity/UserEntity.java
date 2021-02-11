@@ -47,18 +47,13 @@ public class UserEntity {
 	@Column(name = "role")
 	private Collection<RoleEnum> roles;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name="fav_artists",
 		joinColumns=@JoinColumn(name="user_id"),
 		inverseJoinColumns=@JoinColumn(name="artist_id")
 	)
 	private Collection<UserEntity> favArtists;
-
-	// Collection de références pour accéder aux oeuvres d'un artiste
-	// depuis son entité.
-	@OneToMany(mappedBy = "author")
-	private Collection<ArtEntity> arts;
 
     // TODO implémentation des classes  CityEntity, ArtEntity
     //List<CityEntity> favCities

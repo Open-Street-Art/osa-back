@@ -26,3 +26,9 @@ Accès à la documentation Swagger
 ```
 http://localhost:8080/swagger-ui.html
 ```
+
+Compte administrateur
+```
+username: root
+password: OsaAdmin1234
+```
