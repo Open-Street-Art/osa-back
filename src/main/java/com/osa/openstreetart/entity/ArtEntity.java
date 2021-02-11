@@ -13,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import lombok.Data;
 
 @Data
@@ -30,10 +33,13 @@ public class ArtEntity {
 
 	private String description;
 
+	// Soucis de désérialisation en format BLOB, le DTO accueillant des string base64
+	// ce n'est pas génant de laisser en String et de stocker le base64 en BDD
 	@Lob
 	@ElementCollection
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@CollectionTable(name="art_pictures", joinColumns = @JoinColumn(name = "art_id"))
-	private Collection<byte[]> pictures;
+	private Collection<String> pictures;
 
 	@ManyToOne
 	@JoinColumn(name="artist_id")

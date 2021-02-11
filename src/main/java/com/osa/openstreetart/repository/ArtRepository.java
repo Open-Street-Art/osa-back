@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArtRepository extends CrudRepository<ArtEntity, Integer> {
 	Optional<ArtEntity> findById(Integer id);
+	Optional<ArtEntity> findByName(String name);
 }

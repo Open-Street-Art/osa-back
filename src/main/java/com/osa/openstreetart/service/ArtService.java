@@ -1,7 +1,6 @@
 package com.osa.openstreetart.service;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -48,14 +47,15 @@ public class ArtService {
 		art.setDescription(dto.getDescription());
 		
 		// Enregistrement des images en tableau de bytes
-		Collection<byte[]> pictures = new ArrayList<byte[]>();
-		pictures.add(Base64.getDecoder().decode(dto.getPicture1()));
+		Collection<String> pictures = new ArrayList<String>();
+		pictures.add(dto.getPicture1());
 		if (!dto.getPicture2().isEmpty())
-			pictures.add(Base64.getDecoder().decode(dto.getPicture2()));
+			pictures.add(dto.getPicture2());
 		if (!dto.getPicture3().isEmpty())
-			pictures.add(Base64.getDecoder().decode(dto.getPicture3()));
+			pictures.add(dto.getPicture3());
 		art.setPictures(pictures);
 		
+		// Si un nom d'artiste est spécifié
 		if (!dto.getAuthor().isEmpty())
 			art.setAuthorName(dto.getAuthor());
 		else {

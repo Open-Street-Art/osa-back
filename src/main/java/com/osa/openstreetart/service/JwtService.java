@@ -60,8 +60,9 @@ public class JwtService implements UserDetailsService{
 	public Collection<RoleEnum> getRolesByToken(String token) {
 		String payload = jwtUtil.getRolesFromToken(token);
 		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();
-		for (String role : payload.split(","))
-			roles.add(RoleEnum.valueOf(role));
+		if (!payload.isEmpty())
+			for (String role : payload.split(","))
+				roles.add(RoleEnum.valueOf(role));
 
 		return roles;
 	}
