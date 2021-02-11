@@ -11,13 +11,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
+
 import java.util.List;
 
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.tranformator.UserRegisterTransformator;
+import com.osa.openstreetart.util.JwtUtil;
 import com.osa.openstreetart.dto.UserRegisterDTO;
 
 @Service
@@ -32,8 +35,11 @@ public class JwtService implements UserDetailsService{
 	@Autowired
 	private UserRegisterTransformator userTransf;
 
-	 @Override
-	 public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+	@Autowired
+	private JwtUtil jwtUtil;
+
+	@Override
+	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 		Optional<UserEntity> optUser = userRepo.findByUsername(username);
 		if (!optUser.isPresent())
 			throw new UsernameNotFoundException("User not found with email: " + username);
@@ -49,6 +55,15 @@ public class JwtService implements UserDetailsService{
 		UserEntity newUser = userTransf.dtoToModel(user);
 		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
 		return userRepo.save(newUser);
+	}
+
+	public Collection<RoleEnum> getRolesByToken(String token) {
+		String payload = jwtUtil.getRolesFromToken(token);
+		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();
+		for (String role : payload.split(","))
+			roles.add(RoleEnum.valueOf(role));
+
+		return roles;
 	}
 
 }

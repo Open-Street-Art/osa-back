@@ -28,8 +28,8 @@ public class UserController {
 	UserRepository userRepo;
 
 	@PatchMapping(value = "/user/email")
-	public ResponseEntity<String> patchUserEmail(@RequestHeader(value="Authorization") String token, @RequestBody String newMail)
-			throws OSA400Exception {
+	public ResponseEntity<String> patchUserEmail(@RequestHeader(value="Authorization") String token, 
+			@RequestBody String newMail) throws OSA400Exception {
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
 		
@@ -42,7 +42,7 @@ public class UserController {
 		optionalUser.get().setEmail(newMail);
 		userRepo.save(optionalUser.get());
 		
-		return ResponseEntity.ok("Email changed.");
+		return ResponseEntity.ok("Email modified.");
 	}
 
 }
