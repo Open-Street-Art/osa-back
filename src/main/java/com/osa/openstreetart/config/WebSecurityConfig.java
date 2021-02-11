@@ -34,7 +34,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		"/webjars/**",
 		// API
 		"/api/register",
-		"/api/authenticate"
+		"/api/authenticate",
+		"/api/art/locations"
 	};
 
 	@Autowired
