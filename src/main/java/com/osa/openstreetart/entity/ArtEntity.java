@@ -50,15 +50,15 @@ public class ArtEntity {
 	// TODO : a décommenter quand ContribEntity existe
 	//private Collection<ContribEntity> contributions;
 
-	@Column(nullable = false)
+	//@Column(nullable = false)
 	private LocalDateTime creationDateTime;
 
 	// TODO : a décommenter quand CityEntity existe
 	//private CityEntity city;
 
-	@Column(nullable = false)
+	//@Column(nullable = false)
 	private Double longitude;
 
-	@Column(nullable = false)
+	//@Column(nullable = false)
 	private Double latitude;
 }
