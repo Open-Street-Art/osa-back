@@ -13,6 +13,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.OneToMany;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+
 import lombok.Data;
 
 @Data
@@ -37,7 +39,8 @@ public class UserEntity {
 	
 	private String description;
 
-	private byte[] profilePicture;
+	@Lob
+	private String profilePicture;
 
 	private boolean isPublic;
     

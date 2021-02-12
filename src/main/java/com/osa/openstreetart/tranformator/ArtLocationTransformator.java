@@ -39,7 +39,7 @@ public class ArtLocationTransformator implements AbstractTransformator<ArtEntity
 	@Override
 	public ArtEntity dtoToModel(ArtLocationDTO dto) {
 		if (null == dto) {
-
+			return null;
 		}
 		return modelMapper().map(dto, ArtEntity.class);
 	}
