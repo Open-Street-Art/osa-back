@@ -2,6 +2,7 @@ package com.osa.openstreetart.controller;
 
 import java.util.Optional;
 
+import com.osa.openstreetart.dto.UserPatchProfileDTO;
 import com.osa.openstreetart.dto.UserProfileDTO;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
@@ -41,7 +42,7 @@ public class UserController {
 	}
 
 	@PatchMapping(value = "/user/email")
-	public ResponseEntity<String> patchUserEmail(@RequestHeader(value="Authorization") String token, 
+	public ResponseEntity<String> patchUserEmail(@RequestHeader(value = "Authorization") String token, 
 			@RequestBody String newMail) throws OSA400Exception {
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
@@ -58,4 +59,35 @@ public class UserController {
 		return ResponseEntity.ok("Email modified.");
 	}
 
+	@PatchMapping(value = "/user/password")
+	public ResponseEntity<String> patchUserPassword(@RequestHeader(value = "Authorization") String token,
+			@RequestBody String newPassword) throws OSA400Exception {
+		
+		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
+		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
+
+		if (!optionalUser.isPresent())
+			throw new OSA400Exception("No user found.");
+
+		if (!userService.isValidPassword(newPassword))
+			throw new OSA400Exception("Invalid password.");
+
+		userService.changeUserPassword(optionalUser.get(), newPassword);
+
+		return ResponseEntity.ok("Password modified.");
+	}
+
+	@PatchMapping(value = "/user/profile")
+	public ResponseEntity<String> patchUserProfile(@RequestHeader(value = "Authorization") String token,
+			@RequestBody UserPatchProfileDTO dto) throws OSA400Exception {
+		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
+		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
+		if (!optionalUser.isPresent())
+			throw new OSA400Exception("No user found.");
+
+		userService.patchUser(optionalUser.get(), dto);
+		userRepo.save(optionalUser.get());
+
+		return ResponseEntity.ok("Profile modified.");
+	}
 }

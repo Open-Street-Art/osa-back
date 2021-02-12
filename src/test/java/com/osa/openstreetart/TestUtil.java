@@ -16,6 +16,7 @@ import com.osa.openstreetart.util.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,11 +34,14 @@ public class TestUtil {
 	@Autowired
 	JwtUtil jwtUtil;
 
+	@Autowired
+	private PasswordEncoder bcryptEncoder;
+
 	public UserEntity createAdmin() {
 		UserEntity admin = new UserEntity();
 		admin.setEmail("admin@mail.fr");
 		admin.setUsername("admin");
-		admin.setPassword("psw123");
+		admin.setPassword(bcryptEncoder.encode("psw123"));
 
 		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();
 		roles.add(RoleEnum.ROLE_ADMIN);
@@ -50,7 +54,8 @@ public class TestUtil {
 		UserEntity user = new UserEntity();
 		user.setEmail("test@mail.fr");
 		user.setUsername("tester");
-		user.setPassword("psw123");
+		user.setIsPublic(false);
+		user.setPassword(bcryptEncoder.encode("psw123"));
 
 		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();
 		roles.add(RoleEnum.ROLE_USER);
