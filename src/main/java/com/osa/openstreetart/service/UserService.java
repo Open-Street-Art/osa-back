@@ -86,6 +86,7 @@ public class UserService {
 
 	public void changeUserPassword(UserEntity user, String newPassword) {
 		user.setPassword(bcryptEncoder.encode(newPassword));
+		userRepo.save(user);
 	}
 
 	public boolean isValidEmailAddress(String email) {
