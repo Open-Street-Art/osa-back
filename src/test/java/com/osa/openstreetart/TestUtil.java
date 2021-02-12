@@ -54,6 +54,7 @@ public class TestUtil {
 		UserEntity user = new UserEntity();
 		user.setEmail("test@mail.fr");
 		user.setUsername("tester");
+		user.setIsPublic(false);
 		user.setPassword(bcryptEncoder.encode("psw123"));
 
 		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();

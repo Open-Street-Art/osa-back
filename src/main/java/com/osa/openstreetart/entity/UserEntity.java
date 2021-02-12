@@ -42,7 +42,7 @@ public class UserEntity {
 	@Lob
 	private String profilePicture;
 
-	private boolean isPublic;
+	private Boolean isPublic;
     
 	@ElementCollection(targetClass = RoleEnum.class, fetch = FetchType.EAGER)
 	@CollectionTable(name="user_roles", joinColumns = @JoinColumn(name = "user_id"))

@@ -95,7 +95,7 @@ public class UserService {
 			throw new OSA400Exception("isPublic is missing.");
 
 		user.setDescription(dto.getDescription());
-		user.setPublic(dto.getIsPublic());
+		user.setIsPublic(dto.getIsPublic());
 		user.setProfilePicture(dto.getProfilePicture());
 	}
 
