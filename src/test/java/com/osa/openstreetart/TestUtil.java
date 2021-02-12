@@ -9,14 +9,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
+import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.util.JwtUtil;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TestUtil {
 
-	public static UserEntity createAdmin() {
+	@Autowired
+	ArtRepository artRepo;
+
+	@Autowired
+	UserRepository userRepo;
+
+	@Autowired
+	JwtService jwtService;
+
+	@Autowired
+	JwtUtil jwtUtil;
+
+	public UserEntity createAdmin() {
 		UserEntity admin = new UserEntity();
 		admin.setEmail("admin@mail.fr");
 		admin.setUsername("admin");
@@ -29,7 +46,20 @@ public class TestUtil {
 		return admin;
 	}
 
-	public static ArtEntity createArt() {
+	public UserEntity createUser() {
+		UserEntity user = new UserEntity();
+		user.setEmail("test@mail.fr");
+		user.setUsername("tester");
+		user.setPassword("psw123");
+
+		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();
+		roles.add(RoleEnum.ROLE_USER);
+		user.setRoles(roles);
+
+		return user;
+	}
+
+	public ArtEntity createArt() {
 		ArtEntity art = new ArtEntity();
 		art.setName("Oeuvre");
 		art.setCreationDateTime(LocalDateTime.now());
@@ -38,14 +68,19 @@ public class TestUtil {
 		return art;
 	}
 
-	public static String asJsonString(final Object obj) throws JsonProcessingException {
+	public String asJsonString(final Object obj) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(obj);
     }
 
-	public static String getJWTwithUsername(String username, JwtService service, JwtUtil util) {
-		UserDetails userDetails = service.loadUserByUsername(username);
-		return util.generateToken(userDetails);
+	public String getJWTwithUsername(String username) {
+		UserDetails userDetails = jwtService.loadUserByUsername(username);
+		return jwtUtil.generateToken(userDetails);
+	}
+
+	public void cleanDB() {
+		artRepo.deleteAll();
+		userRepo.deleteAll();
 	}
 
 }

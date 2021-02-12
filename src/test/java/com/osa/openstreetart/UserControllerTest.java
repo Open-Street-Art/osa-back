@@ -2,8 +2,6 @@ package com.osa.openstreetart;
 
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.UserRepository;
-import com.osa.openstreetart.service.JwtService;
-import com.osa.openstreetart.util.JwtUtil;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,23 +29,18 @@ public class UserControllerTest {
 	MockMvc mvc;
 
 	@Autowired
-	JwtService jwtService;
-
-	@Autowired
-	JwtUtil jwtUtil;
+	TestUtil testUtil;
 
 	@Test
 	public void patchUserEmailTest() throws Exception {
+		testUtil.cleanDB();
+
 		// Creation d'un utilisateur
-		UserEntity user = new UserEntity();
-		user.setEmail("test@mail.fr");
-		user.setUsername("tester");
-		user.setPassword("psw123");
+		UserEntity user = testUtil.createUser();
 		userRepo.save(user);
 
 		// Génération d'un token JWT pour utiliser la route
-		UserDetails userDetails = jwtService.loadUserByUsername(user.getUsername());
-		String token = jwtUtil.generateToken(userDetails);
+		String token = testUtil.getJWTwithUsername(user.getUsername());
 
 		// Changement de l'email
 		mvc.perform(patch("/api/user/email")
@@ -66,6 +59,24 @@ public class UserControllerTest {
 		// Verificatiom de la modification
 		Optional<UserEntity> optionalUser = userRepo.findByEmail("test@mail.fr");
 		assertEquals(optionalUser.get().getUsername(), "tester");
+	}
+
+	@Test
+	public void getUserProfileTest() throws Exception {
+		// Creation d'un utilisateur
+		UserEntity user = testUtil.createUser();
+		user = userRepo.save(user);
+
+		MvcResult res = mvc.perform(get("/api/user/" + user.getId()))
+			.andExpect(status().isOk()).andReturn();
+
+		System.out.println(res.getResponse().getContentAsString());
+		assertEquals(
+			true,
+			res.getResponse()
+				.getContentAsString()
+				.contains("\"username\":\"tester\",\"roles\":\"[ROLE_USER]\"")
+		);
 	}
 
 }

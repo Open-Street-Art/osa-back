@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -41,20 +42,19 @@ public class ArtControllerTest {
 	@Autowired
 	MockMvc mvc;
 
+	@Autowired
+	TestUtil testUtil;
+
 	@Test
 	public void patchArtTest() throws Exception {
-		UserEntity author = TestUtil.createAdmin();
+		UserEntity author = testUtil.createAdmin();
 		userRepo.save(author);
 
-		ArtEntity art = TestUtil.createArt();
+		ArtEntity art = testUtil.createArt();
 		art.setAuthor(author);
 		art = artRepo.save(art);
 
-		String token = TestUtil.getJWTwithUsername(
-			author.getUsername(), 
-			jwtService, 
-			jwtUtil
-		);
+		String token = testUtil.getJWTwithUsername(author.getUsername());
 
 		// Création du formulaire de modification
 		ArtDTO artDTO = new ArtDTO();
@@ -69,14 +69,14 @@ public class ArtControllerTest {
 		mvc.perform(patch("/api/art/" + art.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(TestUtil.asJsonString(artDTO)))
+			.content(testUtil.asJsonString(artDTO)))
 			.andExpect(status().isOk());
 
 		// Fausse tentative
 		mvc.perform(patch("/api/art/0")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(TestUtil.asJsonString(artDTO)))
+			.content(testUtil.asJsonString(artDTO)))
 			.andExpect(status().isNotFound());
 
 		// Verificatiom de la modification
@@ -86,10 +86,19 @@ public class ArtControllerTest {
 
 	@Test
 	public void getArtsLocationsTest() throws Exception {
-		ArtEntity art = TestUtil.createArt();
+		ArtEntity art = testUtil.createArt();
 		art = artRepo.save(art);
-		mvc.perform(get("/api/art/locations"))
+		MvcResult res = mvc.perform(get("/api/art/locations"))
 			.andExpect(status().isOk()).andReturn();
+
+		System.out.println(res.getResponse().getContentAsString());
+
+		assertEquals(
+			true,
+			res.getResponse()
+				.getContentAsString()
+				.contains("\"latitude\":3.2,\"longitude\":1.5")
+		);
 	}
 
 }
