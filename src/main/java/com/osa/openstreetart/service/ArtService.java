@@ -94,7 +94,10 @@ public class ArtService {
 		ArtEntity newArt = new ArtEntity();
 		newArt.setName(dto.getName());
 		newArt.setDescription(dto.getDescription());
-
+		//newArt.setCreationDateTime(dto.getCreationDateTime());
+		newArt.setLongitude(dto.getLongitude());
+		newArt.setLatitude(dto.getLatitude());
+		
 		// Enregistrement des images en tableau de bytes
 		Collection<String> pictures = new ArrayList<String>();
 		pictures.add(dto.getPicture1());

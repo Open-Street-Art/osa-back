@@ -13,10 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import lombok.Data;
+
 
 @Data
 @Entity
@@ -56,9 +58,9 @@ public class ArtEntity {
 	// TODO : a décommenter quand CityEntity existe
 	//private CityEntity city;
 
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private Double longitude;
 
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private Double latitude;
 }

@@ -124,6 +124,10 @@ public class ArtControllerTest {
 			.content(testUtil.asJsonString(art)))
 			.andExpect(status().isOk());
 		
+		// vérification de l'ajout de la nouvlle oeuvre
+		Optional<ArtEntity> optArt = artRepo.findByName("Nouvelle oeuvre");
+		assertEquals(optArt.get().getAuthorName(), "Thomas");
+
 		// mauvaise réquête avec  author_id de role ROLE_ADMIN
 		art.setAuthor_id(createdAuthor.getId());
 		mvc.perform(post("/api/art")
