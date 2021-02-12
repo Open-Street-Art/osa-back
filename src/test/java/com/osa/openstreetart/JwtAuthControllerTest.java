@@ -28,59 +28,41 @@ public class JwtAuthControllerTest {
 	private MockMvc mvc;
 
 	@Autowired
-	PasswordEncoder bcryptEncoder;
+	private PasswordEncoder bcryptEncoder;
+
+	@Autowired
+	private TestUtil testUtil;
 	@Test
 	public void postAuthenticateTest() throws Exception {
         
 		// Creation d'un utilisateur
-		UserEntity user = new UserEntity();
-		user.setEmail("bob@gmail.com");
-		user.setUsername("bob");
-		//lors de l'authentification le password est comparé au password hashé dans la base
-		user.setPassword(bcryptEncoder.encode("xwq12345"));
-		userRepo.save(user);
+		UserEntity user = testUtil.createUser();
 
 		// Creation du l'objet de authentification : username, paswword
         UserLoginDTO userCred = new UserLoginDTO();
         userCred.setUsername(user.getUsername());
-        userCred.setPassword("xwq12345");
+        userCred.setPassword(user.getPassword());
+
+		//lors de l'authentification le password est comparé au password hashé dans la base
+		user.setPassword(bcryptEncoder.encode(user.getPassword()));
+		userRepo.save(user);
 
         //authentification avec les bons identifiants
 		mvc.perform(post("/api/authenticate")
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-			.content(asJsonString(userCred)))
+			.content(testUtil.asJsonString(userCred)))
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.jsonPath("$.token").exists());
            
 
 		// Fausse tentative avec un username érroné
         userCred.setUsername("alice");
-
 		mvc.perform(post("/api/authenticate")
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-			.content(asJsonString(userCred)))
+			.content(testUtil.asJsonString(userCred)))
 			.andExpect(status().isUnauthorized());
-		
-		// Fausse tentative avec un password érroné
-		userCred.setPassword("xwq1234740");
-
-		mvc.perform(post("/api/authenticate")
-			.contentType(MediaType.APPLICATION_JSON)
-			.accept(MediaType.APPLICATION_JSON)
-			.content(asJsonString(userCred)))
-			.andExpect(status().isUnauthorized());
-	
 	}
-
-    private static String asJsonString(final Object obj) {
-		ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }
