@@ -29,6 +29,8 @@ public class ArtService {
 		Optional<ArtEntity> optArt = artRepo.findById(artId);
 		if (!optArt.isPresent())
 			throw new OSA404Exception("Art not found.");
+		// tu peux utiliser la fonction validateArt ici
+		//pour que les mêmes vérification ne se répètent
 
 		if (dto.getName().length() < ArtEntity.NAME_MIN_LENGTH)
 			throw new OSA400Exception("Name too short.");
@@ -68,4 +70,51 @@ public class ArtService {
 		artRepo.save(art);
 	}
 
+	public void save(ArtDTO ArtDTO) throws OSA404Exception, OSA400Exception{
+		artRepo.save(validateArt(ArtDTO));
+	}
+
+	private ArtEntity validateArt(ArtDTO dto) throws OSA404Exception, OSA400Exception {
+
+		if (dto == null)
+			throw new OSA400Exception("empty values");
+
+		if (dto.getAuthor().isEmpty() && dto.getAuthor_id() == null)
+			throw new OSA400Exception("Author or author_id must be filled.");
+
+		if (!dto.getAuthor().isEmpty() && dto.getAuthor_id() != null)
+			throw new OSA400Exception("Author or author_id must be empty.");
+
+		if (dto.getName().length() < ArtEntity.NAME_MIN_LENGTH)
+			throw new OSA400Exception("Name too short.");
+
+		if (dto.getPicture1().isEmpty())
+			throw new OSA400Exception("Picture 1 is empty.");
+
+		ArtEntity newArt = new ArtEntity();
+		newArt.setName(dto.getName());
+		newArt.setDescription(dto.getDescription());
+
+		// Enregistrement des images en tableau de bytes
+		Collection<String> pictures = new ArrayList<String>();
+		pictures.add(dto.getPicture1());
+		if (!dto.getPicture2().isEmpty())
+			pictures.add(dto.getPicture2());
+		if (!dto.getPicture3().isEmpty())
+			pictures.add(dto.getPicture3());
+		newArt.setPictures(pictures);
+
+		// Si un nom d'artiste est spécifié
+		if (!dto.getAuthor().isEmpty())
+			newArt.setAuthorName(dto.getAuthor());
+		else {
+			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthor_id());
+			if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
+				throw new OSA400Exception("Invalid author ID.");
+
+				newArt.setAuthor(optAuthor.get());
+		}
+
+		return newArt; 
+	}
 }

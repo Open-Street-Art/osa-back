@@ -47,6 +47,7 @@ public class ArtControllerTest {
 
 	@Test
 	public void patchArtTest() throws Exception {
+		testUtil.cleanDB();
 		UserEntity author = testUtil.createAdmin();
 		userRepo.save(author);
 
@@ -99,6 +100,38 @@ public class ArtControllerTest {
 				.getContentAsString()
 				.contains("\"latitude\":3.2,\"longitude\":1.5")
 		);
+	}
+
+	@Test
+	public void postArtTest() throws Exception {
+		testUtil.cleanDB();
+
+		UserEntity author = testUtil.createAdmin();
+		UserEntity createdAuthor = userRepo.save(author);
+		String token = testUtil.getJWTwithUsername(author.getUsername());
+
+		// création de ArtDTO
+		ArtDTO art = testUtil.createArtDTO();
+
+		//associé à un utilisateur spécifié
+		art.setAuthor("Thomas");
+		
+		// enregister l'oeuvre
+		mvc.perform(post("/api/art")
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+			.content(testUtil.asJsonString(art)))
+			.andExpect(status().isOk());
+		
+		// mauvaise réquête avec  author_id de role ROLE_ADMIN
+		art.setAuthor_id(createdAuthor.getId());
+		mvc.perform(post("/api/art")
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+			.content(testUtil.asJsonString(art)))
+			.andExpect(status().isBadRequest());
 	}
 
 }
