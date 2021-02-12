@@ -1,7 +1,6 @@
 package com.osa.openstreetart;
 
 import com.osa.openstreetart.entity.UserEntity;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.dto.UserLoginDTO;
 import com.osa.openstreetart.repository.UserRepository;
 
@@ -28,24 +27,21 @@ public class JwtAuthControllerTest {
 	private MockMvc mvc;
 
 	@Autowired
-	private PasswordEncoder bcryptEncoder;
-
-	@Autowired
 	private TestUtil testUtil;
+	
 	@Test
 	public void postAuthenticateTest() throws Exception {
-        
+        testUtil.cleanDB();
+
 		// Creation d'un utilisateur
 		UserEntity user = testUtil.createUser();
+		userRepo.save(user);
 
 		// Creation du l'objet de authentification : username, paswword
         UserLoginDTO userCred = new UserLoginDTO();
-        userCred.setUsername(user.getUsername());
-        userCred.setPassword(user.getPassword());
+        userCred.setUsername("tester");
+        userCred.setPassword("psw123");
 
-		//lors de l'authentification le password est comparé au password hashé dans la base
-		user.setPassword(bcryptEncoder.encode(user.getPassword()));
-		userRepo.save(user);
 
         //authentification avec les bons identifiants
 		mvc.perform(post("/api/authenticate")

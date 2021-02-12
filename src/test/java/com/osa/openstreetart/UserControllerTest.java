@@ -93,7 +93,6 @@ public class UserControllerTest {
 
 		// Verificatiom de la modification
 		Optional<UserEntity> optUser = userRepo.findByEmail(user.getEmail());
-		System.out.println("DEBUG" + optUser.get().getPassword());
 		assertEquals(
 			true, 
 			bcryptEncoder.matches("UnNouveauPass123", optUser.get().getPassword())
