@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -39,6 +40,17 @@ public class ArtController {
 
 	@Autowired
 	ArtRepository artRepo;
+
+	@PostMapping(value = "/art")
+	public ResponseEntity<String> postArt(@RequestHeader(value = "Authorization") String token,
+			@RequestBody ArtDTO art)
+			throws OSA401Exception, OSA400Exception, OSA404Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception("Unauthorized.");
+
+		artService.save(art);
+		return ResponseEntity.ok("Art created.");
+	}
 
 	@PatchMapping(value = "/art/{art_id}")
 	public ResponseEntity<String> patchArt(@RequestHeader(value = "Authorization") String token,
