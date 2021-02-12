@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,6 +35,9 @@ public class UserService {
 
 	@Autowired
 	private JwtUtil jwtUtil;
+
+	@Autowired
+	private PasswordEncoder bcryptEncoder;
 
 	public void register(UserRegisterDTO dto) throws OSA409Exception, OSA400Exception {
 		Optional<UserEntity> optUser1 = userRepo.findByEmail(dto.getEmail());
@@ -80,11 +84,23 @@ public class UserService {
 		return dto;
 	}
 
+	public void changeUserPassword(UserEntity user, String newPassword) {
+		user.setPassword(bcryptEncoder.encode(newPassword));
+		userRepo.save(user);
+	}
+
 	public boolean isValidEmailAddress(String email) {
 		String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
 		java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
 		java.util.regex.Matcher m = p.matcher(email);
 		return m.matches();
  	}
+
+	public boolean isValidPassword(String password) {
+		String ePattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+		java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+		java.util.regex.Matcher m = p.matcher(password);
+		return m.matches();
+	}
 
 }

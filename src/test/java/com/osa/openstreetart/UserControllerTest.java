@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -23,13 +24,16 @@ import java.util.Optional;
 public class UserControllerTest {
 	
 	@Autowired
-	UserRepository userRepo;
+	private UserRepository userRepo;
 
 	@Autowired
-	MockMvc mvc;
+	private MockMvc mvc;
 
 	@Autowired
-	TestUtil testUtil;
+	private TestUtil testUtil;
+
+	@Autowired
+	private PasswordEncoder bcryptEncoder;
 
 	@Test
 	public void patchUserEmailTest() throws Exception {
@@ -59,6 +63,41 @@ public class UserControllerTest {
 		// Verificatiom de la modification
 		Optional<UserEntity> optionalUser = userRepo.findByEmail("test@mail.fr");
 		assertEquals(optionalUser.get().getUsername(), "tester");
+	}
+
+	@Test
+	public void patchUserPasswordTest() throws Exception {
+		testUtil.cleanDB();
+
+		// Creation d'un utilisateur
+		UserEntity user = testUtil.createUser();
+		userRepo.save(user);
+
+		// Génération d'un token JWT pour utiliser la route
+		String token = testUtil.getJWTwithUsername(user.getUsername());
+
+		// Changement de l'email
+		mvc.perform(patch("/api/user/password")
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("UnNouveauPass123"))
+			.andExpect(status().isOk());
+
+
+		// Fausse tentative
+		mvc.perform(patch("/api/user/email")
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("unmauvaispass"))
+			.andExpect(status().isBadRequest());
+
+		// Verificatiom de la modification
+		Optional<UserEntity> optUser = userRepo.findByEmail(user.getEmail());
+		System.out.println("DEBUG" + optUser.get().getPassword());
+		assertEquals(
+			true, 
+			bcryptEncoder.matches("UnNouveauPass123", optUser.get().getPassword())
+		);
 	}
 
 	@Test
