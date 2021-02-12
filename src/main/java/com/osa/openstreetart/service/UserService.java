@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.UserLoginDTO;
+import com.osa.openstreetart.dto.UserPatchProfileDTO;
 import com.osa.openstreetart.dto.UserProfileDTO;
 import com.osa.openstreetart.dto.UserRegisterDTO;
 import com.osa.openstreetart.entity.RoleEnum;
@@ -87,6 +88,15 @@ public class UserService {
 	public void changeUserPassword(UserEntity user, String newPassword) {
 		user.setPassword(bcryptEncoder.encode(newPassword));
 		userRepo.save(user);
+	}
+
+	public void patchUser(UserEntity user, UserPatchProfileDTO dto) throws OSA400Exception {
+		if (dto.getIsPublic() == null)
+			throw new OSA400Exception("isPublic is missing.");
+
+		user.setDescription(dto.getDescription());
+		user.setPublic(dto.getIsPublic());
+		user.setProfilePicture(dto.getProfilePicture());
 	}
 
 	public boolean isValidEmailAddress(String email) {
