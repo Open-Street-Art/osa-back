@@ -120,4 +120,12 @@ public class ArtService {
 
 		return newArt; 
 	}
+
+	public void delete(Integer artId) throws OSA404Exception {
+		Optional<ArtEntity> deletedArt = artRepo.findById(artId);
+		if(!deletedArt.isPresent())
+			throw new OSA404Exception("Art not found");
+		
+		artRepo.delete(deletedArt.get());
+	}
 }

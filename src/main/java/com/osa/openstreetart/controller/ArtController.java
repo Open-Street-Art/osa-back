@@ -19,6 +19,7 @@ import com.osa.openstreetart.util.ApiRestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,5 +70,15 @@ public class ArtController {
 		Iterable<ArtEntity> iterable = artRepo.findAll();
 		iterable.forEach(arts::add);
 		return ResponseEntity.ok(artTransf.modelsToDtos(arts));
+	}
+
+	@DeleteMapping(value = "/art/{art_id}")
+	public ResponseEntity<String> deleteArt(@RequestHeader(value = "Authorization") String token,
+			@PathVariable("art_id") Integer artId) throws OSA401Exception, OSA404Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception("Unauthorized.");
+		
+		artService.delete(artId);
+		return ResponseEntity.ok("Art deleted");
 	}
 }

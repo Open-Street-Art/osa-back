@@ -138,4 +138,35 @@ public class ArtControllerTest {
 			.andExpect(status().isBadRequest());
 	}
 
+	@Test
+	public void deleteArtTest() throws Exception {
+		testUtil.cleanDB();
+
+		UserEntity admin = testUtil.createAdmin();
+		userRepo.save(admin);
+
+		String token = testUtil.getJWTwithUsername(admin.getUsername());
+
+		// créer une nouvelle Oeuvre
+		ArtEntity art = testUtil.createArt();
+		art.setAuthor(admin);
+		ArtEntity artToDelete = artRepo.save(art);
+
+		// supprimer l'oeuvre
+		mvc.perform(delete("/api/art/" + artToDelete.getId())
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+		
+		Optional<ArtEntity> optArt = artRepo.findById(artToDelete.getId());
+		assertEquals(optArt.isPresent(),false);
+
+		// Oeuvre inexistante
+		mvc.perform(delete("/api/art/9")
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound());
+	}
 }
