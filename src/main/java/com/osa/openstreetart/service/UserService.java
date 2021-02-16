@@ -1,12 +1,8 @@
 package com.osa.openstreetart.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.UserLoginDTO;
-import com.osa.openstreetart.dto.UserPatchProfileDTO;
-import com.osa.openstreetart.dto.UserProfileDTO;
 import com.osa.openstreetart.dto.UserRegisterDTO;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
@@ -57,7 +53,7 @@ public class UserService {
 
 		if (!dto.getRole().equals(RoleEnum.ROLE_USER.name()) && !dto.getRole().equals(RoleEnum.ROLE_ARTIST.name()))
 			throw new OSA400Exception("Invalid role.");
-
+		
 		jwtService.save(dto);
 	}
 
@@ -67,36 +63,11 @@ public class UserService {
 		return jwtUtil.generateToken(userDetails);
 	}
 
-	public UserProfileDTO loadUserProfileDTO(UserEntity user) {
-		// Remplissage du DTO
-		UserProfileDTO dto = new UserProfileDTO();
-		dto.setId(user.getId());
-		dto.setUsername(user.getUsername());
-		dto.setDescription(user.getDescription());
-		dto.setProfilePicture(user.getProfilePicture());
-		dto.setRoles(user.getRoles().toString());
-
-		// Remplissage d'une collection des ID des artistes favoris
-		Collection<Integer> favArtists = new ArrayList<Integer>();
-		for (UserEntity artist : user.getFavArtists()) {
-			favArtists.add(artist.getId());
-		}
-		dto.setFavArtists(favArtists);
-		return dto;
-	}
+	
 
 	public void changeUserPassword(UserEntity user, String newPassword) {
 		user.setPassword(bcryptEncoder.encode(newPassword));
 		userRepo.save(user);
-	}
-
-	public void patchUser(UserEntity user, UserPatchProfileDTO dto) throws OSA400Exception {
-		if (dto.getIsPublic() == null)
-			throw new OSA400Exception("isPublic is missing.");
-
-		user.setDescription(dto.getDescription());
-		user.setIsPublic(dto.getIsPublic());
-		user.setProfilePicture(dto.getProfilePicture());
 	}
 
 	public boolean isValidEmailAddress(String email) {

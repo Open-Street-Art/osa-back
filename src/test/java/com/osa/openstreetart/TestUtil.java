@@ -6,8 +6,6 @@ import java.util.Collection;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.osa.openstreetart.dto.ArtDTO;
-import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
@@ -65,30 +63,7 @@ public class TestUtil {
 		return user;
 	}
 
-	public ArtEntity createArt() {
-		ArtEntity art = new ArtEntity();
-		art.setName("Oeuvre");
-		art.setCreationDateTime(LocalDateTime.now());
-		art.setLongitude(1.5);
-		art.setLatitude(3.2);
-		return art;
-	}
-
-	public ArtDTO createArtDTO()
-	{
-		// Création du formulaire de modification
-		ArtDTO artDTO = new ArtDTO();
-		artDTO.setName("Nouvelle oeuvre");
-		artDTO.setDescription("Une description");
-		artDTO.setPicture1("art.png");
-		artDTO.setPicture2("");
-		artDTO.setPicture3("");
-		//artDTO.setCreationDateTime(LocalDateTime.now());
-		artDTO.setLongitude(4.5);
-		artDTO.setLatitude(3.2);
-		return artDTO;
-	}
-
+	
 	public String asJsonString(final Object obj) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(obj);
