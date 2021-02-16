@@ -18,13 +18,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 	
-	@Bean
+    @Bean
     public Docket apiDocs() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
                 .paths(PathSelectors.ant("/api/**"))
                 .build()
+                .useDefaultResponseMessages(false)
                 .globalOperationParameters(
                         Collections.singletonList(
                                 new ParameterBuilder().name("Authorization")
@@ -33,12 +34,12 @@ public class SwaggerConfig {
                                         .parameterType("header").required(false).build()));
     };
 
-	@Bean
-	public ApiInfo apiInfo() {
-		return new ApiInfoBuilder()
-			.title("OpenStreetArt API")
-			.description("OpenStreetArt API Documentation")
-			.version("0.1")
-			.build();
-	}
+    @Bean
+    public ApiInfo apiInfo() {
+            return new ApiInfoBuilder()
+                    .title("OpenStreetArt API")
+                    .description("OpenStreetArt API Documentation")
+                    .version("0.1")
+                    .build();
+    }
 }
