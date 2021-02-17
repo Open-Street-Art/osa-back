@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class JwtAuthControllerTest {
+class JwtAuthControllerTest {
 
     @Autowired
 	private UserRepository userRepo;
@@ -34,7 +34,7 @@ public class JwtAuthControllerTest {
 	private TestUtil testUtil;
 	
 	@Test
-	public void postAuthenticateTest() throws Exception {
+	void postAuthenticateTest() throws Exception {
         testUtil.cleanDB();
 
 		// Creation d'un utilisateur
@@ -66,7 +66,7 @@ public class JwtAuthControllerTest {
 	}
 
 	@Test
-	public void postRegisterTest() throws Exception {
+	void postRegisterTest() throws Exception {
 		testUtil.cleanDB();
 
 		UserRegisterDTO user = new UserRegisterDTO();
@@ -84,7 +84,7 @@ public class JwtAuthControllerTest {
 		
 		// vérifier le création du nouveau compte
 		Optional<UserEntity> optUser = userRepo.findByEmail("test@mail.fr");
-		assertEquals(optUser.get().getUsername(), "tester");
+		assertEquals("tester", optUser.get().getUsername());
 
 		// mauvaise requête avec un @mail déjà existant
 		user.setEmail("test@mail.fr");

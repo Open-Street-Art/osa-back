@@ -24,7 +24,7 @@ import lombok.Data;
 @Entity
 public class ArtEntity {
 	
-	static public final int NAME_MIN_LENGTH = 3;
+	public static final int NAME_MIN_LENGTH = 3;
 
 	@Id
 	@GeneratedValue

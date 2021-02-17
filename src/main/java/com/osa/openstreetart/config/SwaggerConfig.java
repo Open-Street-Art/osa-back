@@ -22,7 +22,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.ant("/api/**"))
                 .build()
                 .useDefaultResponseMessages(false);
-    };
+    }
 
     @Bean
     public ApiInfo apiInfo() {

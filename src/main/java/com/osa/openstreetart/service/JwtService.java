@@ -44,7 +44,7 @@ public class JwtService implements UserDetailsService{
 		if (!optUser.isPresent())
 			throw new UsernameNotFoundException("User not found with email: " + username);
 
-		List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+		List<GrantedAuthority> roles = new ArrayList<>();
 		for (RoleEnum role : optUser.get().getRoles())
 			roles.add(new SimpleGrantedAuthority(role.name()));
 
@@ -59,7 +59,7 @@ public class JwtService implements UserDetailsService{
 
 	public Collection<RoleEnum> getRolesByToken(String token) {
 		String payload = jwtUtil.getRolesFromToken(token);
-		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();
+		Collection<RoleEnum> roles = new ArrayList<>();
 		if (!payload.isEmpty())
 			for (String role : payload.split(","))
 				roles.add(RoleEnum.valueOf(role));
