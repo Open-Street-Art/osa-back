@@ -1,14 +1,10 @@
 package com.osa.openstreetart.config;
 
-import java.util.Collections;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -25,13 +21,7 @@ public class SwaggerConfig {
                 .select()
                 .paths(PathSelectors.ant("/api/**"))
                 .build()
-                .useDefaultResponseMessages(false)
-                .globalOperationParameters(
-                        Collections.singletonList(
-                                new ParameterBuilder().name("Authorization")
-                                        .description("Authorization details for security (JWT token or BasicAuth)")
-                                        .modelRef(new ModelRef("String"))
-                                        .parameterType("header").required(false).build()));
+                .useDefaultResponseMessages(false);
     };
 
     @Bean

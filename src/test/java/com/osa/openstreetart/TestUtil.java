@@ -1,6 +1,5 @@
 package com.osa.openstreetart;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
