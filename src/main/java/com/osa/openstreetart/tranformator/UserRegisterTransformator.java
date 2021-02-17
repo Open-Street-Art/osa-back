@@ -45,7 +45,7 @@ public class UserRegisterTransformator implements AbstractTransformator<UserEnti
 			return null;
 		}
 		UserEntity user = modelMapper().map(dto, UserEntity.class);
-		List<RoleEnum> rolesList = new ArrayList<RoleEnum>();
+		List<RoleEnum> rolesList = new ArrayList<>();
 		rolesList.add(RoleEnum.valueOf(dto.getRole()));
 		user.setRoles(rolesList);
 		

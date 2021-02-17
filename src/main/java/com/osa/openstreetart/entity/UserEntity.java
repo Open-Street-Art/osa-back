@@ -21,8 +21,8 @@ import lombok.Data;
 @Entity
 public class UserEntity {
 
-	static public final int USERNAME_MIN_LENGTH = 3;
-	static public final int PSW_MIN_LENGTH = 8;
+	public static final int USERNAME_MIN_LENGTH = 3;
+	public static final int PSW_MIN_LENGTH = 8;
 
 	@Id
 	@GeneratedValue
