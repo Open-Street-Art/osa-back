@@ -73,6 +73,7 @@ class JwtAuthControllerTest {
 		user.setEmail("test@mail.fr");
 		user.setUsername("tester");
 		user.setPassword("psw12374");
+		user.setConfirmPassword("psw12374");
 		user.setRole(RoleEnum.ROLE_ARTIST.name());
 
 		// création du compte

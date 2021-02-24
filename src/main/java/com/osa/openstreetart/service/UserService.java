@@ -55,6 +55,9 @@ public class UserService {
 		if (dto.getPassword().length() < UserEntity.PSW_MIN_LENGTH)
 			throw new OSA400Exception("Password too short.");
 
+		if (!dto.getPassword().equals(dto.getConfirmPassword()))
+			throw new OSA400Exception("Passwords does not match.");
+
 		if (!dto.getRole().equals(RoleEnum.ROLE_USER.name()) && !dto.getRole().equals(RoleEnum.ROLE_ARTIST.name()))
 			throw new OSA400Exception("Invalid role.");
 

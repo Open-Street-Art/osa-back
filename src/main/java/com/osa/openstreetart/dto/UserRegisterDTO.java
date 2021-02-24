@@ -16,6 +16,9 @@ public class UserRegisterDTO {
 	@ApiModelProperty("Le mot de passe de l'utilisateur.")
 	private String password;
 
+	@ApiModelProperty("Confirmation du mot de passe.")
+	private String confirmPassword;
+
 	@ApiModelProperty("Le rôle initial de l'utilisateur.")
 	private String role;
 }
