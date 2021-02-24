@@ -1,6 +1,7 @@
 package com.osa.openstreetart.controller;
 
 import com.osa.openstreetart.dto.JwtDTO;
+import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.dto.UserLoginDTO;
 import com.osa.openstreetart.dto.UserRegisterDTO;
 import com.osa.openstreetart.exceptions.OSA400Exception;
@@ -32,13 +33,12 @@ public class JwtAuthController {
 		@ApiResponse(code = 409, message = "Le nom d'utilisateur est déjà pris.")
 	})
 	@PostMapping(value = "/register")
-	public ResponseEntity<String> postRegister(@RequestBody UserRegisterDTO user)
+	public ResponseEntity<OSAResponseDTO> postRegister(@RequestBody UserRegisterDTO user)
 			throws OSA409Exception, OSA400Exception {
 		userService.register(user);
-		return ResponseEntity.ok("User registered.");
+		return ResponseEntity.ok(new OSAResponseDTO("User registered."));
 	}
 
-	
 	@ApiOperation(value = "Authentification d'un utilisateur.", 
 		notes = "API assurant l’authentification d’un utilisateur en lui renvoyant un token JWT valide 5 jours utilisable sur les routes de l’API.",
 		response = JwtDTO.class)
@@ -48,9 +48,9 @@ public class JwtAuthController {
 	})
 	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@PostMapping(value = "/authenticate")
-	public ResponseEntity<JwtDTO> postAuthenticate(@RequestBody UserLoginDTO request) {
+	public ResponseEntity<OSAResponseDTO> postAuthenticate(@RequestBody UserLoginDTO request) {
 		final String token = userService.login(request);
-		return ResponseEntity.ok(new JwtDTO(token));
+		return ResponseEntity.ok(new OSAResponseDTO(new JwtDTO(token)));
 	}
 	
 }

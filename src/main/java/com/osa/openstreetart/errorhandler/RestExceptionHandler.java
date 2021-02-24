@@ -13,8 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.EntityNotFoundException;
 
 import com.osa.openstreetart.exceptions.OSA400Exception;
@@ -35,7 +33,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-		return buildResponseEntity(new ErrorDto("", LocalDateTime.now()), status);
+		return buildResponseEntity(new ErrorDto(""), status);
 	}
 
 	private ResponseEntity<Object> buildResponseEntity(final ErrorDto errorDto, final HttpStatus status) {
@@ -44,77 +42,77 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	protected ResponseEntity<Object> handleException(final EntityNotFoundException ex) {
-		ErrorDto errorDto = new ErrorDto("ENF", LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto("ENF");
 		log.error("ENF", ex);
 		return buildResponseEntity(errorDto, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	protected ResponseEntity<Object> handleException(final IllegalArgumentException ex) {
-		ErrorDto errorDto = new ErrorDto("IAE", LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto("IAE");
 		log.error("IAE", ex);
 		return buildResponseEntity(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(SQLGrammarException.class)
 	protected ResponseEntity<Object> handleException(final SQLGrammarException ex) {
-		ErrorDto errorDto = new ErrorDto("SGE", LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto("SGE");
 		log.error("SGE", ex);
 		return buildResponseEntity(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(InvalidDataAccessResourceUsageException.class)
 	protected ResponseEntity<Object> handleException(final InvalidDataAccessResourceUsageException ex) {
-		ErrorDto errorDto = new ErrorDto("IDARE", LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto("IDARE");
 		log.error("IDARE", ex);
 		return buildResponseEntity(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(OSA404Exception.class)
 	protected ResponseEntity<Object> handleException(final OSA404Exception ex) {
-		ErrorDto errorDto = new ErrorDto(ex.getMessage(), LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto(ex.getMessage());
 		log.error(ex.getMessage(), ex);
 		return buildResponseEntity(errorDto, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(OSA403Exception.class)
 	protected ResponseEntity<Object> handleException(final OSA403Exception ex) {
-		ErrorDto errorDto = new ErrorDto(ex.getMessage(), LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto(ex.getMessage());
 		log.error(ex.getMessage(), ex);
 		return buildResponseEntity(errorDto, HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler(OSA401Exception.class)
 	protected ResponseEntity<Object> handleException(final OSA401Exception ex) {
-		ErrorDto errorDto = new ErrorDto(ex.getMessage(), LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto(ex.getMessage());
 		log.error(ex.getMessage(), ex);
 		return buildResponseEntity(errorDto, HttpStatus.UNAUTHORIZED);
 	}
 
 	@ExceptionHandler(OSA500Exception.class)
 	protected ResponseEntity<Object> handleException(final OSA500Exception ex) {
-		ErrorDto errorDto = new ErrorDto(ex.getMessage(), LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto(ex.getMessage());
 		log.error(ex.getMessage(), ex);
 		return buildResponseEntity(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(OSA400Exception.class)
 	protected ResponseEntity<Object> handleException(final OSA400Exception ex) {
-		ErrorDto errorDto = new ErrorDto(ex.getMessage(), LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto(ex.getMessage());
 		log.error(ex.getMessage(), ex);
 		return buildResponseEntity(errorDto, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(OSA409Exception.class)
 	protected ResponseEntity<Object> handleException(final OSA409Exception ex) {
-		ErrorDto errorDto = new ErrorDto(ex.getMessage(), LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto(ex.getMessage());
 		log.error(ex.getMessage(), ex);
 		return buildResponseEntity(errorDto, HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler(OSAException.class)
 	protected ResponseEntity<Object> handleException(final OSAException ex) {
-		ErrorDto errorDto = new ErrorDto(ex.getMessage(), LocalDateTime.now());
+		ErrorDto errorDto = new ErrorDto(ex.getMessage());
 		return buildResponseEntity(errorDto, HttpStatus.MULTI_STATUS);
 	}
 	

@@ -2,8 +2,8 @@ package com.osa.openstreetart.controller;
 
 import java.util.Optional;
 
+import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.dto.UserPatchProfileDTO;
-import com.osa.openstreetart.dto.UserProfileDTO;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.repository.UserRepository;
@@ -32,17 +32,21 @@ public class UserController {
 	UserRepository userRepo;
 
 	@GetMapping(value = "/user/{user_id}")
-	public ResponseEntity<UserProfileDTO> getUserProfile(
+	public ResponseEntity<OSAResponseDTO> getUserProfile(
 			@PathVariable("user_id") Integer userId) throws OSA400Exception {
 		Optional<UserEntity> optUser = userRepo.findById(userId);
 		if (!optUser.isPresent())
 			throw new OSA400Exception("User not found.");
 
-		return ResponseEntity.ok(userService.loadUserProfileDTO(optUser.get()));
+		return ResponseEntity.ok(
+			new OSAResponseDTO(
+				userService.loadUserProfileDTO(optUser.get())
+			)
+		);
 	}
 
 	@PatchMapping(value = "/user/email")
-	public ResponseEntity<String> patchUserEmail(@RequestHeader(value = "Authorization") String token, 
+	public ResponseEntity<OSAResponseDTO> patchUserEmail(@RequestHeader(value = "Authorization") String token, 
 			@RequestBody String newMail) throws OSA400Exception {
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
@@ -56,11 +60,11 @@ public class UserController {
 		optionalUser.get().setEmail(newMail);
 		userRepo.save(optionalUser.get());
 		
-		return ResponseEntity.ok("Email modified.");
+		return ResponseEntity.ok(new OSAResponseDTO("Email modified."));
 	}
 
 	@PatchMapping(value = "/user/password")
-	public ResponseEntity<String> patchUserPassword(@RequestHeader(value = "Authorization") String token,
+	public ResponseEntity<OSAResponseDTO> patchUserPassword(@RequestHeader(value = "Authorization") String token,
 			@RequestBody String newPassword) throws OSA400Exception {
 		
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
@@ -74,11 +78,11 @@ public class UserController {
 
 		userService.changeUserPassword(optionalUser.get(), newPassword);
 
-		return ResponseEntity.ok("Password modified.");
+		return ResponseEntity.ok(new OSAResponseDTO("Password modified."));
 	}
 
 	@PatchMapping(value = "/user/profile")
-	public ResponseEntity<String> patchUserProfile(@RequestHeader(value = "Authorization") String token,
+	public ResponseEntity<OSAResponseDTO> patchUserProfile(@RequestHeader(value = "Authorization") String token,
 			@RequestBody UserPatchProfileDTO dto) throws OSA400Exception {
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
@@ -88,6 +92,6 @@ public class UserController {
 		userService.patchUser(optionalUser.get(), dto);
 		userRepo.save(optionalUser.get());
 
-		return ResponseEntity.ok("Profile modified.");
+		return ResponseEntity.ok(new OSAResponseDTO("Profile modified."));
 	}
 }

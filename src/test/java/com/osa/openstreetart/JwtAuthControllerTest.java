@@ -53,7 +53,7 @@ class JwtAuthControllerTest {
             .accept(MediaType.APPLICATION_JSON)
 			.content(testUtil.asJsonString(userCred)))
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.jsonPath("$.token").exists());
+			.andExpect(MockMvcResultMatchers.jsonPath("$.data.token").exists());
            
 
 		// Fausse tentative avec un username érroné

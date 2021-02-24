@@ -92,8 +92,6 @@ public class ArtControllerTest {
 		MvcResult res = mvc.perform(get("/api/art/locations"))
 			.andExpect(status().isOk()).andReturn();
 
-		System.out.println(res.getResponse().getContentAsString());
-
 		assertEquals(
 			true,
 			res.getResponse()

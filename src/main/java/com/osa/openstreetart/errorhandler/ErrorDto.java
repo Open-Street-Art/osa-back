@@ -1,8 +1,5 @@
 package com.osa.openstreetart.errorhandler;
 
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,14 +11,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ErrorDto {
 
-	private String errorCode;
+	private String status;
 
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-	private LocalDateTime dateTime;
+	private String message;
 
-	public ErrorDto(final String errorCode, final LocalDateTime dateTime) {
-		this.errorCode = errorCode;
-		this.dateTime = dateTime;
+	public ErrorDto(final String message) {
+		this.status = "error";
+		this.message = message;
 	}
 	
 }
