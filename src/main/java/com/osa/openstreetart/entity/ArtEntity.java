@@ -56,8 +56,9 @@ public class ArtEntity {
 	//@Column(nullable = false)
 	private LocalDateTime creationDateTime;
 
-	// TODO : a décommenter quand CityEntity existe
-	//private CityEntity city;
+	@ManyToOne
+	@JoinColumn(name="city_id")
+	private CityEntity city;
 
 	@Column(nullable = false)
 	private Double longitude;
