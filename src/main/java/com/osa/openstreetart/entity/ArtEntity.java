@@ -12,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
+
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -50,8 +54,13 @@ public class ArtEntity {
 
 	private String authorName;
 
-	// TODO : a décommenter quand ContribEntity existe
-	//private Collection<ContribEntity> contributions;
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name="art_contribs",
+		joinColumns=@JoinColumn(name="art_id"),
+		inverseJoinColumns=@JoinColumn(name="art_contrib_id")
+	)
+	private Collection<ContribEntity> contributions;
 
 	//@Column(nullable = false)
 	private LocalDateTime creationDateTime;
