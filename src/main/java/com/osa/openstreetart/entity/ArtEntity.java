@@ -13,9 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.Type;
 
 import lombok.Data;
 
@@ -38,6 +38,7 @@ public class ArtEntity {
 	// Soucis de désérialisation en format BLOB, le DTO accueillant des string base64
 	// ce n'est pas génant de laisser en String et de stocker le base64 en BDD
 	@Lob
+	@Type(type = "org.hibernate.type.TextType")
 	@ElementCollection
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@CollectionTable(name="art_pictures", joinColumns = @JoinColumn(name = "art_id"))

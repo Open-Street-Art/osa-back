@@ -41,7 +41,7 @@ public class ArtController {
 	@Autowired
 	ArtRepository artRepo;
 
-	@PostMapping(value = "/art")
+	@PostMapping(value = "/admin/art")
 	public ResponseEntity<OSAResponseDTO> postArt(@RequestHeader(value = "Authorization") String token,
 			@RequestBody ArtDTO art)
 			throws OSA401Exception, OSA400Exception, OSA404Exception {
@@ -52,7 +52,7 @@ public class ArtController {
 		return ResponseEntity.ok(new OSAResponseDTO("Art created."));
 	}
 
-	@PatchMapping(value = "/art/{art_id}")
+	@PatchMapping(value = "/admin/art/{art_id}")
 	public ResponseEntity<OSAResponseDTO> patchArt(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId, @RequestBody ArtDTO art)
 			throws OSA401Exception, OSA404Exception, OSA400Exception {
@@ -72,7 +72,7 @@ public class ArtController {
 		return ResponseEntity.ok(new OSAResponseDTO(artTransf.modelsToDtos(arts)));
 	}
 
-	@DeleteMapping(value = "/art/{art_id}")
+	@DeleteMapping(value = "/admin/art/{art_id}")
 	public ResponseEntity<OSAResponseDTO> deleteArt(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId) throws OSA401Exception, OSA404Exception {
 		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
@@ -80,5 +80,10 @@ public class ArtController {
 		
 		artService.delete(artId);
 		return ResponseEntity.ok(new OSAResponseDTO("Art deleted"));
+	}
+
+	@GetMapping(value = "/art/{art_id}")
+	public ResponseEntity<OSAResponseDTO> getArt(@PathVariable("art_id") Integer artId) {
+		return ResponseEntity.ok(new OSAResponseDTO(artRepo.findById(artId)));
 	}
 }

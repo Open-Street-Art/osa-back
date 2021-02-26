@@ -46,7 +46,7 @@ public class ArtControllerTest {
 	TestUtil testUtil;
 
 	@Test
-	public void patchArtTest() throws Exception {
+	void patchArtTest() throws Exception {
 		testUtil.cleanDB();
 		UserEntity author = testUtil.createAdmin();
 		userRepo.save(author);
@@ -67,14 +67,14 @@ public class ArtControllerTest {
 		artDTO.setAuthor("Toto");
 
 		// Changement des informations de l'art
-		mvc.perform(patch("/api/art/" + art.getId())
+		mvc.perform(patch("/api/admin/art/" + art.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(testUtil.asJsonString(artDTO)))
 			.andExpect(status().isOk());
 
 		// Fausse tentative
-		mvc.perform(patch("/api/art/0")
+		mvc.perform(patch("/api/admin/art/0")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(testUtil.asJsonString(artDTO)))
@@ -86,7 +86,7 @@ public class ArtControllerTest {
 	}
 
 	@Test
-	public void getArtsLocationsTest() throws Exception {
+	void getArtsLocationsTest() throws Exception {
 		ArtEntity art = testUtil.createArt();
 		art = artRepo.save(art);
 		MvcResult res = mvc.perform(get("/api/art/locations"))
@@ -101,7 +101,7 @@ public class ArtControllerTest {
 	}
 
 	@Test
-	public void postArtTest() throws Exception {
+	void postArtTest() throws Exception {
 		testUtil.cleanDB();
 
 		UserEntity author = testUtil.createAdmin();
@@ -115,7 +115,7 @@ public class ArtControllerTest {
 		art.setAuthor("Thomas");
 		
 		// enregister l'oeuvre
-		mvc.perform(post("/api/art")
+		mvc.perform(post("/api/admin/art")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -128,7 +128,7 @@ public class ArtControllerTest {
 
 		// mauvaise réquête avec  author_id de role ROLE_ADMIN
 		art.setAuthor_id(createdAuthor.getId());
-		mvc.perform(post("/api/art")
+		mvc.perform(post("/api/admin/art")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ public class ArtControllerTest {
 	}
 
 	@Test
-	public void deleteArtTest() throws Exception {
+	void deleteArtTest() throws Exception {
 		testUtil.cleanDB();
 
 		UserEntity admin = testUtil.createAdmin();
@@ -151,7 +151,7 @@ public class ArtControllerTest {
 		ArtEntity artToDelete = artRepo.save(art);
 
 		// supprimer l'oeuvre
-		mvc.perform(delete("/api/art/" + artToDelete.getId())
+		mvc.perform(delete("/api/admin/art/" + artToDelete.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -161,10 +161,24 @@ public class ArtControllerTest {
 		assertEquals(optArt.isPresent(),false);
 
 		// Oeuvre inexistante
-		mvc.perform(delete("/api/art/9")
+		mvc.perform(delete("/api/admin/art/9")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void getArtTest() throws Exception {
+		testUtil.cleanDB();
+		ArtEntity art = testUtil.createArt();
+		artRepo.save(art);
+
+		MvcResult res = mvc.perform(get("/api/search/arts/oeuv")
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk()).andReturn();
+
+		assertEquals(true, res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre\""));
 	}
 }
