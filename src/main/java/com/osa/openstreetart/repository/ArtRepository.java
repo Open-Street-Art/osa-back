@@ -16,7 +16,7 @@ public interface ArtRepository extends CrudRepository<ArtEntity, Integer> {
 
 	Optional<ArtEntity> findByName(String name);
 
-	@Query("select a from ArtEntity a where a.name like ?1%")
+	@Query("select a from ArtEntity a where lower(a.name) like lower(concat(?1, '%'))")
 	Collection<ArtEntity> findByNamePrefix(String prefix);
 
 }

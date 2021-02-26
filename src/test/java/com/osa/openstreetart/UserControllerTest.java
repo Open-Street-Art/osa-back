@@ -93,7 +93,6 @@ public class UserControllerTest {
 
 		MvcResult res = mvc.perform(get("/api/user/" + user.getId())).andExpect(status().isOk()).andReturn();
 
-		System.out.println(res.getResponse().getContentAsString());
 		assertEquals(true,
 				res.getResponse().getContentAsString().contains("\"username\":\"tester\",\"roles\":\"[ROLE_USER]\""));
 	}
