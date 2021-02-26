@@ -33,7 +33,7 @@ public class ContribEntity {
     private String description;
 
     @ManyToOne
-	@JoinColumn(name="art_id")
+	@JoinColumn(name="art_id", nullable=false)
 	private ArtEntity art;
 
     @Type(type = "org.hibernate.type.TextType")

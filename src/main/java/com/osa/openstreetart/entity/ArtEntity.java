@@ -54,12 +54,8 @@ public class ArtEntity {
 
 	private String authorName;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinTable(
-		name="art_contribs",
-		joinColumns=@JoinColumn(name="art_id"),
-		inverseJoinColumns=@JoinColumn(name="art_contrib_id")
-	)
+	@OneToMany(targetEntity=ContribEntity.class, mappedBy="art")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<ContribEntity> contributions;
 
 	//@Column(nullable = false)

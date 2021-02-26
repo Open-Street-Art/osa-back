@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
@@ -89,6 +90,13 @@ public class TestUtil {
 		return artDTO;
 	}
 
+	public CityEntity createCity()
+	{
+		CityEntity city = new CityEntity();
+		city.setName("rouen");
+		return city;
+	}
+	
 	public String asJsonString(final Object obj) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(obj);
