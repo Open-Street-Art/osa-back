@@ -13,7 +13,7 @@ public class ArtDTO {
 	private String picture3;	
 	private String author;
 	private Integer author_id;
-	private LocalDateTime creationDateTime;
+	private Integer city_id;
 	private Double longitude;
 	private Double latitude;
 }

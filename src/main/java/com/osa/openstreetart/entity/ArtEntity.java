@@ -12,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
+
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -50,14 +54,16 @@ public class ArtEntity {
 
 	private String authorName;
 
-	// TODO : a décommenter quand ContribEntity existe
-	//private Collection<ContribEntity> contributions;
+	@OneToMany(targetEntity=ContribEntity.class, mappedBy="art")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<ContribEntity> contributions;
 
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private LocalDateTime creationDateTime;
 
-	// TODO : a décommenter quand CityEntity existe
-	//private CityEntity city;
+	@ManyToOne
+	@JoinColumn(name="city_id")
+	private CityEntity city;
 
 	@Column(nullable = false)
 	private Double longitude;

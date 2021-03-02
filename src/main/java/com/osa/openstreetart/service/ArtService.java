@@ -1,16 +1,19 @@
 package com.osa.openstreetart.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +28,14 @@ public class ArtService {
 	@Autowired
 	UserRepository userRepo;
 
+	@Autowired
+	CityRepository cityRepo;
+
 	public void patch(Integer artId, ArtDTO dto) throws OSA404Exception, OSA400Exception {
 		Optional<ArtEntity> optArt = artRepo.findById(artId);
 		if (!optArt.isPresent())
 			throw new OSA404Exception("Art not found.");
-		// tu peux utiliser la fonction validateArt ici
-		//pour que les mêmes vérification ne se répètent
-
+		
 		if (dto.getName().length() < ArtEntity.NAME_MIN_LENGTH)
 			throw new OSA400Exception("Name too short.");
 
@@ -71,7 +75,9 @@ public class ArtService {
 	}
 
 	public void save(ArtDTO ArtDTO) throws OSA404Exception, OSA400Exception{
-		artRepo.save(validateArt(ArtDTO));
+		ArtEntity art = validateArt(ArtDTO);
+		art.setCreationDateTime(LocalDateTime.now());
+		artRepo.save(art);
 	}
 
 	private ArtEntity validateArt(ArtDTO dto) throws OSA404Exception, OSA400Exception {
@@ -94,7 +100,6 @@ public class ArtService {
 		ArtEntity newArt = new ArtEntity();
 		newArt.setName(dto.getName());
 		newArt.setDescription(dto.getDescription());
-		//newArt.setCreationDateTime(dto.getCreationDateTime());
 		newArt.setLongitude(dto.getLongitude());
 		newArt.setLatitude(dto.getLatitude());
 		
@@ -117,7 +122,13 @@ public class ArtService {
 
 				newArt.setAuthor(optAuthor.get());
 		}
+		
+		// une oeuvre est associé à un city
+		Optional<CityEntity> artCity = cityRepo.findById(dto.getCity_id());
+		if(!artCity.isPresent())
+			throw new OSA400Exception("City not found");
 
+		newArt.setCity(artCity.get());
 		return newArt; 
 	}
 

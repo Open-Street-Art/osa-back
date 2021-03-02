@@ -2,8 +2,10 @@ package com.osa.openstreetart;
 
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.util.JwtUtil;
@@ -32,6 +34,9 @@ public class ArtControllerTest {
 
 	@Autowired
 	ArtRepository artRepo;
+
+	@Autowired
+	CityRepository cityRepo;
 
 	@Autowired
 	JwtService jwtService;
@@ -113,6 +118,12 @@ public class ArtControllerTest {
 
 		//associé à un utilisateur spécifié
 		art.setAuthor("Thomas");
+		
+		//la ville de l'oeuvre
+		CityEntity city = testUtil.createCity();
+		cityRepo.save(city);
+		
+		art.setCity_id(cityRepo.findByName("rouen").get().getId());
 		
 		// enregister l'oeuvre
 		mvc.perform(post("/api/admin/art")
