@@ -1,6 +1,7 @@
 package com.osa.openstreetart;
 
 import com.osa.openstreetart.dto.ArtDTO;
+import com.osa.openstreetart.dto.EditArtDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.UserEntity;
@@ -63,7 +64,7 @@ public class ArtControllerTest {
 		String token = testUtil.getJWTwithUsername(author.getUsername());
 
 		// Création du formulaire de modification
-		ArtDTO artDTO = new ArtDTO();
+		EditArtDTO artDTO = new EditArtDTO();
 		artDTO.setName("Nouvelle oeuvre");
 		artDTO.setDescription("Une description");
 		artDTO.setPicture1("1234");

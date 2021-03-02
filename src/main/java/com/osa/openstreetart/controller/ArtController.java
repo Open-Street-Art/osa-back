@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.osa.openstreetart.dto.ArtDTO;
+import com.osa.openstreetart.dto.EditArtDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.RoleEnum;
@@ -54,7 +55,7 @@ public class ArtController {
 
 	@PatchMapping(value = "/admin/art/{art_id}")
 	public ResponseEntity<OSAResponseDTO> patchArt(@RequestHeader(value = "Authorization") String token,
-			@PathVariable("art_id") Integer artId, @RequestBody ArtDTO art)
+			@PathVariable("art_id") Integer artId, @RequestBody EditArtDTO art)
 			throws OSA401Exception, OSA404Exception, OSA400Exception {
 		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception("Unauthorized.");

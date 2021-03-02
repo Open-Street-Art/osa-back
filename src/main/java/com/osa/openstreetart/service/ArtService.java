@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.ArtDTO;
+import com.osa.openstreetart.dto.EditArtDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
@@ -31,11 +32,13 @@ public class ArtService {
 	@Autowired
 	CityRepository cityRepo;
 
-	public void patch(Integer artId, ArtDTO dto) throws OSA404Exception, OSA400Exception {
+	public void patch(Integer artId, EditArtDTO dto) throws OSA404Exception, OSA400Exception {
+		if (dto == null)
+			throw new OSA400Exception("empty values");
+			
 		Optional<ArtEntity> optArt = artRepo.findById(artId);
 		if (!optArt.isPresent())
 			throw new OSA404Exception("Art not found.");
-		
 		if (dto.getName().length() < ArtEntity.NAME_MIN_LENGTH)
 			throw new OSA400Exception("Name too short.");
 
