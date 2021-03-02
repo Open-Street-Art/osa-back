@@ -23,7 +23,7 @@ public class SearchController {
 			throw new OSA400Exception("Empty search content.");
 
 		return ResponseEntity.ok(
-			new OSAResponseDTO(artRepo.findByNamePrefix(content))
+			new OSAResponseDTO(artRepo.findByNameWithSub(content))
 		);
 	}
 }
