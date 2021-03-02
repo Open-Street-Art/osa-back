@@ -14,7 +14,6 @@ public class ArtDTO {
 	private String author;
 	private Integer author_id;
 	private Integer city_id;
-	private LocalDateTime creationDateTime;
 	private Double longitude;
 	private Double latitude;
 }

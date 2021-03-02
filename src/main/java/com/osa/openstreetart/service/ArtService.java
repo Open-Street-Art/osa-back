@@ -1,5 +1,6 @@
 package com.osa.openstreetart.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -74,7 +75,9 @@ public class ArtService {
 	}
 
 	public void save(ArtDTO ArtDTO) throws OSA404Exception, OSA400Exception{
-		artRepo.save(validateArt(ArtDTO));
+		ArtEntity art = validateArt(ArtDTO);
+		art.setCreationDateTime(LocalDateTime.now());
+		artRepo.save(art);
 	}
 
 	private ArtEntity validateArt(ArtDTO dto) throws OSA404Exception, OSA400Exception {
@@ -97,7 +100,6 @@ public class ArtService {
 		ArtEntity newArt = new ArtEntity();
 		newArt.setName(dto.getName());
 		newArt.setDescription(dto.getDescription());
-		//newArt.setCreationDateTime(dto.getCreationDateTime());
 		newArt.setLongitude(dto.getLongitude());
 		newArt.setLatitude(dto.getLatitude());
 		

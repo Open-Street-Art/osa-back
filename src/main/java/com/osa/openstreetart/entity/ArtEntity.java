@@ -58,7 +58,7 @@ public class ArtEntity {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<ContribEntity> contributions;
 
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private LocalDateTime creationDateTime;
 
 	@ManyToOne
