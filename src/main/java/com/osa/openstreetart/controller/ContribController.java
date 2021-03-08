@@ -9,6 +9,7 @@ import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
+import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.service.ContribService;
 import com.osa.openstreetart.service.JwtService;
