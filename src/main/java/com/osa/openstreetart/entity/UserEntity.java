@@ -58,7 +58,19 @@ public class UserEntity {
 	)
 	private Collection<UserEntity> favArtists;
 
-    // TODO implémentation des classes  CityEntity, ArtEntity
-    //List<CityEntity> favCities
-	//List<ArtEntity>favArts;
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name="fav_cities",
+		joinColumns=@JoinColumn(name="user_id"),
+		inverseJoinColumns=@JoinColumn(name="city_id")
+	)
+	private Collection<UserEntity> favCities;
+
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name="fav_arts",
+		joinColumns=@JoinColumn(name="user_id"),
+		inverseJoinColumns=@JoinColumn(name="art_id")
+	)
+	private Collection<UserEntity> favArts;
 }
