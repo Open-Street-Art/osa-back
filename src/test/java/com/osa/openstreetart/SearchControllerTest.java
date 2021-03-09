@@ -1,8 +1,10 @@
 package com.osa.openstreetart;
 
 import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.repository.UserRepository;
 
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -29,6 +32,9 @@ public class SearchControllerTest {
 
 	@Autowired
 	private UserRepository userRepo;
+
+	@Autowired
+	private CityRepository cityRepo;
 
 	@Autowired
 	private TestUtil testUtil;
@@ -77,5 +83,33 @@ public class SearchControllerTest {
 			.andExpect(status().isOk()).andReturn();
 
 		assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre\""));
+	}
+
+	@Test
+	public void getSearchCitiesTest() throws Exception {
+		testUtil.cleanDB();
+
+		CityEntity city = new CityEntity();
+		city.setName("rouen");
+		city = cityRepo.save(city);
+
+		ArtEntity art = testUtil.createArt();
+		art.setAuthorName("bob");
+		art.setCity(city);
+		artRepo.save(art);
+
+
+		ArtEntity art1 = testUtil.createArt();
+		art.setAuthorName("alice");
+		art.setCity(city);
+		artRepo.save(art1);
+
+	   mvc.perform(get("/api/search/cities/rouen")
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.data").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.data[*].id").isNotEmpty());
+
 	}
 }
