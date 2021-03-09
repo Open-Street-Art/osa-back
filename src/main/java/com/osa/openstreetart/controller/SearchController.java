@@ -56,4 +56,13 @@ public class SearchController {
 
 		return ResponseEntity.ok(new OSAResponseDTO(result));
 	}
+
+	@GetMapping(value = "/search/cities/{content}")
+	public ResponseEntity<OSAResponseDTO> getSearchCities(@PathVariable("content") String content)
+			throws OSA400Exception {
+		if (content.isEmpty() || content.isBlank())
+			throw new OSA400Exception("Empty search content.");
+
+		return ResponseEntity.ok(new OSAResponseDTO(artRepo.findByCitiesName(content)));
+	}
 }
