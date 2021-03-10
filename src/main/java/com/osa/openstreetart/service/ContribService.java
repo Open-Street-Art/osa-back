@@ -1,13 +1,16 @@
 package com.osa.openstreetart.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.ContribDTO;
+import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
+import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
-import com.osa.openstreetart.repository.CityRepository;
+import com.osa.openstreetart.repository.ArtRepository;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 
@@ -23,84 +26,99 @@ public class ContribService {
 	@Autowired
 	UserRepository userRepo;
 
-    @Autowired
-	CityRepository cityRepo;
+	@Autowired
+	ArtRepository artRepo;
 
-    /**public void patch(Integer artId, ContribDTO dto) throws OSA404Exception, OSA400Exception {
+
+	public void setArt(Integer artId, ContribDTO dto) throws OSA404Exception, OSA400Exception {
 		if (dto == null) {
 			throw new OSA400Exception("empty values");
         }
-		Optional<ContribEntity> optContrib = contribRepo.findById(artId);
-		if (!optContrib.isPresent()) {
+		Optional<ArtEntity> newArt = artRepo.findById(artId);
+		if (!newArt.isPresent()) {
 			throw new OSA404Exception("Art not found.");
         }
 		if (dto.getName().length() < 2) {
 			throw new OSA400Exception("Name too short.");
         }
-		if (dto.getPictures().isEmpty()) {
-			throw new OSA400Exception("No picture found.");
+		if (dto.getDescription().isEmpty()) {
+			throw new OSA400Exception("Description is empty.");
         }
-		optContrib.get().setName(dto.getName());
-		optContrib.get().setDescription(dto.getDescription());
-		
-		// Enregistrement des images en tableau de bytes
-		Collection<String> pictures = new ArrayList<String>();
-		pictures.add(dto.getPicture1());
-		if (!dto.getPicture2().isEmpty())
-			pictures.add(dto.getPicture2());
-		if (!dto.getPicture3().isEmpty())
-			pictures.add(dto.getPicture3());
-		art.setPictures(pictures);
+		if (dto.getPictures().isEmpty()) {
+			throw new OSA400Exception("Pictures are empty.");
+        }
+		newArt.get().setName(dto.getName());
+		newArt.get().setDescription(dto.getDescription());
+		newArt.get().setPictures(dto.getPictures());
 		
 		// Si un nom d'artiste est spécifié
-		if (!dto.getAuthor().isEmpty())
-			art.setAuthorName(dto.getAuthor());
-		else {
-			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthor_id());
-			if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
-				throw new OSA400Exception("Invalid author ID.");
-
-			art.setAuthor(optAuthor.get());
+		if (dto.getAuthorName().isEmpty()) {
+			newArt.get().setAuthorName(dto.getAuthorName());
 		}
-		artRepo.save(art);
-	}**/
+		else {
+			Optional<UserEntity> optAuthor = userRepo.findByUsername(dto.getAuthorName());
+			if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST)) {
+				throw new OSA400Exception("Invalid author ID.");
+			}
+			newArt.get().setAuthor(optAuthor.get());
+		}
+		artRepo.save(newArt.get());
+	}
 
-	private ContribEntity verifyContrib(ContribDTO dto) throws OSA404Exception, OSA400Exception {
+	private ContribEntity verifyContrib(ContribDTO dto) throws OSA400Exception {
 		if (dto == null) {
+			throw new OSA400Exception("Empty contribution");
+        }
+		if (dto.getId() == null) {
 			throw new OSA400Exception("Empty contribution");
         }
         if (dto.getName().length() < 2) {
 			throw new OSA400Exception("Name too short.");
         }
-        if (dto.getPicture1().isEmpty()) {
-			throw new OSA400Exception("Picture 1 is empty.");
+		if (dto.getDescription().isEmpty()) {
+			throw new OSA400Exception("Description is empty");
+		}
+		if (artRepo.findById(dto.getArt().getId()).isPresent()) {
+			throw new OSA400Exception("Art not found.");
+		}
+		if (dto.getPictures().isEmpty()) {
+			throw new OSA400Exception("Pictures is Empty.");
         }
-		if (dto.getAuthor().isEmpty() && dto.getAuthor_id() == null) {
-			throw new OSA400Exception("Author or author_id must be filled.");
-        }
-		if (!dto.getAuthor().isEmpty() && dto.getAuthor_id() != null) {
-			throw new OSA400Exception("Author or author_id must be empty.");
-        }
+		if (userRepo.findByUsername(dto.getContributor().getUsername()).isEmpty()) {
+			throw new OSA400Exception("Author not found.");
+		}
+		if (dto.getAuthorName().isEmpty()) {
+			throw new OSA400Exception("Author name is Empty.");
+		}
+		if (dto.getApproved()) {
+			throw new OSA400Exception("Contribution already approved.");
+		}
 		ContribEntity resetArt = new ContribEntity();
+		resetArt.setId(dto.getId());
 		resetArt.setName(dto.getName());
 		resetArt.setDescription(dto.getDescription());
-		
-        // Enregistrement des images
-        resetArt.setPictures(dto.getPictures());
-		return resetArt; 
+		resetArt.setArt(dto.getArt());
+		resetArt.setPictures(dto.getPictures());
+		resetArt.setContributor(dto.getContributor());
+		resetArt.setCity(artRepo.findById(dto.getId()).get().getCity());
+		resetArt.setLongitude(artRepo.findById(dto.getId()).get().getLongitude());
+		resetArt.setLatitude(artRepo.findById(dto.getId()).get().getLatitude());
+		resetArt.setApproved(dto.getApproved());
+		return resetArt;
+	}
+	
+    public void save(ContribDTO contrib2) throws OSA404Exception, OSA400Exception{
+		ContribEntity contrib = verifyContrib(contrib2);
+		contrib.setCreationDateTime(LocalDateTime.now());
+		contribRepo.save(contrib);
 	}
 
-    public void save(ContribDTO contribDTO) throws OSA404Exception, OSA400Exception{
-		ContribEntity contrib = verifyContrib(contribDTO);
-		contrib.setCreationDateTime(LocalDateTime.now());
-		ContribRepo.save(contrib);
-	}
 
 	public void delete(Integer artId) throws OSA404Exception {
-		Optional<ContribEntity> deletedContrib = contribRepo.findById(artId);
-		if(!deletedContrib.isPresent()) {
+		Optional<ContribEntity> contrib = contribRepo.findById(artId);
+		if(!contrib.isPresent()) {
 			throw new OSA404Exception("Contribution not found.");
         }
-		contribRepo.delete(deletedContrib.get());
+		contribRepo.delete(contrib.get());
 	}
 }

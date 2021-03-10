@@ -1,9 +1,6 @@
 package com.osa.openstreetart.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.osa.openstreetart.dto.EditArtDTO;
+import com.osa.openstreetart.dto.ContribDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
@@ -16,12 +13,9 @@ import com.osa.openstreetart.service.JwtService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 public class ContribController {
 
@@ -41,22 +35,48 @@ public class ContribController {
 
     @PostMapping(value = "/user/contrib/{art_id}")
 	public ResponseEntity<OSAResponseDTO> postContrib(@RequestHeader(value = "Authorization") String token,
-    @PathVariable("art_id") Integer artId, @RequestBody EditArtDTO contrib)
-			throws OSA401Exception, OSA400Exception {
+    @PathVariable("art_id") Integer artId, @RequestBody ContribDTO contrib)
+			throws OSA401Exception, OSA404Exception, OSA400Exception {
 		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_USER)) {
 			throw new OSA401Exception("Unauthorized.");
 		}
+		contrib.setId(artId);
 		contribService.save(contrib);
 		return ResponseEntity.ok(new OSAResponseDTO("Crontribution sent."));
 	}
 
     @DeleteMapping(value = "/admin/art/{art_id}")
-	public ResponseEntity<OSAResponseDTO> deleteArt(@RequestHeader(value = "Authorization") String token,
-			@PathVariable("art_id") Integer artId) throws OSA401Exception, OSA404Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
+	public ResponseEntity<OSAResponseDTO> deleteContrib(@RequestHeader(value = "Authorization") String token,
+														@PathVariable("art_id") Integer artId) throws OSA401Exception, OSA404Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ARTIST)
+		|| !jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
 			throw new OSA401Exception("Unauthorized.");
 		}
 		contribService.delete(artId);
-		return ResponseEntity.ok(new OSAResponseDTO("Art deleted"));
+		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
 	}
+
+	@PostMapping(value = "/admin/contrib/accept/{contrib_id}")
+	public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,
+														@PathVariable("contrib_id") Integer contribId)
+			throws OSA401Exception,
+			OSA404Exception, OSA400Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
+			throw new OSA401Exception("Unauthorized.");
+		}
+    	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
+    }
+
+	@PostMapping(value = "/admin/contrib/deny/{contrib_id}")
+	public ResponseEntity<OSAResponseDTO> denyContrib(@RequestHeader(value = "Authorization") String token,
+														@PathVariable("contrib_id") Integer contribId)
+			throws OSA401Exception, OSA404Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
+			throw new OSA401Exception("Unauthorized.");
+		}
+		contribService.delete(contribId);
+    	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
+    }
+
+
 }
