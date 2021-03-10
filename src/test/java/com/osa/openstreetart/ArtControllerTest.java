@@ -122,9 +122,9 @@ public class ArtControllerTest {
 		
 		//la ville de l'oeuvre
 		CityEntity city = testUtil.createCity();
-		cityRepo.save(city);
+		city = cityRepo.save(city);
 		
-		art.setCity_id(cityRepo.findByName("rouen").get().getId());
+		art.setCity_id(city.getId());
 		
 		// enregister l'oeuvre
 		mvc.perform(post("/api/admin/art")

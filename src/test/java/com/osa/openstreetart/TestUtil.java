@@ -66,6 +66,20 @@ public class TestUtil {
 		return user;
 	}
 
+	public UserEntity createArtist() {
+		UserEntity user = new UserEntity();
+		user.setEmail("test@mail.fr");
+		user.setUsername("artist");
+		user.setIsPublic(false);
+		user.setPassword(bcryptEncoder.encode("psw123"));
+
+		Collection<RoleEnum> roles = new ArrayList<RoleEnum>();
+		roles.add(RoleEnum.ROLE_ARTIST);
+		user.setRoles(roles);
+
+		return user;
+	}
+
 	public ArtEntity createArt() {
 		ArtEntity art = new ArtEntity();
 		art.setName("Oeuvre");
