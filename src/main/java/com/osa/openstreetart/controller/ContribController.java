@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.PartialResultException;
 import java.util.Optional;
 
 public class ContribController {
@@ -64,6 +65,7 @@ public class ContribController {
 		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
 			throw new OSA401Exception("Unauthorized.");
 		}
+		contribService.setArt(contribId, contribRepo.findById(contribId).get());
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
     }
 

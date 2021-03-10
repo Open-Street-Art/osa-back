@@ -30,7 +30,7 @@ public class ContribService {
 	ArtRepository artRepo;
 
 
-	public void setArt(Integer artId, ContribDTO dto) throws OSA404Exception, OSA400Exception {
+	public void setArt(Integer artId, ContribEntity dto) throws OSA404Exception, OSA400Exception {
 		if (dto == null) {
 			throw new OSA400Exception("empty values");
         }
