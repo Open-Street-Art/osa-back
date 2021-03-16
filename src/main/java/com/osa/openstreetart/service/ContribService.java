@@ -123,6 +123,7 @@ public class ContribService {
 		contribRepo.save(verifyContrib(contrib2, contribUser, artId));
 	}
 
+
 	public void delete(Integer artId) throws OSA404Exception {
 		Optional<ContribEntity> contrib = contribRepo.findById(artId);
 		if(!contrib.isPresent()) {
