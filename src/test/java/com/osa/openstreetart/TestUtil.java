@@ -12,6 +12,7 @@ import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.util.JwtUtil;
@@ -29,6 +30,9 @@ public class TestUtil {
 
 	@Autowired
 	UserRepository userRepo;
+
+	@Autowired
+	ContribRepository contribRepo;
 
 	@Autowired
 	JwtService jwtService;
@@ -121,7 +125,8 @@ public class TestUtil {
 	}
 
 	public void cleanDB() {
-		artRepo.deleteAll();
+		contribRepo.deleteAll();
+		artRepo.deleteAll();		
 		userRepo.deleteAll();
 	}
 

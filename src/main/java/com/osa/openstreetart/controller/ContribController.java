@@ -7,11 +7,11 @@ import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
-import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.ContribService;
 import com.osa.openstreetart.service.JwtService;
+import com.osa.openstreetart.util.ApiRestController;
 import com.osa.openstreetart.util.JwtUtil;
 import com.osa.openstreetart.entity.UserEntity;
 
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+@ApiRestController
 public class ContribController {
 
 	@Autowired
@@ -42,10 +42,10 @@ public class ContribController {
 	// 	return ResponseEntity.ok(new OSAResponseDTO(contribRepo.findById(artId)));
 	// }
 
-    @PostMapping(value = "/user/contrib/{art_id}")
+    @PostMapping(value = "/contrib/{art_id}")
 	public ResponseEntity<OSAResponseDTO> postContrib(@RequestHeader(value = "Authorization") String token,
     @PathVariable("art_id") Integer artId, @RequestBody ContribDTO contrib)
-			throws OSA401Exception, OSA404Exception, OSA400Exception {
+			throws OSA401Exception, OSA400Exception {
 		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_USER)) {
 			throw new OSA401Exception("Unauthorized.");
 		}

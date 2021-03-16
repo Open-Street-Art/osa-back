@@ -1,7 +1,5 @@
 package com.osa.openstreetart.dto;
 
-import java.util.Collection;
-
 import lombok.Data;
 
 @Data
