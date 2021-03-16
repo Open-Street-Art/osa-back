@@ -31,40 +31,33 @@ public class ContribService {
 	ArtRepository artRepo;
 
 
-	// public void setArt(Integer artId, ContribEntity dto) throws OSA404Exception, OSA400Exception {
-	// 	if (dto == null) {
-	// 		throw new OSA400Exception("empty values");
-    //     }
-	// 	Optional<ArtEntity> newArt = artRepo.findById(artId);
-	// 	if (!newArt.isPresent()) {
-	// 		throw new OSA404Exception("Art not found.");
-    //     }
-	// 	if (dto.getName().length() < 2) {
-	// 		throw new OSA400Exception("Name too short.");
-    //     }
-	// 	if (dto.getDescription().isEmpty()) {
-	// 		throw new OSA400Exception("Description is empty.");
-    //     }
-	// 	if (dto.getPictures().isEmpty()) {
-	// 		throw new OSA400Exception("Pictures are empty.");
-    //     }
-	// 	newArt.get().setName(dto.getName());
-	// 	newArt.get().setDescription(dto.getDescription());
-	// 	newArt.get().setPictures(dto.getPictures());
+	public void saveContrib(ContribEntity contrib) {
+		// accepter la contribution
+		contrib.setApproved(true);
+		contribRepo.save(contrib);
+
+		//l'art associé à la contribution
+		ArtEntity art = contrib.getArt();
+		art.setName(contrib.getName());
+		art.setDescription(contrib.getDescription());
+
+		// les images de la contribution
+		Collection<String> pictures = new ArrayList<String>();
 		
-	// 	// Si un nom d'artiste est spécifié
-	// 	if (dto.getAuthorName().isEmpty()) {
-	// 		newArt.get().setAuthorName(dto.getAuthorName());
-	// 	}
-	// 	else {
-	// 		Optional<UserEntity> optAuthor = userRepo.findByUsername(dto.getAuthorName());
-	// 		if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST)) {
-	// 			throw new OSA400Exception("Invalid author ID.");
-	// 		}
-	// 		newArt.get().setAuthor(optAuthor.get());
-	// 	}
-	// 	artRepo.save(newArt.get());
-	// }
+		//
+		// for(String picture: art.getPictures())
+		// {
+		// 	pictures.add(picture);
+		// }
+
+		for(String picture: contrib.getPictures())
+		{
+			pictures.add(picture);
+		}
+		
+		art.setPictures(pictures);
+		artRepo.save(art);
+	}
 
 	private ContribEntity verifyContrib(ContribDTO dto,UserEntity contribUser, Integer artId) throws OSA400Exception {
 		if (dto == null) {

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.osa.openstreetart.dto.ContribDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
+import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
@@ -72,17 +73,22 @@ public class ContribController {
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
 	}
 
-	// @PostMapping(value = "/admin/contrib/accept/{contrib_id}")
-	// public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,
-	// 													@PathVariable("contrib_id") Integer contribId)
-	// 		throws OSA401Exception,
-	// 		OSA404Exception, OSA400Exception {
-	// 	if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
-	// 		throw new OSA401Exception("Unauthorized.");
-	// 	}
-	// 	contribService.setArt(contribId, contribRepo.findById(contribId).get());
-    // 	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
-    // }
+	@PostMapping(value = "/contrib/accept/{contrib_id}")
+	public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,
+														@PathVariable("contrib_id") Integer contribId) throws OSA404Exception, OSA401Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
+			throw new OSA401Exception("Unauthorized.");
+		}
+		
+		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
+		if(!contrib.isPresent())
+		{
+			throw new OSA404Exception("Contribution not found.");
+		}
+		
+		contribService.saveContrib(contrib.get());
+    	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
+    }
 
 	// @PostMapping(value = "/admin/contrib/deny/{contrib_id}")
 	// public ResponseEntity<OSAResponseDTO> denyContrib(@RequestHeader(value = "Authorization") String token,

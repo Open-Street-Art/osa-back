@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -121,5 +122,38 @@ public class ContribControllerTest {
         //assertion
         Optional<ContribEntity> deletedContrib = contribRepo.findById(contrib.getId());
         assertFalse(deletedContrib.isPresent());
+    }
+
+    @Test
+    public void acceptContribTest() throws Exception {
+        testUtil.cleanDB();
+
+        //utilisateur contributeur
+        UserEntity admin = testUtil.createAdmin();
+        userRepo.save(admin);
+
+        String token = testUtil.getJWTwithUsername(admin.getUsername());
+
+        //l'oeuvre recevant la contribution
+        ArtEntity art = testUtil.createArt();
+        art.setAuthorName("Thomas");
+        art = artRepo.save(art);
+
+        //la contribution à supprimer
+        ContribEntity contrib = testUtil.createContrib(); 
+        contrib.setLongitude(art.getLongitude());
+        contrib.setLatitude(art.getLatitude());
+        contrib.setArt(art);
+        contrib = contribRepo.save(contrib);
+        
+
+        //accepter la contribution
+		mvc.perform(post("/api/contrib/accept/" + contrib.getId())
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+       // assertTrue(contrib.getApproved());
     }
 }
