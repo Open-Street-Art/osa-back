@@ -19,13 +19,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @SpringBootTest
@@ -76,7 +76,6 @@ public class ContribControllerTest {
 		contribArt.setPicture3("hdhc.png");
 
         //enregister la contribution
-        // enregister l'oeuvre
 		mvc.perform(post("/api/contrib/" + art.getId())
         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .contentType(MediaType.APPLICATION_JSON)
@@ -88,5 +87,39 @@ public class ContribControllerTest {
         Optional<ContribEntity> contrib = contribRepo.findByName("belle Oeuvre");
         assertTrue(contrib.isPresent());
 
+    }
+
+    @Test
+    public void deleteContribTest() throws Exception {
+        testUtil.cleanDB();
+
+        //utilisateur contributeur
+        UserEntity contributor = testUtil.createUser();
+        userRepo.save(contributor);
+
+        String token = testUtil.getJWTwithUsername(contributor.getUsername());
+
+        //l'oeuvre recevant la contribution
+        ArtEntity art = testUtil.createArt();
+        art.setAuthorName("Thomas");
+        art = artRepo.save(art);
+
+        //la contribution à supprimer
+        ContribEntity contrib = testUtil.createContrib();
+        contrib.setLongitude(art.getLongitude());
+        contrib.setLatitude(art.getLatitude());
+        contrib.setArt(art);
+        contrib = contribRepo.save(contrib);
+         
+         //supprimer la contribution
+		mvc.perform(delete("/api/contrib/" + contrib.getId())
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+
+        //assertion
+        Optional<ContribEntity> deletedContrib = contribRepo.findById(contrib.getId());
+        assertFalse(deletedContrib.isPresent());
     }
 }

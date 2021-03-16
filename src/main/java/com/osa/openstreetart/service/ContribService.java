@@ -10,6 +10,7 @@ import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
+import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ArtRepository;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
@@ -122,12 +123,11 @@ public class ContribService {
 		contribRepo.save(verifyContrib(contrib2, contribUser, artId));
 	}
 
-
-	// public void delete(Integer artId) throws OSA404Exception {
-	// 	Optional<ContribEntity> contrib = contribRepo.findById(artId);
-	// 	if(!contrib.isPresent()) {
-	// 		throw new OSA404Exception("Contribution not found.");
-    //     }
-	// 	contribRepo.delete(contrib.get());
-	// }
+	public void delete(Integer artId) throws OSA404Exception {
+		Optional<ContribEntity> contrib = contribRepo.findById(artId);
+		if(!contrib.isPresent()) {
+			throw new OSA404Exception("Contribution not found.");
+        }
+		contribRepo.delete(contrib.get());
+	}
 }

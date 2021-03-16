@@ -7,6 +7,7 @@ import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
+import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.ContribService;
@@ -60,16 +61,16 @@ public class ContribController {
 		return ResponseEntity.ok(new OSAResponseDTO("Crontribution sent."));
 	}
 
-    // @DeleteMapping(value = "/admin/art/{art_id}")
-	// public ResponseEntity<OSAResponseDTO> deleteContrib(@RequestHeader(value = "Authorization") String token,
-	// 													@PathVariable("art_id") Integer artId) throws OSA401Exception, OSA404Exception {
-	// 	if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ARTIST)
-	// 	|| !jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
-	// 		throw new OSA401Exception("Unauthorized.");
-	// 	}
-	// 	contribService.delete(artId);
-	// 	return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
-	// }
+    @DeleteMapping(value = "/contrib/{contrib_id}")
+	public ResponseEntity<OSAResponseDTO> deleteContrib(@RequestHeader(value = "Authorization") String token,
+														@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA404Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_USER)) {
+			throw new OSA401Exception("Unauthorized.");
+		}
+		
+		contribService.delete(contribId);
+		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
+	}
 
 	// @PostMapping(value = "/admin/contrib/accept/{contrib_id}")
 	// public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,

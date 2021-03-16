@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
+import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
@@ -105,6 +106,16 @@ public class TestUtil {
 		artDTO.setLongitude(4.5);
 		artDTO.setLatitude(3.2);
 		return artDTO;
+	}
+
+	public ContribEntity createContrib() 
+	{
+		ContribEntity contrib = new ContribEntity();
+		contrib.setName("Oeuvre 2");
+        contrib.setDescription("description de l'oeuvre");
+        contrib.setCreationDateTime(LocalDateTime.now());
+
+		return contrib;
 	}
 
 	public CityEntity createCity()
