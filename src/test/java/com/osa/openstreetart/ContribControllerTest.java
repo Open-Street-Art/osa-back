@@ -153,7 +153,12 @@ public class ContribControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
+        
+        art = artRepo.findById(art.getId()).get();
+        contrib = contribRepo.findById(contrib.getId()).get();
 
-       // assertTrue(contrib.getApproved());
+        //la contribution est acceptée 
+        assertTrue(contrib.getApproved());
+        assertEquals(art.getName(), contrib.getName());
     }
 }

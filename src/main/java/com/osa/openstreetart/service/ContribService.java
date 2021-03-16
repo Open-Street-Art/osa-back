@@ -31,7 +31,17 @@ public class ContribService {
 	ArtRepository artRepo;
 
 
-	public void saveContrib(ContribEntity contrib) {
+	public void saveContrib(ContribEntity contrib) throws OSA400Exception{
+		//la contribution a déjà été  traitée
+		if(contrib.getApproved() != null) {
+			if(contrib.getApproved() == false)
+			 throw new OSA400Exception("the contribution has been refused.");
+			
+			if(contrib.getApproved() == true) {
+				throw new OSA400Exception("the contribution is already accepted.");
+			}
+		}
+		
 		// accepter la contribution
 		contrib.setApproved(true);
 		contribRepo.save(contrib);
@@ -41,21 +51,30 @@ public class ContribService {
 		art.setName(contrib.getName());
 		art.setDescription(contrib.getDescription());
 
-		// les images de la contribution
-		Collection<String> pictures = new ArrayList<String>();
-		
-		//
-		// for(String picture: art.getPictures())
-		// {
-		// 	pictures.add(picture);
-		// }
+		// les images de l'oeuvre
+		if(contrib.getPictures() != null && contrib.getPictures().size() > 0) {
+			Collection<String> pictures = new ArrayList<String>();
 
-		for(String picture: contrib.getPictures())
-		{
-			pictures.add(picture);
+			//les images de la contribution
+			for(String picture: contrib.getPictures())
+			{
+				pictures.add(picture);
+			}
+
+			//ajouter les images non modifiées de l'oeuvre
+			if(art.getPictures().size() > contrib.getPictures().size())
+			{
+				ArrayList<String> artPictures = new ArrayList<>(art.getPictures());
+				for(int index = artPictures.size() + 1; index < art.getPictures().size(); index ++)
+				{
+					pictures.add(artPictures.get(index));
+				}
+			}
+
+			//remplacer les image de l'oeuvre.
+			art.setPictures(pictures);
 		}
-		
-		art.setPictures(pictures);
+
 		artRepo.save(art);
 	}
 
@@ -69,11 +88,7 @@ public class ContribService {
 		if (dto.getDescription().isEmpty()) {
 			throw new OSA400Exception("Description is empty");
 		}
-
-		if (dto.getPicture1().isEmpty()) {
-			throw new OSA400Exception("Picture 1 is empty.");
-		}
-		
+	
 		//l'oeuvre recevant la contribution
 		Optional<ArtEntity> art = artRepo.findById(artId);
 
@@ -89,7 +104,8 @@ public class ContribService {
 
 		// les images de la contribution
 		Collection<String> pictures = new ArrayList<String>();
-		pictures.add(dto.getPicture1());
+		if (!dto.getPicture1().isEmpty())
+			pictures.add(dto.getPicture1());
 		if (!dto.getPicture2().isEmpty())
 			pictures.add(dto.getPicture2());
 		if (!dto.getPicture3().isEmpty())
@@ -107,7 +123,6 @@ public class ContribService {
 		contribArt.setLatitude(art.get().getLatitude());
 		
 		contribArt.setCreationDateTime(LocalDateTime.now());
-		contribArt.setApproved(false);
 		
 		return contribArt;
 	}
@@ -115,7 +130,6 @@ public class ContribService {
     public void save(ContribDTO contrib2,UserEntity contribUser, Integer artId) throws  OSA400Exception{
 		contribRepo.save(verifyContrib(contrib2, contribUser, artId));
 	}
-
 
 	public void delete(Integer artId) throws OSA404Exception {
 		Optional<ContribEntity> contrib = contribRepo.findById(artId);

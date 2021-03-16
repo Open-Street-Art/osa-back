@@ -114,7 +114,6 @@ public class TestUtil {
 		contrib.setName("Oeuvre 2");
         contrib.setDescription("description de l'oeuvre");
         contrib.setCreationDateTime(LocalDateTime.now());
-		contrib.setApproved(false);
 		return contrib;
 	}
 

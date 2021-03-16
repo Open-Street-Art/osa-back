@@ -75,7 +75,7 @@ public class ContribController {
 
 	@PostMapping(value = "/contrib/accept/{contrib_id}")
 	public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,
-														@PathVariable("contrib_id") Integer contribId) throws OSA404Exception, OSA401Exception {
+														@PathVariable("contrib_id") Integer contribId) throws OSA404Exception, OSA401Exception, OSA400Exception {
 		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
 			throw new OSA401Exception("Unauthorized.");
 		}
