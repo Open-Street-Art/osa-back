@@ -1,6 +1,8 @@
 package com.osa.openstreetart.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.ContribDTO;
@@ -65,11 +67,8 @@ public class ContribService {
 		artRepo.save(newArt.get());
 	}
 
-	private ContribEntity verifyContrib(ContribDTO dto) throws OSA400Exception {
+	private ContribEntity verifyContrib(ContribDTO dto,UserEntity contribUser, Integer artId) throws OSA400Exception {
 		if (dto == null) {
-			throw new OSA400Exception("Empty contribution");
-        }
-		if (dto.getId() == null) {
 			throw new OSA400Exception("Empty contribution");
         }
         if (dto.getName().length() < 2) {
@@ -78,39 +77,48 @@ public class ContribService {
 		if (dto.getDescription().isEmpty()) {
 			throw new OSA400Exception("Description is empty");
 		}
-		if (artRepo.findById(dto.getArt().getId()).isPresent()) {
+
+		if (artRepo.findById(artId).isPresent()) {
 			throw new OSA400Exception("Art not found.");
 		}
-		if (dto.getPictures().isEmpty()) {
-			throw new OSA400Exception("Pictures is Empty.");
-        }
-		if (userRepo.findByUsername(dto.getContributor().getUsername()).isEmpty()) {
-			throw new OSA400Exception("Author not found.");
-		}
-		if (dto.getAuthorName().isEmpty()) {
-			throw new OSA400Exception("Author name is Empty.");
-		}
-		if (dto.getApproved()) {
-			throw new OSA400Exception("Contribution already approved.");
-		}
-		ContribEntity resetArt = new ContribEntity();
-		resetArt.setId(dto.getId());
-		resetArt.setName(dto.getName());
-		resetArt.setDescription(dto.getDescription());
-		resetArt.setArt(dto.getArt());
-		resetArt.setPictures(dto.getPictures());
-		resetArt.setContributor(dto.getContributor());
-		resetArt.setCity(artRepo.findById(dto.getId()).get().getCity());
-		resetArt.setLongitude(artRepo.findById(dto.getId()).get().getLongitude());
-		resetArt.setLatitude(artRepo.findById(dto.getId()).get().getLatitude());
-		resetArt.setApproved(dto.getApproved());
-		return resetArt;
+		if (dto.getPicture1().isEmpty())
+			throw new OSA400Exception("Picture 1 is empty.");
+
+		//l'oeuvre recevant la contribution
+		ArtEntity art = artRepo.findById(artId).get();
+
+		//la contribution
+		ContribEntity contribArt = new ContribEntity();
+		contribArt.setName(dto.getName());
+		contribArt.setDescription(dto.getDescription());
+		contribArt.setArt(art);
+
+		// les images de la contribution
+		Collection<String> pictures = new ArrayList<String>();
+		pictures.add(dto.getPicture1());
+		if (!dto.getPicture2().isEmpty())
+			pictures.add(dto.getPicture2());
+		if (!dto.getPicture3().isEmpty())
+			pictures.add(dto.getPicture3());
+		contribArt.setPictures(pictures);
+
+		//le contributeur
+		contribArt.setContributor(contribUser);
+
+		//la ville
+		contribArt.setCity(art.getCity());
+
+		//les coordonnées Géo
+		contribArt.setLongitude(art.getLongitude());
+		contribArt.setLatitude(art.getLatitude());
+		
+		contribArt.setCreationDateTime(LocalDateTime.now());
+		contribArt.setApproved(false);
+		return contribArt;
 	}
 	
-    public void save(ContribDTO contrib2) throws OSA404Exception, OSA400Exception{
-		ContribEntity contrib = verifyContrib(contrib2);
-		contrib.setCreationDateTime(LocalDateTime.now());
-		contribRepo.save(contrib);
+    public void save(ContribDTO contrib2,UserEntity contribUser, Integer artId) throws OSA404Exception, OSA400Exception{
+		contribRepo.save(verifyContrib(contrib2, contribUser, artId));
 	}
 
 
