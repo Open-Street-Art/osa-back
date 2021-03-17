@@ -9,9 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
+import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.util.JwtUtil;
@@ -29,6 +31,9 @@ public class TestUtil {
 
 	@Autowired
 	UserRepository userRepo;
+
+	@Autowired
+	ContribRepository contribRepo;
 
 	@Autowired
 	JwtService jwtService;
@@ -103,6 +108,15 @@ public class TestUtil {
 		return artDTO;
 	}
 
+	public ContribEntity createContrib() 
+	{
+		ContribEntity contrib = new ContribEntity();
+		contrib.setName("Oeuvre 2");
+        contrib.setDescription("description de l'oeuvre");
+        contrib.setCreationDateTime(LocalDateTime.now());
+		return contrib;
+	}
+
 	public CityEntity createCity()
 	{
 		CityEntity city = new CityEntity();
@@ -121,7 +135,8 @@ public class TestUtil {
 	}
 
 	public void cleanDB() {
-		artRepo.deleteAll();
+		contribRepo.deleteAll();
+		artRepo.deleteAll();		
 		userRepo.deleteAll();
 	}
 
