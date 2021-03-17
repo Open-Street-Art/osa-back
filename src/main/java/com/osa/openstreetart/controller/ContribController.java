@@ -90,16 +90,21 @@ public class ContribController {
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
     }
 
-	// @PostMapping(value = "/admin/contrib/deny/{contrib_id}")
-	// public ResponseEntity<OSAResponseDTO> denyContrib(@RequestHeader(value = "Authorization") String token,
-	// 													@PathVariable("contrib_id") Integer contribId)
-	// 		throws OSA401Exception, OSA404Exception {
-	// 	if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
-	// 		throw new OSA401Exception("Unauthorized.");
-	// 	}
-	// 	contribService.delete(contribId);
-    // 	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
-    // }
+	@PostMapping(value = "/contrib/deny/{contrib_id}")
+	public ResponseEntity<OSAResponseDTO> denyContrib(@RequestHeader(value = "Authorization") String token,
+														@PathVariable("contrib_id") Integer contribId)
+			throws OSA401Exception, OSA404Exception, OSA400Exception {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
+			throw new OSA401Exception("Unauthorized.");
+		}
+		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
+		if(!contrib.isPresent())
+		{
+			throw new OSA404Exception("Contribution not found.");
+		}
 
+		contribService.denyContrib(contrib.get());
+    	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
+    }
 
 }

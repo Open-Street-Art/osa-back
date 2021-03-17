@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @SpringBootTest
@@ -128,7 +127,7 @@ public class ContribControllerTest {
     public void acceptContribTest() throws Exception {
         testUtil.cleanDB();
 
-        //utilisateur contributeur
+         //l'administrateur
         UserEntity admin = testUtil.createAdmin();
         userRepo.save(admin);
 
@@ -139,7 +138,7 @@ public class ContribControllerTest {
         art.setAuthorName("Thomas");
         art = artRepo.save(art);
 
-        //la contribution à supprimer
+        //la contribution à accepter
         ContribEntity contrib = testUtil.createContrib(); 
         contrib.setLongitude(art.getLongitude());
         contrib.setLatitude(art.getLatitude());
@@ -160,5 +159,43 @@ public class ContribControllerTest {
         //la contribution est acceptée 
         assertTrue(contrib.getApproved());
         assertEquals(art.getName(), contrib.getName());
+    }
+
+    @Test
+    public void denyContribTest() throws Exception {
+        testUtil.cleanDB();
+
+        //l'administrateur
+        UserEntity admin = testUtil.createAdmin();
+        userRepo.save(admin);
+
+        String token = testUtil.getJWTwithUsername(admin.getUsername());
+
+        //l'oeuvre recevant la contribution
+        ArtEntity art = testUtil.createArt();
+        art.setAuthorName("Thomas");
+        art = artRepo.save(art);
+
+        //la contribution à refuser
+        ContribEntity contrib = testUtil.createContrib(); 
+        contrib.setLongitude(art.getLongitude());
+        contrib.setLatitude(art.getLatitude());
+        contrib.setArt(art);
+        contrib = contribRepo.save(contrib);
+        
+
+        //refuser la contribution
+		mvc.perform(post("/api/contrib/deny/" + contrib.getId())
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+        
+        art = artRepo.findById(art.getId()).get();
+        contrib = contribRepo.findById(contrib.getId()).get();
+
+        //la contribution est refusée 
+        assertFalse(contrib.getApproved());
+        assertFalse(art.getName() == contrib.getName());
     }
 }

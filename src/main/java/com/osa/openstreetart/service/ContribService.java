@@ -78,6 +78,21 @@ public class ContribService {
 		artRepo.save(art);
 	}
 
+	public void denyContrib(ContribEntity contrib) throws OSA400Exception {
+		//la contribution a déjà été  traitée
+		if(contrib.getApproved() != null) {
+			if(contrib.getApproved() == false)
+			 throw new OSA400Exception("the contribution is already refused.");
+			
+			if(contrib.getApproved() == true) {
+				throw new OSA400Exception("the contribution has been  accepted.");
+			}
+		}
+
+		// refuser la contribution
+		contrib.setApproved(false);
+		contribRepo.save(contrib);
+	}
 	private ContribEntity verifyContrib(ContribDTO dto,UserEntity contribUser, Integer artId) throws OSA400Exception {
 		if (dto == null) {
 			throw new OSA400Exception("Empty contribution");
@@ -131,6 +146,7 @@ public class ContribService {
 		contribRepo.save(verifyContrib(contrib2, contribUser, artId));
 	}
 
+	
 	public void delete(Integer artId) throws OSA404Exception {
 		Optional<ContribEntity> contrib = contribRepo.findById(artId);
 		if(!contrib.isPresent()) {
