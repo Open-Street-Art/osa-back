@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-import com.osa.openstreetart.dto.ContribDTO;
+import com.osa.openstreetart.dto.PostContribDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.UserEntity;
@@ -93,7 +93,7 @@ public class ContribService {
 		contrib.setApproved(false);
 		contribRepo.save(contrib);
 	}
-	private ContribEntity verifyContrib(ContribDTO dto,UserEntity contribUser, Integer artId) throws OSA400Exception {
+	private ContribEntity verifyContrib(PostContribDTO dto,UserEntity contribUser, Integer artId) throws OSA400Exception {
 		if (dto == null) {
 			throw new OSA400Exception("Empty contribution");
         }
@@ -142,7 +142,7 @@ public class ContribService {
 		return contribArt;
 	}
 	
-    public void save(ContribDTO contrib2,UserEntity contribUser, Integer artId) throws  OSA400Exception{
+    public void save(PostContribDTO contrib2,UserEntity contribUser, Integer artId) throws  OSA400Exception{
 		contribRepo.save(verifyContrib(contrib2, contribUser, artId));
 	}
 

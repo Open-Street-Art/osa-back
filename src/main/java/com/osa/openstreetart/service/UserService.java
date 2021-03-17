@@ -109,11 +109,4 @@ public class UserService {
 		return m.matches();
  	}
 
-	public boolean isValidPassword(String password) {
-		String ePattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
-		java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
-		java.util.regex.Matcher m = p.matcher(password);
-		return m.matches();
-	}
-
 }

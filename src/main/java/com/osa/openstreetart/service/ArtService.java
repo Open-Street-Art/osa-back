@@ -127,11 +127,13 @@ public class ArtService {
 		}
 		
 		// une oeuvre est associé à un city
-		Optional<CityEntity> artCity = cityRepo.findById(dto.getCity_id());
-		if(!artCity.isPresent())
-			throw new OSA400Exception("City not found");
-
-		newArt.setCity(artCity.get());
+		if (dto.getCity_id() != null) {
+			Optional<CityEntity> artCity = cityRepo.findById(dto.getCity_id());
+			if(!artCity.isPresent())
+				throw new OSA400Exception("City not found");
+	
+			newArt.setCity(artCity.get());
+		}
 		return newArt; 
 	}
 

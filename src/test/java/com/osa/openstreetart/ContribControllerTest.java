@@ -1,7 +1,7 @@
 package com.osa.openstreetart;
 
 
-import com.osa.openstreetart.dto.ContribDTO;
+import com.osa.openstreetart.dto.PostContribDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.UserEntity;
@@ -20,7 +20,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -70,7 +69,7 @@ public class ContribControllerTest {
 		art = artRepo.save(art);
        
         //création du formulaire de contribution
-        ContribDTO contribArt = new ContribDTO();
+        PostContribDTO contribArt = new PostContribDTO();
         contribArt.setName("belle Oeuvre");
         contribArt.setDescription("modification de le peinture");
         contribArt.setPicture1("shkbv.png");

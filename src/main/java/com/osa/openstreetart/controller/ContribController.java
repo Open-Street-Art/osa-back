@@ -1,9 +1,11 @@
 package com.osa.openstreetart.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import com.osa.openstreetart.dto.ContribDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
+import com.osa.openstreetart.dto.PostContribDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
@@ -15,6 +17,7 @@ import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.ContribService;
 import com.osa.openstreetart.service.JwtService;
+import com.osa.openstreetart.tranformator.ContribTransformator;
 import com.osa.openstreetart.util.ApiRestController;
 import com.osa.openstreetart.util.JwtUtil;
 import com.osa.openstreetart.entity.UserEntity;
@@ -44,14 +47,14 @@ public class ContribController {
 	
 	@Autowired
 	private JwtUtil jwtUtil;
+
+	@Autowired
+	private ContribTransformator contribTransf;
    
     @PostMapping(value = "/contrib/{art_id}")
 	public ResponseEntity<OSAResponseDTO> postContrib(@RequestHeader(value = "Authorization") String token,
-    @PathVariable("art_id") Integer artId, @RequestBody ContribDTO contrib)
+    @PathVariable("art_id") Integer artId, @RequestBody PostContribDTO contrib)
 			throws OSA401Exception, OSA400Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_USER)) {
-			throw new OSA401Exception("Unauthorized.");
-		}
 
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
 		Optional<UserEntity> contribUser = userRepo.findByUsername(username);
@@ -60,16 +63,14 @@ public class ContribController {
 			throw new OSA400Exception("No user found.");
 
 		contribService.save(contrib, contribUser.get(), artId);
-		return ResponseEntity.ok(new OSAResponseDTO("Crontribution sent."));
+		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
     @DeleteMapping(value = "/contrib/{contrib_id}")
 	public ResponseEntity<OSAResponseDTO> deleteContrib(@RequestHeader(value = "Authorization") String token,
 														@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA404Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_USER)) {
-			throw new OSA401Exception("Unauthorized.");
-		}
-		
+		// TODO : seulement le user qui a post'e contrib peut la delelte
+
 		contribService.delete(contribId);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
 	}
@@ -77,15 +78,12 @@ public class ContribController {
 	@PostMapping(value = "/contrib/accept/{contrib_id}")
 	public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,
 														@PathVariable("contrib_id") Integer contribId) throws OSA404Exception, OSA401Exception, OSA400Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception("Unauthorized.");
-		}
 		
 		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
 		if(!contrib.isPresent())
-		{
 			throw new OSA404Exception("Contribution not found.");
-		}
 		
 		contribService.saveContrib(contrib.get());
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
@@ -95,26 +93,29 @@ public class ContribController {
 	public ResponseEntity<OSAResponseDTO> denyContrib(@RequestHeader(value = "Authorization") String token,
 														@PathVariable("contrib_id") Integer contribId)
 			throws OSA401Exception, OSA404Exception, OSA400Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN)) {
+		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception("Unauthorized.");
-		}
+
 		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
 		if(!contrib.isPresent())
-		{
 			throw new OSA404Exception("Contribution not found.");
-		}
 
 		contribService.denyContrib(contrib.get());
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
     }
 
 	@GetMapping(value = "/contrib/{art_id}")
-    public ResponseEntity<OSAResponseDTO> getContribs(@PathVariable("art_id") Integer artId) throws OSA404Exception{
+    public ResponseEntity<OSAResponseDTO> getContribs(@PathVariable("art_id") Integer artId) throws OSA404Exception {
 		Optional<ArtEntity> art = artRepo.findById(artId);
 		if(!art.isPresent())
-		{
 			throw new OSA404Exception("art not found.");
-		}
-		return ResponseEntity.ok(new OSAResponseDTO(contribRepo.findByArtId(artId)));
+
+		List<ContribEntity> contribs = new ArrayList<>(contribRepo.findByArtId(artId));
+		
+		return ResponseEntity.ok(
+			new OSAResponseDTO(
+				contribTransf.modelsToDtos(contribs)
+			)
+		);
 	}
 }

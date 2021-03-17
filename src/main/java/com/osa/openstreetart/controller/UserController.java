@@ -73,7 +73,7 @@ public class UserController {
 		if (!optionalUser.isPresent())
 			throw new OSA400Exception("No user found.");
 
-		if (!userService.isValidPassword(newPassword))
+		if (newPassword.length() < UserEntity.PSW_MIN_LENGTH)
 			throw new OSA400Exception("Invalid password.");
 
 		userService.changeUserPassword(optionalUser.get(), newPassword);
