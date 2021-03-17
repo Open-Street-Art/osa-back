@@ -4,11 +4,13 @@ import java.util.Optional;
 
 import com.osa.openstreetart.dto.ContribDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
+import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
+import com.osa.openstreetart.repository.ArtRepository;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.ContribService;
@@ -26,24 +28,23 @@ import org.springframework.web.bind.annotation.*;
 public class ContribController {
 
 	@Autowired
-	JwtService jwtService;
+	private JwtService jwtService;
 
 	@Autowired
-	UserRepository userRepo;
+	private UserRepository userRepo;
 
 	@Autowired
-	ContribService contribService;
+	private ContribService contribService;
 
 	@Autowired
-	ContribRepository contribRepo;
+	private ContribRepository contribRepo;
+
+	@Autowired
+	private ArtRepository artRepo;
 	
 	@Autowired
-	JwtUtil jwtUtil;
-    // @GetMapping(value = "/contrib/{art_id}")
-    // public ResponseEntity<OSAResponseDTO> getContribs(@PathVariable("art_id") Integer artId) {
-	// 	return ResponseEntity.ok(new OSAResponseDTO(contribRepo.findById(artId)));
-	// }
-
+	private JwtUtil jwtUtil;
+   
     @PostMapping(value = "/contrib/{art_id}")
 	public ResponseEntity<OSAResponseDTO> postContrib(@RequestHeader(value = "Authorization") String token,
     @PathVariable("art_id") Integer artId, @RequestBody ContribDTO contrib)
@@ -107,4 +108,13 @@ public class ContribController {
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
     }
 
+	@GetMapping(value = "/contrib/{art_id}")
+    public ResponseEntity<OSAResponseDTO> getContribs(@PathVariable("art_id") Integer artId) throws OSA404Exception{
+		Optional<ArtEntity> art = artRepo.findById(artId);
+		if(!art.isPresent())
+		{
+			throw new OSA404Exception("art not found.");
+		}
+		return ResponseEntity.ok(new OSAResponseDTO(contribRepo.findByArtId(artId)));
+	}
 }
