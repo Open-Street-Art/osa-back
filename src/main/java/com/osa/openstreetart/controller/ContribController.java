@@ -58,10 +58,9 @@ public class ContribController {
 
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
 		Optional<UserEntity> contribUser = userRepo.findByUsername(username);
-		
 		if (!contribUser.isPresent())
 			throw new OSA400Exception("No user found.");
-
+		
 		contribService.save(contrib, contribUser.get(), artId);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
@@ -70,12 +69,16 @@ public class ContribController {
 	public ResponseEntity<OSAResponseDTO> deleteContrib(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA404Exception, OSA400Exception {
 
+		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
+		if (!contrib.isPresent())
+			throw new OSA400Exception("Contribution not found.");
+
 		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
 		if (!optionalUser.isPresent())
 			throw new OSA400Exception("No user found.");
 
-		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
+		// Vérification si l'auteur de la requete est l'auteur de la contrib ou admin
 		if (!contrib.get().getContributor().equals(optionalUser.get())
 				&& !jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception("Unauthorized.");										

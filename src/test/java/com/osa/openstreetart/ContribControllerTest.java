@@ -109,6 +109,7 @@ public class ContribControllerTest {
         ContribEntity contrib = testUtil.createContrib();
         contrib.setLongitude(art.getLongitude());
         contrib.setLatitude(art.getLatitude());
+		contrib.setContributor(contributor);
         contrib.setArt(art);
         contrib = contribRepo.save(contrib);
          

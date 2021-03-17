@@ -41,7 +41,10 @@ public class ContribService {
 		ArtEntity art = contrib.getArt();
 		art.setName(contrib.getName());
 		art.setDescription(contrib.getDescription());
-		art.setPictures(contrib.getPictures());
+		Collection<String> newPictures = new ArrayList<>();
+		for (String pic : contrib.getPictures())
+			newPictures.add(pic);
+		art.setPictures(newPictures);
 		artRepo.save(art);
 	}
 
@@ -52,7 +55,7 @@ public class ContribService {
 		contrib.setApproved(false);
 		contribRepo.save(contrib);
 	}
-	private ContribEntity verifyContrib(PostContribDTO dto,UserEntity contribUser, Integer artId) throws OSA400Exception {
+	private ContribEntity verifyContrib(PostContribDTO dto, UserEntity contribUser, Integer artId) throws OSA400Exception {
 		if (dto == null) {
 			throw new OSA400Exception("Empty contribution");
         }
