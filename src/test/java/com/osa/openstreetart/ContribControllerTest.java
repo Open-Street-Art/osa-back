@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -197,5 +199,31 @@ public class ContribControllerTest {
         //la contribution est refusée 
         assertFalse(contrib.getApproved());
         assertFalse(art.getName() == contrib.getName());
+    }
+
+    @Test
+    public void getContribsTest() throws Exception {
+        testUtil.cleanDB();
+
+        //l'oeuvre recevant la contribution
+        ArtEntity art = testUtil.createArt();
+        art.setAuthorName("toto");
+        art = artRepo.save(art);
+
+        //la contributions
+        ContribEntity contrib = testUtil.createContrib(); 
+        contrib.setLongitude(art.getLongitude());
+        contrib.setLatitude(art.getLatitude());
+        contrib.setArt(art);
+        contrib = contribRepo.save(contrib);
+ 
+
+        //retournner les contribution de l'oeuvre
+        MvcResult res = mvc.perform(get("/api/contrib/" + art.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andReturn();
+		
+        assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre 2\""));
     }
 }

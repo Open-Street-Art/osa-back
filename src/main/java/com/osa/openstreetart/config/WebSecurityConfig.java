@@ -38,7 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		"/api/art/locations",
 		"/api/user/**",
 		"/api/search/**",
-		"/api/art/**"
+		"/api/art/**",
+		"/api/contrib/{art_id}"
 	};
 
 	@Autowired

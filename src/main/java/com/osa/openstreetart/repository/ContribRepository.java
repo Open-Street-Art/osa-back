@@ -13,6 +13,7 @@ public interface ContribRepository extends CrudRepository<ContribEntity, Integer
 	Optional<ContribEntity> findById(Integer id);
 	Optional<ContribEntity> findByName(String name);
 	Optional<ContribEntity> findByContributor(String contributor);
+	
 	@Query("select c from ContribEntity c where c.art.id = ?1")
 	Collection<ContribEntity> findByArtId(Integer artId);
 }
