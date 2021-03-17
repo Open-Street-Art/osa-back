@@ -31,65 +31,24 @@ public class ContribService {
 	ArtRepository artRepo;
 
 
-	public void saveContrib(ContribEntity contrib) throws OSA400Exception{
-		//la contribution a déjà été  traitée
-		if(contrib.getApproved() != null) {
-			if(contrib.getApproved() == false)
-			 throw new OSA400Exception("the contribution has been refused.");
-			
-			if(contrib.getApproved() == true) {
-				throw new OSA400Exception("the contribution is already accepted.");
-			}
-		}
-		
-		// accepter la contribution
+	public void acceptContrib(ContribEntity contrib) throws OSA400Exception {
+		if(contrib.getApproved() != null)
+			throw new OSA400Exception("This contribution has already been processed.");
+
 		contrib.setApproved(true);
 		contribRepo.save(contrib);
 
-		//l'art associé à la contribution
 		ArtEntity art = contrib.getArt();
 		art.setName(contrib.getName());
 		art.setDescription(contrib.getDescription());
-
-		// les images de l'oeuvre
-		if(contrib.getPictures() != null && contrib.getPictures().size() > 0) {
-			Collection<String> pictures = new ArrayList<String>();
-
-			//les images de la contribution
-			for(String picture: contrib.getPictures())
-			{
-				pictures.add(picture);
-			}
-
-			//ajouter les images non modifiées de l'oeuvre
-			if(art.getPictures().size() > contrib.getPictures().size())
-			{
-				ArrayList<String> artPictures = new ArrayList<>(art.getPictures());
-				for(int index = artPictures.size() + 1; index < art.getPictures().size(); index ++)
-				{
-					pictures.add(artPictures.get(index));
-				}
-			}
-
-			//remplacer les image de l'oeuvre.
-			art.setPictures(pictures);
-		}
-
+		art.setPictures(contrib.getPictures());
 		artRepo.save(art);
 	}
 
 	public void denyContrib(ContribEntity contrib) throws OSA400Exception {
-		//la contribution a déjà été  traitée
-		if(contrib.getApproved() != null) {
-			if(contrib.getApproved() == false)
-			 throw new OSA400Exception("the contribution is already refused.");
-			
-			if(contrib.getApproved() == true) {
-				throw new OSA400Exception("the contribution has been  accepted.");
-			}
-		}
+		if(contrib.getApproved() != null)
+			throw new OSA400Exception("This contribution has already been processed.");
 
-		// refuser la contribution
 		contrib.setApproved(false);
 		contribRepo.save(contrib);
 	}

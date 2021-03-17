@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PostContribDTO {
+	private Integer id;
     private String name;
 	private String description;
 	private String picture1;
