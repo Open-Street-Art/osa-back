@@ -2,6 +2,7 @@ package com.osa.openstreetart;
 
 
 import com.osa.openstreetart.dto.PostContribDTO;
+import com.osa.openstreetart.dto.PostNewContribDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.UserEntity;
@@ -86,6 +87,39 @@ public class ContribControllerTest {
 
         //assertion
         Optional<ContribEntity> contrib = contribRepo.findByName("belle Oeuvre");
+        assertTrue(contrib.isPresent());
+    }
+
+	@Test
+    public void postNewContrib() throws Exception {
+        testUtil.cleanDB();
+
+        //utilisateur contributeur
+        UserEntity contributor = testUtil.createUser();
+        contributor = userRepo.save(contributor);
+
+        String token = testUtil.getJWTwithUsername(contributor.getUsername());
+       
+        //création du formulaire de contribution
+        PostNewContribDTO contribArt = new PostNewContribDTO();
+
+        contribArt.setName("Une oeuvre");
+        contribArt.setDescription("Nouvelle oeuvre par un utilisateur");
+        contribArt.setPicture1("FHFHFTH4646456DGDGDRGDRG");
+		contribArt.setAuthorName("Toto");
+		contribArt.setLatitude(56.78);
+		contribArt.setLongitude(56.78);
+
+        //enregister la contribution
+		mvc.perform(post("/api/contrib")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .content(testUtil.asJsonString(contribArt)))
+        .andExpect(status().isOk());
+
+        //assertion
+        Optional<ContribEntity> contrib = contribRepo.findByName("Une oeuvre");
         assertTrue(contrib.isPresent());
 
     }

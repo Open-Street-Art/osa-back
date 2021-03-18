@@ -1,11 +1,14 @@
 package com.osa.openstreetart.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.dto.PostContribDTO;
+import com.osa.openstreetart.dto.PostNewContribDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
@@ -51,8 +54,36 @@ public class ContribController {
 	@Autowired
 	private ContribTransformator contribTransf;
    
-    @PostMapping(value = "/contrib/{art_id}")
+	@PostMapping(value = "/contrib")
 	public ResponseEntity<OSAResponseDTO> postContrib(@RequestHeader(value = "Authorization") String token,
+			@RequestBody PostNewContribDTO dto) throws OSA400Exception {
+		
+		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
+		Optional<UserEntity> contribUser = userRepo.findByUsername(username);
+		if (!contribUser.isPresent())
+			throw new OSA400Exception("No user found.");
+
+		ContribEntity contrib = new ContribEntity();
+		contrib.setName(dto.getName());
+		contrib.setDescription(dto.getDescription());
+		Collection<String> pictures = new ArrayList<>();
+		pictures.add(dto.getPicture1());
+		pictures.add(dto.getPicture2());
+		pictures.add(dto.getPicture3());
+		contrib.setPictures(pictures);
+		contrib.setLongitude(dto.getLongitude());
+		contrib.setLatitude(dto.getLatitude());
+		contrib.setAuthorName(dto.getAuthorName());
+		contrib.setCreationDateTime(LocalDateTime.now());
+		contrib.setContributor(contribUser.get());
+
+		contribRepo.save(contrib);
+		
+		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
+	}
+
+    @PostMapping(value = "/contrib/{art_id}")
+	public ResponseEntity<OSAResponseDTO> postContribArtId(@RequestHeader(value = "Authorization") String token,
     		@PathVariable("art_id") Integer artId, @RequestBody PostContribDTO contrib)
 			throws OSA401Exception, OSA400Exception {
 
