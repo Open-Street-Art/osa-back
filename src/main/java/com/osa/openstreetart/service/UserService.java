@@ -80,7 +80,7 @@ public class UserService {
 		dto.setRoles(user.getRoles().toString());
 
 		// Remplissage d'une collection des ID des artistes favoris
-		Collection<Integer> favArtists = new ArrayList<Integer>();
+		Collection<Integer> favArtists = new ArrayList<>();
 		for (UserEntity artist : user.getFavArtists()) {
 			favArtists.add(artist.getId());
 		}

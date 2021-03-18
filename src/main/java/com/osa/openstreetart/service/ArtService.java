@@ -77,7 +77,7 @@ public class ArtService {
 		artRepo.save(art);
 	}
 
-	public void save(ArtDTO artDTO) throws OSA404Exception, OSA400Exception{
+	public void save(ArtDTO artDTO) throws OSA400Exception{
 		ArtEntity art = validateArt(artDTO);
 		art.setCreationDateTime(LocalDateTime.now());
 		artRepo.save(art);
@@ -101,10 +101,8 @@ public class ArtService {
 		// Enregistrement des images en tableau de bytes
 		Collection<String> pictures = new ArrayList<>();
 		pictures.add(dto.getPicture1());
-		if (!dto.getPicture2().isEmpty())
-			pictures.add(dto.getPicture2());
-		if (!dto.getPicture3().isEmpty())
-			pictures.add(dto.getPicture3());
+		pictures.add(dto.getPicture2());
+		pictures.add(dto.getPicture3());
 		newArt.setPictures(pictures);
 
 		// Si un nom d'artiste est spécifié
