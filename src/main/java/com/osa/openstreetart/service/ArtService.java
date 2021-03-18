@@ -45,10 +45,10 @@ public class ArtService {
 		if (dto.getPicture1().isEmpty())
 			throw new OSA400Exception("Picture 1 is empty.");
 
-		if (dto.getAuthor().isEmpty() && dto.getAuthor_id() == null)
+		if (dto.getAuthor().isEmpty() && dto.getAuthorId() == null)
 			throw new OSA400Exception("Author or author_id must be filled.");
 
-		if (!dto.getAuthor().isEmpty() && dto.getAuthor_id() != null)
+		if (!dto.getAuthor().isEmpty() && dto.getAuthorId() != null)
 			throw new OSA400Exception("Author or author_id must be empty.");
 
 		ArtEntity art = optArt.get();
@@ -56,7 +56,7 @@ public class ArtService {
 		art.setDescription(dto.getDescription());
 		
 		// Enregistrement des images en tableau de bytes
-		Collection<String> pictures = new ArrayList<String>();
+		Collection<String> pictures = new ArrayList<>();
 		pictures.add(dto.getPicture1());
 		if (!dto.getPicture2().isEmpty())
 			pictures.add(dto.getPicture2());
@@ -68,7 +68,7 @@ public class ArtService {
 		if (!dto.getAuthor().isEmpty())
 			art.setAuthorName(dto.getAuthor());
 		else {
-			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthor_id());
+			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthorId());
 			if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
 				throw new OSA400Exception("Invalid author ID.");
 
@@ -77,26 +77,18 @@ public class ArtService {
 		artRepo.save(art);
 	}
 
-	public void save(ArtDTO ArtDTO) throws OSA404Exception, OSA400Exception{
-		ArtEntity art = validateArt(ArtDTO);
+	public void save(ArtDTO artDTO) throws OSA404Exception, OSA400Exception{
+		ArtEntity art = validateArt(artDTO);
 		art.setCreationDateTime(LocalDateTime.now());
 		artRepo.save(art);
 	}
 
-	private ArtEntity validateArt(ArtDTO dto) throws OSA404Exception, OSA400Exception {
-
-		if (dto == null)
-			throw new OSA400Exception("empty values");
-
-		if (dto.getAuthor().isEmpty() && dto.getAuthor_id() == null)
-			throw new OSA400Exception("Author or author_id must be filled.");
-
-		if (!dto.getAuthor().isEmpty() && dto.getAuthor_id() != null)
-			throw new OSA400Exception("Author or author_id must be empty.");
-
+	private ArtEntity validateArt(ArtDTO dto) throws OSA400Exception {
+		if (dto.getAuthor().isEmpty() && dto.getAuthorId() == null
+			|| !dto.getAuthor().isEmpty() && dto.getAuthorId() != null)
+			throw new OSA400Exception("Either author or authorId must be filled.");
 		if (dto.getName().length() < ArtEntity.NAME_MIN_LENGTH)
 			throw new OSA400Exception("Name too short.");
-
 		if (dto.getPicture1().isEmpty())
 			throw new OSA400Exception("Picture 1 is empty.");
 
@@ -107,7 +99,7 @@ public class ArtService {
 		newArt.setLatitude(dto.getLatitude());
 		
 		// Enregistrement des images en tableau de bytes
-		Collection<String> pictures = new ArrayList<String>();
+		Collection<String> pictures = new ArrayList<>();
 		pictures.add(dto.getPicture1());
 		if (!dto.getPicture2().isEmpty())
 			pictures.add(dto.getPicture2());
@@ -119,7 +111,7 @@ public class ArtService {
 		if (!dto.getAuthor().isEmpty())
 			newArt.setAuthorName(dto.getAuthor());
 		else {
-			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthor_id());
+			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthorId());
 			if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
 				throw new OSA400Exception("Invalid author ID.");
 
@@ -127,8 +119,8 @@ public class ArtService {
 		}
 		
 		// une oeuvre est associé à un city
-		if (dto.getCity_id() != null) {
-			Optional<CityEntity> artCity = cityRepo.findById(dto.getCity_id());
+		if (dto.getCityId() != null) {
+			Optional<CityEntity> artCity = cityRepo.findById(dto.getCityId());
 			if(!artCity.isPresent())
 				throw new OSA400Exception("City not found");
 	

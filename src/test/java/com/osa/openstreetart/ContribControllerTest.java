@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,7 +33,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ContribControllerTest {
+class ContribControllerTest {
     @Autowired
 	UserRepository userRepo;
 
@@ -55,7 +56,7 @@ public class ContribControllerTest {
 	TestUtil testUtil;
 
     @Test
-    public void postContrib() throws Exception {
+    void postContrib() throws Exception {
         testUtil.cleanDB();
 
         //utilisateur contributeur
@@ -91,7 +92,7 @@ public class ContribControllerTest {
     }
 
 	@Test
-    public void postNewContrib() throws Exception {
+    void postNewContrib() throws Exception {
         testUtil.cleanDB();
 
         //utilisateur contributeur
@@ -125,7 +126,7 @@ public class ContribControllerTest {
     }
 
     @Test
-    public void deleteContribTest() throws Exception {
+    void deleteContribTest() throws Exception {
         testUtil.cleanDB();
 
         //utilisateur contributeur
@@ -160,7 +161,7 @@ public class ContribControllerTest {
     }
 
     @Test
-    public void acceptContribTest() throws Exception {
+    void acceptContribTest() throws Exception {
         testUtil.cleanDB();
 
          //l'administrateur
@@ -198,7 +199,7 @@ public class ContribControllerTest {
     }
 
     @Test
-    public void denyContribTest() throws Exception {
+    void denyContribTest() throws Exception {
         testUtil.cleanDB();
 
         //l'administrateur
@@ -232,11 +233,11 @@ public class ContribControllerTest {
 
         //la contribution est refusée 
         assertFalse(contrib.getApproved());
-        assertFalse(art.getName() == contrib.getName());
+		assertNotSame(art.getName(), contrib.getName());
     }
 
     @Test
-    public void getContribsTest() throws Exception {
+    void getContribsTest() throws Exception {
         testUtil.cleanDB();
 
         //l'oeuvre recevant la contribution

@@ -24,7 +24,7 @@ public class ContribEntity {
     
     @Id
 	@GeneratedValue
-    private Integer Id;
+    private Integer id;
     
     @Column( nullable = false)
     private String name;

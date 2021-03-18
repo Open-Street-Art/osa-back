@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SearchControllerTest {
+class SearchControllerTest {
 	
 	@Autowired
 	private MockMvc mvc;
@@ -86,7 +86,7 @@ public class SearchControllerTest {
 	}
 
 	@Test
-	public void getSearchCitiesTest() throws Exception {
+	void getSearchCitiesTest() throws Exception {
 		testUtil.cleanDB();
 
 		CityEntity city = new CityEntity();

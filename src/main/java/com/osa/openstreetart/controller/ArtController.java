@@ -42,12 +42,15 @@ public class ArtController {
 	@Autowired
 	ArtRepository artRepo;
 
+	private static String tokenPrefix = "Bearer ";
+	private static String unauthorizedMsg = "Unauthorized.";
+
 	@PostMapping(value = "/admin/art")
 	public ResponseEntity<OSAResponseDTO> postArt(@RequestHeader(value = "Authorization") String token,
 			@RequestBody ArtDTO art)
 			throws OSA401Exception, OSA400Exception, OSA404Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception("Unauthorized.");
+		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(unauthorizedMsg);
 
 		artService.save(art);
 		return ResponseEntity.ok(new OSAResponseDTO("Art created."));
@@ -57,8 +60,8 @@ public class ArtController {
 	public ResponseEntity<OSAResponseDTO> patchArt(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId, @RequestBody EditArtDTO art)
 			throws OSA401Exception, OSA404Exception, OSA400Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception("Unauthorized.");
+		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(unauthorizedMsg);
 
 		artService.patch(artId, art);
 		return ResponseEntity.ok(new OSAResponseDTO("Art modified."));
@@ -66,9 +69,8 @@ public class ArtController {
 
 	@GetMapping(value = "/art/locations")
 	public ResponseEntity<OSAResponseDTO> getArtsLocations() {
-		List<ArtEntity> arts = new ArrayList<ArtEntity>();
+		List<ArtEntity> arts = new ArrayList<>();
 		Iterable<ArtEntity> iterable = artRepo.findAll();
-		System.out.println(iterable);
 		iterable.forEach(arts::add);
 		return ResponseEntity.ok(new OSAResponseDTO(artTransf.modelsToDtos(arts)));
 	}
@@ -76,8 +78,8 @@ public class ArtController {
 	@DeleteMapping(value = "/admin/art/{art_id}")
 	public ResponseEntity<OSAResponseDTO> deleteArt(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId) throws OSA401Exception, OSA404Exception {
-		if (!jwtService.getRolesByToken(token.substring("Bearer ".length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception("Unauthorized.");
+		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(unauthorizedMsg);
 		
 		artService.delete(artId);
 		return ResponseEntity.ok(new OSAResponseDTO("Art deleted"));

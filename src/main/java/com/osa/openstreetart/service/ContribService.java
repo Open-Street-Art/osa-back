@@ -80,7 +80,7 @@ public class ContribService {
 		contribArt.setArt(art.get());
 
 		// les images de la contribution
-		Collection<String> pictures = new ArrayList<String>();
+		Collection<String> pictures = new ArrayList<>();
 		if (!dto.getPicture1().isEmpty())
 			pictures.add(dto.getPicture1());
 		if (!dto.getPicture2().isEmpty())

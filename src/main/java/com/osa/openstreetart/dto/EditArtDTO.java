@@ -10,5 +10,5 @@ public class EditArtDTO {
 	private String picture2;
 	private String picture3;	
 	private String author;
-	private Integer author_id;
+	private Integer authorId;
 }

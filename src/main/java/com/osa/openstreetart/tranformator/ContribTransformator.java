@@ -38,7 +38,7 @@ public class ContribTransformator implements AbstractTransformator<ContribEntity
 		GetContribDTO dto = modelMapper().map(model, GetContribDTO.class);
 		UserEntity author;
 		if ((author = model.getContributor()) != null)
-			dto.setContributor_id(author.getId());
+			dto.setContributorId(author.getId());
 		return dto;
 	}
 

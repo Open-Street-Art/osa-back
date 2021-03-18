@@ -31,12 +31,15 @@ public class UserController {
 	@Autowired
 	UserRepository userRepo;
 
+	private static String tokenPrefix = "Bearer ";
+	private static String userNotFoundMsg = "User not found.";
+
 	@GetMapping(value = "/user/{user_id}")
 	public ResponseEntity<OSAResponseDTO> getUserProfile(
 			@PathVariable("user_id") Integer userId) throws OSA400Exception {
 		Optional<UserEntity> optUser = userRepo.findById(userId);
 		if (!optUser.isPresent())
-			throw new OSA400Exception("User not found.");
+			throw new OSA400Exception(userNotFoundMsg);
 
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
@@ -48,11 +51,11 @@ public class UserController {
 	@PatchMapping(value = "/user/email")
 	public ResponseEntity<OSAResponseDTO> patchUserEmail(@RequestHeader(value = "Authorization") String token, 
 			@RequestBody String newMail) throws OSA400Exception {
-		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
 		
 		if (!optionalUser.isPresent())
-			throw new OSA400Exception("No user found.");
+			throw new OSA400Exception(userNotFoundMsg);
 
 		if (!userService.isValidEmailAddress(newMail))
 			throw new OSA400Exception("Invalid email address.");
@@ -67,11 +70,11 @@ public class UserController {
 	public ResponseEntity<OSAResponseDTO> patchUserPassword(@RequestHeader(value = "Authorization") String token,
 			@RequestBody String newPassword) throws OSA400Exception {
 		
-		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
 
 		if (!optionalUser.isPresent())
-			throw new OSA400Exception("No user found.");
+			throw new OSA400Exception(userNotFoundMsg);
 
 		if (newPassword.length() < UserEntity.PSW_MIN_LENGTH)
 			throw new OSA400Exception("Invalid password.");
@@ -84,10 +87,10 @@ public class UserController {
 	@PatchMapping(value = "/user/profile")
 	public ResponseEntity<OSAResponseDTO> patchUserProfile(@RequestHeader(value = "Authorization") String token,
 			@RequestBody UserPatchProfileDTO dto) throws OSA400Exception {
-		String username = jwtUtil.getUsernameFromToken(token.substring("Bearer ".length()));
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
 		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
 		if (!optionalUser.isPresent())
-			throw new OSA400Exception("No user found.");
+			throw new OSA400Exception(userNotFoundMsg);
 
 		userService.patchUser(optionalUser.get(), dto);
 		userRepo.save(optionalUser.get());

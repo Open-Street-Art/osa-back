@@ -25,11 +25,13 @@ public class SearchController {
 	@Autowired
 	private UserRepository userRepo;
 
+	private static String emptySearchMsg = "Empty search content.";
+
 	@GetMapping(value = "/search/arts/{content}")
 	public ResponseEntity<OSAResponseDTO> getSearchArts(@PathVariable("content") String content)
 			throws OSA400Exception {
 		if (content.isEmpty() || content.isBlank())
-			throw new OSA400Exception("Empty search content.");
+			throw new OSA400Exception(emptySearchMsg);
 
 		return ResponseEntity.ok(
 			new OSAResponseDTO(artRepo.findByNameWithSub(content))
@@ -40,7 +42,7 @@ public class SearchController {
 	public ResponseEntity<OSAResponseDTO> getSearchArtsByArtist(@PathVariable("username") String username)
 			throws OSA400Exception {
 		if (username.isEmpty() || username.isBlank())
-			throw new OSA400Exception("Empty search content.");
+			throw new OSA400Exception(emptySearchMsg);
 
 		// Résultat à renvoyer
 		Collection<ArtEntity> result = new ArrayList<>();
@@ -61,7 +63,7 @@ public class SearchController {
 	public ResponseEntity<OSAResponseDTO> getSearchCities(@PathVariable("content") String content)
 			throws OSA400Exception {
 		if (content.isEmpty() || content.isBlank())
-			throw new OSA400Exception("Empty search content.");
+			throw new OSA400Exception(emptySearchMsg);
 
 		return ResponseEntity.ok(new OSAResponseDTO(artRepo.findByCitiesName(content)));
 	}

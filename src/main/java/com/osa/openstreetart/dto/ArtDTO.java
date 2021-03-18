@@ -10,8 +10,8 @@ public class ArtDTO {
 	private String picture2;
 	private String picture3;	
 	private String author;
-	private Integer author_id;
-	private Integer city_id;
+	private Integer authorId;
+	private Integer cityId;
 	private Double longitude;
 	private Double latitude;
 }

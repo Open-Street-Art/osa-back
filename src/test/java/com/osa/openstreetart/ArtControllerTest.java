@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -28,7 +29,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ArtControllerTest {
+class ArtControllerTest {
 	
 	@Autowired
 	UserRepository userRepo;
@@ -88,7 +89,7 @@ public class ArtControllerTest {
 
 		// Verificatiom de la modification
 		Optional<ArtEntity> optArt = artRepo.findByName("Nouvelle oeuvre");
-		assertEquals(optArt.get().getAuthorName(), "Toto");
+		assertEquals("Toto", optArt.get().getAuthorName());
 	}
 
 	@Test
@@ -124,7 +125,7 @@ public class ArtControllerTest {
 		CityEntity city = testUtil.createCity();
 		city = cityRepo.save(city);
 		
-		art.setCity_id(city.getId());
+		art.setCityId(city.getId());
 		
 		// enregister l'oeuvre
 		mvc.perform(post("/api/admin/art")
@@ -136,10 +137,10 @@ public class ArtControllerTest {
 		
 		// vérification de l'ajout de la nouvlle oeuvre
 		Optional<ArtEntity> optArt = artRepo.findByName("Nouvelle oeuvre");
-		assertEquals(optArt.get().getAuthorName(), "Thomas");
+		assertEquals("Thomas", optArt.get().getAuthorName());
 
 		// mauvaise réquête avec  author_id de role ROLE_ADMIN
-		art.setAuthor_id(createdAuthor.getId());
+		art.setAuthorId(createdAuthor.getId());
 		mvc.perform(post("/api/admin/art")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
@@ -170,7 +171,7 @@ public class ArtControllerTest {
 			.andExpect(status().isOk());
 		
 		Optional<ArtEntity> optArt = artRepo.findById(artToDelete.getId());
-		assertEquals(optArt.isPresent(),false);
+		assertFalse(optArt.isPresent());
 
 		// Oeuvre inexistante
 		mvc.perform(delete("/api/admin/art/9")

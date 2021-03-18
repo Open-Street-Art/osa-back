@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+class UserControllerTest {
 
 	@Autowired
 	private UserRepository userRepo;
@@ -38,7 +38,7 @@ public class UserControllerTest {
 	private PasswordEncoder bcryptEncoder;
 
 	@Test
-	public void patchUserEmailTest() throws Exception {
+	void patchUserEmailTest() throws Exception {
 		testUtil.cleanDB();
 
 		// Creation d'un utilisateur
@@ -58,11 +58,11 @@ public class UserControllerTest {
 
 		// Verificatiom de la modification
 		Optional<UserEntity> optionalUser = userRepo.findByEmail("test@mail.fr");
-		assertEquals(optionalUser.get().getUsername(), "tester");
+		assertEquals("tester", optionalUser.get().getUsername());
 	}
 
 	@Test
-	public void patchUserPasswordTest() throws Exception {
+	void patchUserPasswordTest() throws Exception {
 		testUtil.cleanDB();
 
 		// Creation d'un utilisateur
@@ -86,7 +86,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void getUserProfileTest() throws Exception {
+	void getUserProfileTest() throws Exception {
 		// Creation d'un utilisateur
 		UserEntity user = testUtil.createUser();
 		user = userRepo.save(user);
@@ -98,7 +98,7 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void patchUserProfileTest() throws JsonProcessingException, Exception {
+	void patchUserProfileTest() throws JsonProcessingException, Exception {
 		testUtil.cleanDB();
 
 		// Creation d'un utilisateur
