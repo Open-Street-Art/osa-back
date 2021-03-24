@@ -13,6 +13,7 @@ import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.JwtService;
@@ -31,6 +32,9 @@ public class TestUtil {
 
 	@Autowired
 	UserRepository userRepo;
+
+	@Autowired
+	CityRepository cityRepo;
 
 	@Autowired
 	ContribRepository contribRepo;
@@ -136,8 +140,19 @@ public class TestUtil {
 
 	public void cleanDB() {
 		contribRepo.deleteAll();
-		artRepo.deleteAll();		
+		// Suppression des favoris
+		for (UserEntity user : userRepo.findAll()) {
+			user.getFavArts().clear();
+
+			user.getFavArtists().clear();
+
+			user.getFavCities().clear();
+
+			userRepo.save(user);
+		}
+		artRepo.deleteAll();
 		userRepo.deleteAll();
+		userRepo.deleteAll();	
 	}
 
 }

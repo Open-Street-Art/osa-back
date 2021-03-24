@@ -8,6 +8,8 @@ import com.osa.openstreetart.dto.UserLoginDTO;
 import com.osa.openstreetart.dto.UserPatchProfileDTO;
 import com.osa.openstreetart.dto.UserProfileDTO;
 import com.osa.openstreetart.dto.UserRegisterDTO;
+import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
@@ -79,11 +81,27 @@ public class UserService {
 		dto.setProfilePicture(user.getProfilePicture());
 		dto.setRoles(user.getRoles().toString());
 
+		// Remplissage d'une collection des ID des oeuvres favorites
+		Collection<Integer> favArts = new ArrayList<>();
+		for (ArtEntity art : user.getFavArts()) {
+			favArts.add(art.getId());
+		}
+
+		dto.setFavArts(favArts);
+
+		// Remplissage d'une collection des ID des villes favorites
+		Collection<Integer> favCities = new ArrayList<>();
+		for (CityEntity city : user.getFavCities()) {
+			favCities.add(city.getId());
+		}
+		dto.setFavCities(favCities);
+
 		// Remplissage d'une collection des ID des artistes favoris
 		Collection<Integer> favArtists = new ArrayList<>();
 		for (UserEntity artist : user.getFavArtists()) {
 			favArtists.add(artist.getId());
 		}
+
 		dto.setFavArtists(favArtists);
 		return dto;
 	}

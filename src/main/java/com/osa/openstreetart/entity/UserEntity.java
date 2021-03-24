@@ -64,7 +64,7 @@ public class UserEntity {
 		joinColumns=@JoinColumn(name="user_id"),
 		inverseJoinColumns=@JoinColumn(name="city_id")
 	)
-	private Collection<UserEntity> favCities;
+	private Collection<CityEntity> favCities;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(
@@ -72,5 +72,5 @@ public class UserEntity {
 		joinColumns=@JoinColumn(name="user_id"),
 		inverseJoinColumns=@JoinColumn(name="art_id")
 	)
-	private Collection<UserEntity> favArts;
+	private Collection<ArtEntity> favArts;
 }
