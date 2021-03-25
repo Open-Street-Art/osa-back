@@ -54,4 +54,23 @@ public class FavouriteController {
 		return ResponseEntity.ok(new OSAResponseDTO("Art added to the favourite arts list."));
 	}
 
+	@PostMapping(value = "/fav/artist/{artist_id}")
+	public ResponseEntity<OSAResponseDTO> postFavouriteArtist(
+			@RequestHeader(value = "Authorization") String token,
+			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA404Exception {
+		
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
+		Optional<UserEntity> user = userRepo.findByUsername(username);
+		if (!user.isPresent())
+			throw new OSA400Exception(userNotFoundMsg);
+
+		Optional<UserEntity> artist = userRepo.findById(artistId);
+		if (!artist.isPresent())
+			throw new OSA404Exception("artist not found");
+
+		user.get().getFavArtists().add(artist.get());
+		userRepo.save(user.get());
+		
+		return ResponseEntity.ok(new OSAResponseDTO("Artist added to the favourite artists list."));
+	}
 }

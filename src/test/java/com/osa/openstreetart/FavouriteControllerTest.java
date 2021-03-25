@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -57,6 +58,34 @@ public class FavouriteControllerTest {
 			.andExpect(status().isOk()).andReturn();
 
 		assertTrue(res.getResponse().getContentAsString().contains("\"favArts\":[" + art.getId() +"]"));
+	}
+
+	@Test
+	void postFavouriteArtistTest() throws Exception {
+		testUtil.cleanDB();
+		//utilisateur
+		UserEntity user = testUtil.createUser();
+		user = userRepo.save(user);
+
+		// l'artist favoris à ajouter
+		UserEntity artist = testUtil.createArtist();
+		artist = userRepo.save(artist);
+
+		String token = testUtil.getJWTwithUsername(user.getUsername());
+
+		mvc.perform(post("/api/fav/artist/" + artist.getId())
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		// vérifier l'ajout de l'artist favori
+		user = userRepo.findById(user.getId()).get();
+		assertSame(
+			user.getFavArtists()
+			.stream()
+			.findFirst()
+			.get().getId(), artist.getId());
+
 	}
 
 }
