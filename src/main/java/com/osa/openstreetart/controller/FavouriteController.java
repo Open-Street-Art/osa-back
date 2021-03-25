@@ -90,10 +90,21 @@ public class FavouriteController {
 		if (!user.isPresent())
 			throw new OSA400Exception(userNotFoundMsg);
 
+		if(user.get().getId().equals(artistId))
+				throw new OSA400Exception("Invalid artist Id");
+
+		//l'artist est present dans la liste favorite
+		Optional<UserEntity> artistFav = user.get().getFavArtists()
+													.stream()
+													.filter(u -> u.getId().equals(artistId))
+													.findFirst();
+		if(artistFav.isPresent())
+			throw new OSA404Exception("Artist is already in favourite artists list");
+		
 		Optional<UserEntity> artist = userRepo.findById(artistId);
 		if (!artist.isPresent())
 			throw new OSA404Exception("artist not found");
-
+		
 		user.get().getFavArtists().add(artist.get());
 		userRepo.save(user.get());
 		
