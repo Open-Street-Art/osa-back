@@ -14,10 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.ArrayList;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -67,7 +70,7 @@ public class FavouriteControllerTest {
 		UserEntity user = testUtil.createUser();
 		user = userRepo.save(user);
 
-		// l'artist favoris à ajouter
+		// l'artist favori à ajouter
 		UserEntity artist = testUtil.createArtist();
 		artist = userRepo.save(artist);
 
@@ -88,4 +91,30 @@ public class FavouriteControllerTest {
 
 	}
 
+	@Test
+	void deleteFavouriteArtistTest() throws Exception {
+		testUtil.cleanDB();
+		//utilisateur
+		UserEntity user = testUtil.createUser();
+		user = userRepo.save(user);
+	
+		// l'artist favori
+		UserEntity artist = testUtil.createArtist();
+		artist = userRepo.save(artist);
+
+		user.setFavArtists(new ArrayList<UserEntity>());
+		user.getFavArtists().add(artist);
+		userRepo.save(user);
+		
+		String token = testUtil.getJWTwithUsername(user.getUsername());
+
+		mvc.perform(delete("/api/fav/artist/" + artist.getId())
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		// vérifier le retrait de l'artist dans la liste
+		user = userRepo.findById(user.getId()).get();
+		assertTrue(user.getFavArtists().isEmpty());
+	}
 }

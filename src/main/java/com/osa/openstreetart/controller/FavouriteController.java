@@ -14,6 +14,7 @@ import com.osa.openstreetart.util.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -72,5 +73,30 @@ public class FavouriteController {
 		userRepo.save(user.get());
 		
 		return ResponseEntity.ok(new OSAResponseDTO("Artist added to the favourite artists list."));
+	}
+
+	@DeleteMapping(value = "/fav/artist/{artist_id}")
+	public ResponseEntity<OSAResponseDTO> deleteFavouriteArtist(
+			@RequestHeader(value = "Authorization") String token,
+			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA404Exception {
+		
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
+		Optional<UserEntity> user = userRepo.findByUsername(username);
+		if (!user.isPresent())
+			throw new OSA400Exception(userNotFoundMsg);
+		
+		//l'artist est un artist favori de l'utilisateur
+		Optional<UserEntity> artistFav = user.get().getFavArtists()
+													.stream()
+													.filter(u -> u.getId().equals(artistId))
+													.findFirst();
+		if(!artistFav.isPresent())
+			throw new OSA404Exception("Artist not found in favorit list");
+		
+		//retirer l'artist de la liste
+		user.get().getFavArtists().remove(artistFav.get());
+		userRepo.save(user.get());
+		
+		return ResponseEntity.ok(new OSAResponseDTO("Artist remove to the favourite artists list."));
 	}
 }
