@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -61,6 +60,34 @@ public class FavouriteControllerTest {
 			.andExpect(status().isOk()).andReturn();
 
 		assertTrue(res.getResponse().getContentAsString().contains("\"favArts\":[" + art.getId() +"]"));
+	}
+
+	@Test
+	void deleteFavouriteArtTest() throws Exception {
+		testUtil.cleanDB();
+
+		UserEntity user = testUtil.createUser();
+		user.setFavArts(new ArrayList<ArtEntity>());
+
+		ArtEntity art = testUtil.createArt();
+		art = artRepo.save(art);
+		user.getFavArts().add(art);
+		userRepo.save(user);
+
+		String token = testUtil.getJWTwithUsername(user.getUsername());
+
+		mvc.perform(delete("/api/fav/art/" + art.getId())
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		// Vérification que l'oeuvre est bien en favori
+		MvcResult res = mvc.perform(get("/api/user/" + user.getId())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk()).andReturn();
+
+		System.out.println(res.getResponse().getContentAsString().contains("\"favArts\":[" + art.getId() +"]"));
+		// assertTrue(res.getResponse().getContentAsString().contains("\"favArts\":[" + art.getId() +"]"));
 	}
 
 	@Test

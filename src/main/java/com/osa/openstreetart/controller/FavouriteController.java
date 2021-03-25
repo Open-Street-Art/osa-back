@@ -55,6 +55,31 @@ public class FavouriteController {
 		return ResponseEntity.ok(new OSAResponseDTO("Art added to the favourite arts list."));
 	}
 
+	@DeleteMapping(value = "/fav/art/{art_id}")
+	public ResponseEntity<OSAResponseDTO> deleteFavouriteArt(
+			@RequestHeader(value = "Authorization") String token,
+			@PathVariable("art_id") Integer artId) throws OSA400Exception {
+		
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
+		Optional<UserEntity> user = userRepo.findByUsername(username);
+		if (!user.isPresent())
+			throw new OSA400Exception(userNotFoundMsg);
+
+		ArtEntity toDelete = null;
+		for (ArtEntity art : user.get().getFavArts()) {
+			if (art.getId().intValue() == artId.intValue()) {
+				toDelete = art;
+				break;
+			}
+		}
+		if (toDelete != null)
+			user.get().getFavArts().remove(toDelete);
+
+		userRepo.save(user.get());
+		
+		return ResponseEntity.ok(new OSAResponseDTO("Art removed from the favourite arts list."));
+	}
+
 	@PostMapping(value = "/fav/artist/{artist_id}")
 	public ResponseEntity<OSAResponseDTO> postFavouriteArtist(
 			@RequestHeader(value = "Authorization") String token,
