@@ -1,8 +1,10 @@
 package com.osa.openstreetart;
 
 import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.repository.UserRepository;
 
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,10 @@ public class FavouriteControllerTest {
 
 	@Autowired
 	ArtRepository artRepo;
+
+
+	@Autowired
+	CityRepository cityRepo;
 
 	@Autowired
 	MockMvc mvc;
@@ -91,7 +97,7 @@ public class FavouriteControllerTest {
 	}
 
 	@Test
-	void postFavouriteArtistTest() throws Exception {
+	public void postFavouriteArtistTest() throws Exception {
 		testUtil.cleanDB();
 		//utilisateur
 		UserEntity user = testUtil.createUser();
@@ -119,7 +125,7 @@ public class FavouriteControllerTest {
 	}
 
 	@Test
-	void deleteFavouriteArtistTest() throws Exception {
+	public void deleteFavouriteArtistTest() throws Exception {
 		testUtil.cleanDB();
 		//utilisateur
 		UserEntity user = testUtil.createUser();
@@ -143,5 +149,33 @@ public class FavouriteControllerTest {
 		// vérifier le retrait de l'artist dans la liste
 		user = userRepo.findById(user.getId()).get();
 		assertTrue(user.getFavArtists().isEmpty());
+	}
+
+	@Test
+	public void postFavouriteCityTest() throws Exception {
+		testUtil.cleanDB();
+
+		UserEntity user = testUtil.createUser();
+		user = userRepo.save(user);
+
+		String token = testUtil.getJWTwithUsername(user.getUsername());
+
+		//la ville favorite
+		CityEntity cityFav = testUtil.createCity();
+		cityFav = cityRepo.save(cityFav);
+
+		//ajouter la ville à la liste favorite
+		mvc.perform(post("/api/fav/city/" + cityFav.getId())
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+		
+		//la ville est ajoutée à la liste
+		user = userRepo.findById(user.getId()).get();
+		assertSame(
+			user.getFavCities()
+			.stream()
+			.findFirst()
+			.get().getId(), cityFav.getId());
 	}
 }
