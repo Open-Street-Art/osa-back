@@ -155,10 +155,10 @@ public class FavouriteControllerTest {
 	public void postFavouriteCityTest() throws Exception {
 		testUtil.cleanDB();
 
-		UserEntity user = testUtil.createUser();
-		user = userRepo.save(user);
+		UserEntity admin = testUtil.createAdmin();
+		admin = userRepo.save(admin);
 
-		String token = testUtil.getJWTwithUsername(user.getUsername());
+		String token = testUtil.getJWTwithUsername(admin.getUsername());
 
 		//la ville favorite
 		CityEntity cityFav = testUtil.createCity();
@@ -171,9 +171,9 @@ public class FavouriteControllerTest {
 			.andExpect(status().isOk());
 		
 		//la ville est ajoutée à la liste
-		user = userRepo.findById(user.getId()).get();
+		admin = userRepo.findById(admin.getId()).get();
 		assertSame(
-			user.getFavCities()
+			admin.getFavCities()
 			.stream()
 			.findFirst()
 			.get().getId(), cityFav.getId());

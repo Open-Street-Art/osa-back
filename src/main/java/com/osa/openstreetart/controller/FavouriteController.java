@@ -97,7 +97,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA401Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER))
+		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+			    &&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
 	
 		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
@@ -131,7 +132,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("artist_id") Integer artistId) throws OSA400Exception,OSA401Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER))
+		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
 		
 		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
@@ -159,7 +161,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("city_id") Integer cityId) throws OSA400Exception, OSA401Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER))
+		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
 		
 		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
