@@ -97,4 +97,16 @@ public class UserController {
 
 		return ResponseEntity.ok(new OSAResponseDTO("Profile modified."));
 	}
+
+	@GetMapping(value = "/user/profile")
+	public ResponseEntity<OSAResponseDTO> getUserProfile(
+			@RequestHeader(value = "Authorization") String token) throws OSA400Exception {
+
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
+		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
+		if (!optionalUser.isPresent())
+			throw new OSA400Exception(userNotFoundMsg);
+
+		return ResponseEntity.ok(new OSAResponseDTO(optionalUser.get()));
+	}
 }

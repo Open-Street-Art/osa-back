@@ -125,4 +125,26 @@ class UserControllerTest {
 		assertEquals("Nouvelle description", userRepo.findByUsername(user.getUsername()).get().getDescription());
 	}
 
+	@Test
+	void getUserProfileWithJWTTest() throws Exception {
+		testUtil.cleanDB();
+
+		// Creation d'un utilisateur
+		UserEntity user = testUtil.createUser();
+		user = userRepo.save(user);
+
+		// Génération d'un token JWT pour utiliser la route
+		String token = testUtil.getJWTwithUsername(user.getUsername());
+
+		// Changement du profil
+		MvcResult res = mvc.perform(get("/api/user/profile")
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+			.andExpect(status().isOk()).andReturn();
+
+		System.out.println(res.getResponse().getContentAsString());
+
+		assertEquals(true,
+			res.getResponse().getContentAsString().contains("\"username\":\"tester\""));
+	}
+
 }
