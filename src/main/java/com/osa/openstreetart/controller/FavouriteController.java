@@ -187,4 +187,38 @@ public class FavouriteController {
 		
 		return ResponseEntity.ok(new OSAResponseDTO("City added to the favourite Cities list."));
 	}
+
+	@DeleteMapping(value = "/fav/city/{city_id}")
+	public ResponseEntity<OSAResponseDTO> deleteFavouriteCity(
+			@RequestHeader(value = "Authorization") String token,
+			@PathVariable("city_id") Integer cityId) throws OSA400Exception,OSA401Exception {
+		
+		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(unauthorizedMsg);
+		
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
+		Optional<UserEntity> user = userRepo.findByUsername(username);
+		if (!user.isPresent())
+			throw new OSA400Exception(userNotFoundMsg);
+		
+		//la ville est une ville favorite
+		CityEntity cityFav = null;
+		for(CityEntity city: user.get().getFavCities())
+		{
+			if(city.getId().equals(cityId))
+			{
+				cityFav = city;
+				break;
+			}
+		}
+
+		if(cityFav == null)
+			throw new OSA400Exception("City not found in favorit list");
+		
+		user.get().getFavCities().remove(cityFav);
+		userRepo.save(user.get());
+		
+		return ResponseEntity.ok(new OSAResponseDTO("City remove to the favourite Cities list."));
+	}
 }

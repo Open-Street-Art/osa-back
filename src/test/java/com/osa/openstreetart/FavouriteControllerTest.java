@@ -178,4 +178,32 @@ public class FavouriteControllerTest {
 			.findFirst()
 			.get().getId(), cityFav.getId());
 	}
+
+	@Test
+	public void deleteFavouriteCityTest() throws Exception {
+		testUtil.cleanDB();
+		//utilisateur 
+		UserEntity user = testUtil.createUser();
+		user = userRepo.save(user);
+	
+		//la ville favorite
+		CityEntity cityFav = testUtil.createCity();
+		cityFav = cityRepo.save(cityFav);
+
+
+		user.setFavCities(new ArrayList<CityEntity>());
+		user.getFavCities().add(cityFav);
+		userRepo.save(user);
+		
+		String token = testUtil.getJWTwithUsername(user.getUsername());
+
+		mvc.perform(delete("/api/fav/city/" + cityFav.getId())
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		// vérifier le retrait de la ville dans la liste
+		user = userRepo.findById(user.getId()).get();
+		assertTrue(user.getFavCities().isEmpty());
+	}
 }
