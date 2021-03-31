@@ -7,11 +7,13 @@ import java.util.Optional;
 
 import com.osa.openstreetart.dto.PostContribDTO;
 import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.ContribEntity;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 
@@ -30,6 +32,8 @@ public class ContribService {
 	@Autowired
 	ArtRepository artRepo;
 
+	@Autowired
+	CityService cityService;
 
 	public void acceptContrib(ContribEntity contrib) throws OSA400Exception {
 		if(contrib.getApproved() != null)
@@ -45,6 +49,16 @@ public class ContribService {
 		for (String pic : contrib.getPictures())
 			newPictures.add(pic);
 		art.setPictures(newPictures);
+
+		// On créé la ville si nécessaire puis on l'attribue a la contribution
+		CityEntity city = cityService.getCityFromLatLong(
+			art.getLatitude(),
+			art.getLongitude()
+		);
+
+		if (city != null)
+			art.setCity(cityService.registerCity(city));
+
 		artRepo.save(art);
 	}
 

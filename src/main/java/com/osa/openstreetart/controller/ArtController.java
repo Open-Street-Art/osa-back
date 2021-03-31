@@ -3,16 +3,19 @@ package com.osa.openstreetart.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.dto.EditArtDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.entity.ArtEntity;
+import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ArtRepository;
 import com.osa.openstreetart.service.ArtService;
+import com.osa.openstreetart.service.CityService;
 import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.tranformator.ArtLocationTransformator;
 import com.osa.openstreetart.util.ApiRestController;
@@ -37,6 +40,9 @@ public class ArtController {
 	ArtService artService;
 
 	@Autowired
+	CityService cityService;
+
+	@Autowired
 	ArtLocationTransformator artTransf;
 
 	@Autowired
@@ -48,9 +54,19 @@ public class ArtController {
 	@PostMapping(value = "/admin/art")
 	public ResponseEntity<OSAResponseDTO> postArt(@RequestHeader(value = "Authorization") String token,
 			@RequestBody ArtDTO art)
-			throws OSA401Exception, OSA400Exception, OSA404Exception {
+			throws OSA401Exception, OSA400Exception {
 		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
+
+		CityEntity city = cityService.getCityFromLatLong(
+			art.getLatitude(),
+			art.getLongitude()
+		);
+
+		if (city != null) {
+			CityEntity cityToLink = cityService.registerCity(city);
+			art.setCityId(cityToLink.getId());
+		}
 
 		artService.save(art);
 		return ResponseEntity.ok(new OSAResponseDTO("Art created."));

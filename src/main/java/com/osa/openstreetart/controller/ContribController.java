@@ -133,7 +133,7 @@ public class ContribController {
 		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
 		if(!contrib.isPresent())
 			throw new OSA404Exception(contribNotFoundMsg);
-		
+
 		contribService.acceptContrib(contrib.get());
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
     }
