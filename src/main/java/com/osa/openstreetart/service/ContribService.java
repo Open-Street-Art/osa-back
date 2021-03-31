@@ -13,7 +13,6 @@ import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ArtRepository;
-import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.repository.ContribRepository;
 import com.osa.openstreetart.repository.UserRepository;
 

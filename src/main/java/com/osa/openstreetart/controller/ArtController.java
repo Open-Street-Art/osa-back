@@ -3,7 +3,6 @@ package com.osa.openstreetart.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.dto.EditArtDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;

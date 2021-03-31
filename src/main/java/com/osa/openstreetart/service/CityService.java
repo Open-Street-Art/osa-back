@@ -1,14 +1,9 @@
 package com.osa.openstreetart.service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.repository.CityRepository;
 
@@ -42,7 +37,8 @@ public class CityService {
 		} catch (JsonProcessingException e) {
 			city = null;
 		}
-		if (city.getName() == null 
+		if (city == null
+				|| city.getName() == null 
 				|| city.getName().isEmpty() 
 				|| city.getName().contains("null"))
 			city = null;
