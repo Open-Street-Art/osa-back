@@ -154,13 +154,29 @@ public class ContribController {
     }
 
 	@GetMapping(value = "/contrib/{art_id}")
-    public ResponseEntity<OSAResponseDTO> getContribs(@PathVariable("art_id") Integer artId) throws OSA404Exception {
+    public ResponseEntity<OSAResponseDTO> getContribsOfArt(@PathVariable("art_id") Integer artId) throws OSA404Exception {
 		Optional<ArtEntity> art = artRepo.findById(artId);
 		if(!art.isPresent())
 			throw new OSA404Exception("Art not found.");
 
 		List<ContribEntity> contribs = new ArrayList<>(contribRepo.findByArtId(artId));
 		
+		return ResponseEntity.ok(
+			new OSAResponseDTO(
+				contribTransf.modelsToDtos(contribs)
+			)
+		);
+	}
+
+	@GetMapping(value = "/contrib/unapproved")
+	public ResponseEntity<OSAResponseDTO> getUnapprovedContribs() {
+
+		List<ContribEntity> contribs = new ArrayList<>();
+		for (ContribEntity contrib : contribRepo.findAll()) {
+			if (contrib.getApproved() == null)
+				contribs.add(contrib);
+		}
+
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
 				contribTransf.modelsToDtos(contribs)

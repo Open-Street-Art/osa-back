@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 @SpringBootTest
@@ -261,4 +262,28 @@ class ContribControllerTest {
 		
         assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre 2\""));
     }
+
+	@Test
+	void getUnapprovedContribsTest() throws Exception {
+		testUtil.cleanDB();
+
+        ArtEntity art = testUtil.createArt();
+        art.setAuthorName("toto");
+        art = artRepo.save(art);
+
+        ContribEntity contrib = testUtil.createContrib(); 
+        contrib.setLongitude(art.getLongitude());
+        contrib.setLatitude(art.getLatitude());
+        contrib.setArt(art);
+        contrib = contribRepo.save(contrib);
+ 
+
+        MvcResult res = mvc.perform(get("/api/contrib/unapproved")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andReturn();
+		
+
+        assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre 2\""));
+	}
 }
