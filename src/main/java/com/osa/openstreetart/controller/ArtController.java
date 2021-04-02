@@ -64,7 +64,8 @@ public class ArtController {
 
 		if (city != null) {
 			CityEntity cityToLink = cityService.registerCity(city);
-			art.setCityId(cityToLink.getId());
+			if (cityToLink != null)
+				art.setCityId(cityToLink.getId());
 		}
 
 		artService.save(art);
