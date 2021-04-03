@@ -25,6 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @ApiRestController
 public class FavouriteController {
 
@@ -48,6 +52,14 @@ public class FavouriteController {
 	private static String artNotFoundMsg = "Art not found.";
 	private static String unauthorizedMsg = "Unauthorized.";
 	
+	@ApiOperation(value = "Ajouter une œuvre dans la liste des œuvres Favorites.")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "œuvre ajouté à la liste favorite ."),
+		@ApiResponse(code = 400, message = "Utilisateur non identifié."),
+		@ApiResponse(code = 401, message = "Token invalid ."),
+		@ApiResponse(code = 404, message = "œuvre non trouvée ."),
+		@ApiResponse(code = 500, message = "œuvre déjà trouvée dans la liste favorite.")
+	})
 	@PostMapping(value = "/fav/art/{art_id}")
 	public ResponseEntity<OSAResponseDTO> postFavouriteArt(
 			@RequestHeader(value = "Authorization") String token,
@@ -84,10 +96,17 @@ public class FavouriteController {
 		return ResponseEntity.ok(new OSAResponseDTO("Art added to the favourite arts list."));
 	}
 
+	@ApiOperation(value = "Retirer une œuvre dans la liste des œuvres Favorites.")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "œuvre retirée de la liste favorite ."),
+		@ApiResponse(code = 400, message = "Utilisateur non identifié."),
+		@ApiResponse(code = 401, message = "Token invalid ."),
+		@ApiResponse(code = 404, message = "œuvre non trouvée dans la liste favorite.")
+	})
 	@DeleteMapping(value = "/fav/art/{art_id}")
 	public ResponseEntity<OSAResponseDTO> deleteFavouriteArt(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA401Exception {
+			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA401Exception,OSA404Exception {
 		
 		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
 			&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
@@ -105,18 +124,28 @@ public class FavouriteController {
 				break;
 			}
 		}
-		if (toDelete != null)
-			user.get().getFavArts().remove(toDelete);
 
+		if	(toDelete == null)
+			throw new OSA404Exception("Art not found in favorit list");
+		
+		user.get().getFavArts().remove(toDelete);
 		userRepo.save(user.get());
 		
 		return ResponseEntity.ok(new OSAResponseDTO("Art removed from the favourite arts list."));
 	}
 
+	@ApiOperation(value = "Ajouter un artiste dans la liste des artistes Favoris.")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Artiste ajouté à la liste favorite ."),
+		@ApiResponse(code = 400, message = "Utilisateur non identifié."),
+		@ApiResponse(code = 401, message = "Token invalid ."),
+		@ApiResponse(code = 404, message = "Artiste non trouvé ."),
+		@ApiResponse(code = 500, message = "Artiste déjà trouvé dans la liste favorite.")
+	})
 	@PostMapping(value = "/fav/artist/{artist_id}")
 	public ResponseEntity<OSAResponseDTO> postFavouriteArtist(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA401Exception, OSA500Exception {
+			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA401Exception,OSA404Exception, OSA500Exception {
 		
 		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
 			    &&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
@@ -140,7 +169,7 @@ public class FavouriteController {
 		
 		Optional<UserEntity> artist = userRepo.findById(artistId);
 		if (!artist.isPresent())
-			throw new OSA400Exception("artist not found");
+			throw new OSA404Exception("artist not found");
 		
 		user.get().getFavArtists().add(artist.get());
 		userRepo.save(user.get());
@@ -148,10 +177,17 @@ public class FavouriteController {
 		return ResponseEntity.ok(new OSAResponseDTO("Artist added to the favourite artists list."));
 	}
 
+	@ApiOperation(value = "Retirer un artist dans la liste des artistes Favoris.")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Artiste retiré de la liste favorite ."),
+		@ApiResponse(code = 400, message = "Utilisateur non identifié."),
+		@ApiResponse(code = 401, message = "Token invalid ."),
+		@ApiResponse(code = 404, message = "Artiste non trouvé dans la liste favorite.")
+	})
 	@DeleteMapping(value = "/fav/artist/{artist_id}")
 	public ResponseEntity<OSAResponseDTO> deleteFavouriteArtist(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("artist_id") Integer artistId) throws OSA400Exception,OSA401Exception {
+			@PathVariable("artist_id") Integer artistId) throws OSA400Exception,OSA401Exception,OSA404Exception {
 		
 		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
 				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
@@ -168,7 +204,7 @@ public class FavouriteController {
 													.filter(u -> u.getId().equals(artistId))
 													.findFirst();
 		if(!artistFav.isPresent())
-			throw new OSA400Exception("Artist not found in favorit list");
+			throw new OSA404Exception("Artist not found in favorit list");
 		
 		//retirer l'artist de la liste
 		user.get().getFavArtists().remove(artistFav.get());
@@ -177,10 +213,18 @@ public class FavouriteController {
 		return ResponseEntity.ok(new OSAResponseDTO("Artist remove to the favourite artists list."));
 	}
 
+	@ApiOperation(value = "Ajouter une ville dans la liste des villes Favorites.")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Ville ajoutée à la liste favorite ."),
+		@ApiResponse(code = 400, message = "Utilisateur non identifié ."),
+		@ApiResponse(code = 401, message = "Token invalid ."),
+		@ApiResponse(code = 404, message = "Ville non trouvée ."),
+		@ApiResponse(code = 500, message = "Ville déjà trouvée dans la liste favorite .")
+	})
 	@PostMapping(value = "/fav/city/{city_id}")
 	public ResponseEntity<OSAResponseDTO> postFavouriteCity(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("city_id") Integer cityId) throws OSA400Exception, OSA401Exception, OSA500Exception {
+			@PathVariable("city_id") Integer cityId) throws OSA400Exception, OSA401Exception, OSA404Exception, OSA500Exception {
 		
 		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
 				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
@@ -201,7 +245,7 @@ public class FavouriteController {
 		
 		cityFav = citytRepo.findById(cityId);
 		if (!cityFav.isPresent())
-			throw new OSA400Exception("City not found");
+			throw new OSA404Exception("City not found");
 		
 		user.get().getFavCities().add(cityFav.get());
 		userRepo.save(user.get());
@@ -209,10 +253,17 @@ public class FavouriteController {
 		return ResponseEntity.ok(new OSAResponseDTO("City added to the favourite Cities list."));
 	}
 
+	@ApiOperation(value = "Retirer une ville dans la liste des villes Favorites.")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Ville retirée de la la liste favorite ."),
+		@ApiResponse(code = 400, message = "Utilisateur non identifié ."),
+		@ApiResponse(code = 401, message = "Token invalid ."),
+		@ApiResponse(code = 404, message = "Ville non trouvée dans la liste favorite.")
+	})
 	@DeleteMapping(value = "/fav/city/{city_id}")
 	public ResponseEntity<OSAResponseDTO> deleteFavouriteCity(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("city_id") Integer cityId) throws OSA400Exception,OSA401Exception {
+			@PathVariable("city_id") Integer cityId) throws OSA400Exception,OSA401Exception, OSA404Exception {
 		
 		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
 				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
@@ -235,7 +286,7 @@ public class FavouriteController {
 		}
 
 		if(cityFav == null)
-			throw new OSA400Exception("City not found in favorit list");
+			throw new OSA404Exception("City not found in favorit list");
 		
 		user.get().getFavCities().remove(cityFav);
 		userRepo.save(user.get());
