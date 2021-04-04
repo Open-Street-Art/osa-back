@@ -27,6 +27,17 @@ public class SearchController {
 
 	private static String emptySearchMsg = "Empty search content.";
 
+	@GetMapping(value = "/search/users/{content}")
+	public ResponseEntity<OSAResponseDTO> getSearchUsers(@PathVariable("content") String content)
+			throws OSA400Exception {
+		if (content.isEmpty() || content.isBlank())
+			throw new OSA400Exception(emptySearchMsg);
+
+		return ResponseEntity.ok(
+				new OSAResponseDTO(userRepo.findByUsername(content))
+		);
+	}
+
 	@GetMapping(value = "/search/arts/{content}")
 	public ResponseEntity<OSAResponseDTO> getSearchArts(@PathVariable("content") String content)
 			throws OSA400Exception {

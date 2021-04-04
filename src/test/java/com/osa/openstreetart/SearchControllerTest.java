@@ -40,6 +40,18 @@ class SearchControllerTest {
 	private TestUtil testUtil;
 
 	@Test
+	void getSearchUsersTest() throws Exception {
+		testUtil.cleanDB();
+		UserEntity user = testUtil.createUser();
+		user.setUsername("toto");
+		userRepo.save(user);
+		MvcResult res = mvc.perform(get(("/api/search/users/") + user.getUsername())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk()).andReturn();
+	}
+
+	@Test
 	void getSearchArtsTest() throws Exception {
 		testUtil.cleanDB();
 		ArtEntity art = testUtil.createArt();
@@ -50,7 +62,7 @@ class SearchControllerTest {
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();
 
-		assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre\""));
+		assertTrue(res.getResponse().getContentAsString().contains("\"name\""));
 	}
 
 	@Test
