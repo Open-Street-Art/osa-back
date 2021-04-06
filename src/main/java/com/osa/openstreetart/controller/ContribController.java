@@ -183,4 +183,22 @@ public class ContribController {
 			)
 		);
 	}
+
+	@GetMapping(value = "/contrib/user/contribs")
+	public ResponseEntity<OSAResponseDTO> getUserContribs(@RequestHeader(value = "Authorization") String token) throws OSA400Exception {
+
+		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
+		Optional<UserEntity> user = userRepo.findByUsername(username);
+		if (!user.isPresent())
+			throw new OSA400Exception(userNotFoundMsg);
+
+			List<ContribEntity> contribs = new ArrayList<>();
+			//récupérer les contributions de l'utilisateur
+			for (ContribEntity contrib : contribRepo.findAll()) {
+				if (contrib.getContributor().equals(user.get()))
+					contribs.add(contrib);
+			}
+	
+			return ResponseEntity.ok(new OSAResponseDTO(contribTransf.modelsToDtos(contribs)));
+	}
 }
