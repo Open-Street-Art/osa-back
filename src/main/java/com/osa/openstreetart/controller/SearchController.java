@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.osa.openstreetart.dto.OSAResponseDTO;
+import com.osa.openstreetart.dto.UserProfileDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.repository.ArtRepository;
 import com.osa.openstreetart.repository.UserRepository;
+import com.osa.openstreetart.service.UserService;
 import com.osa.openstreetart.util.ApiRestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class SearchController {
 	@Autowired
 	private UserRepository userRepo;
 
+	@Autowired
+	private UserService userService;
+
 	private static String emptySearchMsg = "Empty search content.";
 
 	@GetMapping(value = "/search/users/{content}")
@@ -33,8 +38,14 @@ public class SearchController {
 		if (content.isEmpty() || content.isBlank())
 			throw new OSA400Exception(emptySearchMsg);
 
+		Collection<UserProfileDTO> searchResult = new ArrayList<>();
+		
+		for (UserEntity user : userRepo.findByUsernameWithSub(content)) {
+			searchResult.add(userService.loadUserProfileDTO(user));
+		}
+
 		return ResponseEntity.ok(
-				new OSAResponseDTO(userRepo.findByUsername(content))
+				new OSAResponseDTO(searchResult)
 		);
 	}
 

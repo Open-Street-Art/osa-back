@@ -42,13 +42,19 @@ class SearchControllerTest {
 	@Test
 	void getSearchUsersTest() throws Exception {
 		testUtil.cleanDB();
+
 		UserEntity user = testUtil.createUser();
 		user.setUsername("toto");
 		userRepo.save(user);
-		MvcResult res = mvc.perform(get(("/api/search/users/") + user.getUsername())
+
+		MvcResult res = mvc.perform(get("/api/search/users/tot")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();
+
+		System.out.println(res.getResponse().getContentAsString());
+
+		assertTrue(res.getResponse().getContentAsString().contains("\"toto\""));
 	}
 
 	@Test
