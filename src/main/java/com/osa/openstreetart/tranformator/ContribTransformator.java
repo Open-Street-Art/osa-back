@@ -1,5 +1,6 @@
 package com.osa.openstreetart.tranformator;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,8 +38,21 @@ public class ContribTransformator implements AbstractTransformator<ContribEntity
 
 		GetContribDTO dto = modelMapper().map(model, GetContribDTO.class);
 		UserEntity author;
-		if ((author = model.getContributor()) != null)
+		if ((author = model.getContributor()) != null) {
 			dto.setContributorId(author.getId());
+			dto.setAuthor(author.getUsername());
+		}
+
+		Iterator<String> pictures = model.getPictures().iterator();
+
+		if (pictures.hasNext())
+			dto.setPicture1(pictures.next());
+		if (pictures.hasNext())
+			dto.setPicture2(pictures.next());
+		if (pictures.hasNext())
+			dto.setPicture3(pictures.next());
+
+		dto.setAuthor(model.getAuthorName());
 		return dto;
 	}
 

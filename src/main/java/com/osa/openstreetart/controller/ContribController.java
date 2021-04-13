@@ -184,7 +184,7 @@ public class ContribController {
 		);
 	}
 
-	@GetMapping(value = "/contrib/user/contribs")
+	@GetMapping(value = "/contrib/personnal")
 	public ResponseEntity<OSAResponseDTO> getUserContribs(@RequestHeader(value = "Authorization") String token) throws OSA400Exception {
 
 		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));

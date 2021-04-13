@@ -10,5 +10,6 @@ public class GetContribDTO {
 	private String picture1;
 	private String picture2;
 	private String picture3;
+	private String author;
 	private Integer contributorId;
 }
