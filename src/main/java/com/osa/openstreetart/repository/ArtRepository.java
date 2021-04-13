@@ -3,6 +3,8 @@ package com.osa.openstreetart.repository;
 import java.util.Collection;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import com.osa.openstreetart.entity.ArtEntity;
 
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +12,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Transactional
 public interface ArtRepository extends CrudRepository<ArtEntity, Integer> {
 	
 	Optional<ArtEntity> findById(Integer id);

@@ -7,9 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import com.osa.openstreetart.entity.UserEntity;
 
 @Repository
+@Transactional
 public interface UserRepository extends CrudRepository<UserEntity, Integer> {
 
 	Optional<UserEntity> findByEmail(String email);
