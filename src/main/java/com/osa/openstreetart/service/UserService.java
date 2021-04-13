@@ -88,24 +88,24 @@ public class UserService {
 		dto.setRoles(rolesString);
 
 		// Remplissage d'une collection des ID des oeuvres favorites
-		Collection<Integer> favArts = new ArrayList<>();
+		Collection<ArtEntity> favArts = new ArrayList<>();
 		for (ArtEntity art : user.getFavArts()) {
-			favArts.add(art.getId());
+			favArts.add(art);
 		}
 
 		dto.setFavArts(favArts);
 
 		// Remplissage d'une collection des ID des villes favorites
-		Collection<Integer> favCities = new ArrayList<>();
+		Collection<CityEntity> favCities = new ArrayList<>();
 		for (CityEntity city : user.getFavCities()) {
-			favCities.add(city.getId());
+			favCities.add(city);
 		}
 		dto.setFavCities(favCities);
 
 		// Remplissage d'une collection des ID des artistes favoris
-		Collection<Integer> favArtists = new ArrayList<>();
+		Collection<UserEntity> favArtists = new ArrayList<>();
 		for (UserEntity artist : user.getFavArtists()) {
-			favArtists.add(artist.getId());
+			favArtists.add(artist);
 		}
 
 		dto.setFavArtists(favArtists);

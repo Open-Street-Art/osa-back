@@ -107,6 +107,6 @@ public class UserController {
 		if (!optionalUser.isPresent())
 			throw new OSA400Exception(userNotFoundMsg);
 
-		return ResponseEntity.ok(new OSAResponseDTO(optionalUser.get()));
+		return ResponseEntity.ok(new OSAResponseDTO(userService.loadUserProfileDTO(optionalUser.get())));
 	}
 }

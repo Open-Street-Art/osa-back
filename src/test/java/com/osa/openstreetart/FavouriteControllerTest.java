@@ -65,7 +65,7 @@ public class FavouriteControllerTest {
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();
 
-		assertTrue(res.getResponse().getContentAsString().contains("\"favArts\":[" + art.getId() +"]"));
+		assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre\""));
 	}
 
 	@Test
@@ -92,8 +92,7 @@ public class FavouriteControllerTest {
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();
 
-		System.out.println(res.getResponse().getContentAsString().contains("\"favArts\":[" + art.getId() +"]"));
-		// assertTrue(res.getResponse().getContentAsString().contains("\"favArts\":[" + art.getId() +"]"));
+		assertTrue(res.getResponse().getContentAsString().contains("\"favArts\":[]"));
 	}
 
 	@Test
