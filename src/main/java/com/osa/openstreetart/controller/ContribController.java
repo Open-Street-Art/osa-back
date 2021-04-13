@@ -1,8 +1,6 @@
 package com.osa.openstreetart.controller;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -169,11 +167,12 @@ public class ContribController {
 		);
 	}
 
-	@GetMapping(value = "/contrib/personnal")
-	public ResponseEntity<OSAResponseDTO> getUserContribs(@RequestHeader(value = "Authorization") String token) throws OSA400Exception {
+	@GetMapping(value = "/contrib/user/{user_id}")
+	public ResponseEntity<OSAResponseDTO> getUserContribs(
+			@RequestHeader(value = "Authorization") String token,
+			@PathVariable("user_id") Integer userId) throws OSA400Exception {
 
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> user = userRepo.findByUsername(username);
+		Optional<UserEntity> user = userRepo.findById(userId);
 		if (!user.isPresent())
 			throw new OSA400Exception(userNotFoundMsg);
 

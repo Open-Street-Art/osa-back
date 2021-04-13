@@ -306,7 +306,7 @@ class ContribControllerTest {
         contrib = contribRepo.save(contrib);
  
 
-        MvcResult res = mvc.perform(get("/api/contrib/personnal")
+        MvcResult res = mvc.perform(get("/api/contrib/user/" + user.getId())
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
