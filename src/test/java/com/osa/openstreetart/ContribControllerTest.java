@@ -285,8 +285,40 @@ class ContribControllerTest {
 
         assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre 2\""));
 	}
+
+	@Test
+	void getSelfContribsTest() throws Exception {
+		testUtil.cleanDB();
+
+        UserEntity user = testUtil.createUser();
+        user = userRepo.save(user);
+
+        String token = testUtil.getJWTwithUsername(user.getUsername());
+
+        ArtEntity art = testUtil.createArt();
+        art.setAuthorName("Thomas");
+        art = artRepo.save(art);
+
+        ContribEntity contrib = testUtil.createContrib(); 
+        contrib.setLongitude(art.getLongitude());
+        contrib.setLatitude(art.getLatitude());
+        contrib.setArt(art);
+        contrib.setContributor(user);
+        contrib = contribRepo.save(contrib);
+ 
+
+        MvcResult res = mvc.perform(get("/api/contrib/personnal")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andReturn();
+		
+
+        assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre 2\""));
+	}
+
     @Test
-	public void getUserContribsTest() throws Exception {
+	void getUserContribsTest() throws Exception {
 		testUtil.cleanDB();
 
         UserEntity user = testUtil.createUser();
