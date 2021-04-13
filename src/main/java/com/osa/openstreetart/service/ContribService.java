@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.PostContribDTO;
+import com.osa.openstreetart.dto.PostNewContribDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.ContribEntity;
@@ -68,57 +69,70 @@ public class ContribService {
 		contrib.setApproved(false);
 		contribRepo.save(contrib);
 	}
-	private ContribEntity verifyContrib(PostContribDTO dto, UserEntity contribUser, Integer artId) throws OSA400Exception {
-		if (dto == null) {
-			throw new OSA400Exception("Empty contribution");
-        }
-        if (dto.getName().length() < 2) {
-			throw new OSA400Exception("Name too short.");
-        }
-		if (dto.getDescription().isEmpty()) {
-			throw new OSA400Exception("Description is empty");
-		}
-	
-		//l'oeuvre recevant la contribution
-		Optional<ArtEntity> art = artRepo.findById(artId);
 
-		if (!art.isPresent()) {
-			throw new OSA400Exception("Art not found.");
-		}
-
-		//la contribution
+    public void save(PostContribDTO contrib1, PostNewContribDTO contrib2, UserEntity contribUser, Integer artId) throws  OSA400Exception{
+		
+		Optional<ArtEntity> art;
+		//la contribution qui sera enregistreé
 		ContribEntity contribArt = new ContribEntity();
-		contribArt.setName(dto.getName());
-		contribArt.setDescription(dto.getDescription());
-		contribArt.setArt(art.get());
 
-		// les images de la contribution
-		Collection<String> pictures = new ArrayList<>();
-		if (!dto.getPicture1().isEmpty())
-			pictures.add(dto.getPicture1());
-		if (!dto.getPicture2().isEmpty())
-			pictures.add(dto.getPicture2());
-		if (!dto.getPicture3().isEmpty())
-			pictures.add(dto.getPicture3());
-		contribArt.setPictures(pictures);
+		// contribution modifiant une oeuvre existante
+		if	(contrib1 != null) {
+			// l'oeuvre recevant la contribution
+			art = artRepo.findById(artId);
+			if (!art.isPresent()) {
+				throw new OSA400Exception("Art not found.");
+			}
 
+			contribArt.setName(contrib1.getName());
+			contribArt.setDescription(contrib1.getDescription());
+			contribArt.setArt(art.get());
+
+			// les images de la contribution
+			Collection<String> pictures = new ArrayList<>();
+			if (!contrib1.getPicture1().isEmpty())
+				pictures.add(contrib1.getPicture1());
+			if (!contrib1.getPicture2().isEmpty())
+				pictures.add(contrib1.getPicture2());
+			if (!contrib1.getPicture3().isEmpty())
+				pictures.add(contrib1.getPicture3());
+			contribArt.setPictures(pictures);
+
+			//la ville
+			contribArt.setCity(art.get().getCity());
+
+			//les coordonnées Géo
+			contribArt.setLongitude(art.get().getLongitude());
+			contribArt.setLatitude(art.get().getLatitude());
+		}
+		
+		//nouvelle contribution
+		if(contrib2 != null) {
+			if (contrib2.getName().isEmpty() || contrib2.getDescription().isEmpty()) 
+				throw new OSA400Exception("Empty content");
+
+			contribArt.setName(contrib2.getName());
+			contribArt.setDescription(contrib2.getDescription());
+
+			// les images de la contribution
+			Collection<String> pictures = new ArrayList<>();
+			pictures.add(contrib2.getPicture1());
+			pictures.add(contrib2.getPicture2());
+			pictures.add(contrib2.getPicture3());
+			contribArt.setPictures(pictures);
+			
+			contribArt.setAuthorName(contrib2.getAuthorName());
+			
+			//les coordonnées Géo
+			contribArt.setLongitude(contrib2.getLongitude());
+			contribArt.setLatitude(contrib2.getLatitude());
+		}
 		//le contributeur
 		contribArt.setContributor(contribUser);
 
-		//la ville
-		contribArt.setCity(art.get().getCity());
-
-		//les coordonnées Géo
-		contribArt.setLongitude(art.get().getLongitude());
-		contribArt.setLatitude(art.get().getLatitude());
-		
 		contribArt.setCreationDateTime(LocalDateTime.now());
-		
-		return contribArt;
-	}
-	
-    public void save(PostContribDTO contrib2,UserEntity contribUser, Integer artId) throws  OSA400Exception{
-		contribRepo.save(verifyContrib(contrib2, contribUser, artId));
+
+		contribRepo.save(contribArt);
 	}
 
 	

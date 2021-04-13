@@ -68,22 +68,7 @@ public class ContribController {
 		if (!contribUser.isPresent())
 			throw new OSA400Exception(userNotFoundMsg);
 
-		ContribEntity contrib = new ContribEntity();
-		contrib.setName(dto.getName());
-		contrib.setDescription(dto.getDescription());
-		Collection<String> pictures = new ArrayList<>();
-		pictures.add(dto.getPicture1());
-		pictures.add(dto.getPicture2());
-		pictures.add(dto.getPicture3());
-		contrib.setPictures(pictures);
-		contrib.setLongitude(dto.getLongitude());
-		contrib.setLatitude(dto.getLatitude());
-		contrib.setAuthorName(dto.getAuthorName());
-		contrib.setCreationDateTime(LocalDateTime.now());
-		contrib.setContributor(contribUser.get());
-
-		contribRepo.save(contrib);
-		
+		contribService.save(null, dto, contribUser.get(), null);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
@@ -97,7 +82,7 @@ public class ContribController {
 		if (!contribUser.isPresent())
 			throw new OSA400Exception(userNotFoundMsg);
 		
-		contribService.save(contrib, contribUser.get(), artId);
+		contribService.save(contrib, null, contribUser.get(), artId);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
