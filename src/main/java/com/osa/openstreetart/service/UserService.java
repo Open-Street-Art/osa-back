@@ -79,7 +79,13 @@ public class UserService {
 		dto.setUsername(user.getUsername());
 		dto.setDescription(user.getDescription());
 		dto.setProfilePicture(user.getProfilePicture());
-		dto.setRoles(user.getRoles().toString());
+
+		// Remplissage des roles dans la collection de String
+		Collection<String> rolesString = new ArrayList<>();
+		for (RoleEnum role : user.getRoles()) {
+			rolesString.add(role.name());
+		}
+		dto.setRoles(rolesString);
 
 		// Remplissage d'une collection des ID des oeuvres favorites
 		Collection<Integer> favArts = new ArrayList<>();
