@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.ElementCollection;
 import javax.persistence.CollectionTable;
 import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -56,6 +59,7 @@ public class UserEntity {
 		joinColumns=@JoinColumn(name="user_id"),
 		inverseJoinColumns=@JoinColumn(name="artist_id")
 	)
+	@JsonBackReference
 	private Collection<UserEntity> favArtists;
 
 	@OneToMany(fetch = FetchType.EAGER)
@@ -64,6 +68,7 @@ public class UserEntity {
 		joinColumns=@JoinColumn(name="user_id"),
 		inverseJoinColumns=@JoinColumn(name="city_id")
 	)
+	@JsonBackReference
 	private Collection<CityEntity> favCities;
 
 	@OneToMany(fetch = FetchType.EAGER)
@@ -72,5 +77,6 @@ public class UserEntity {
 		joinColumns=@JoinColumn(name="user_id"),
 		inverseJoinColumns=@JoinColumn(name="art_id")
 	)
+	@JsonBackReference
 	private Collection<ArtEntity> favArts;
 }
