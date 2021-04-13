@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 
 import lombok.Data;
 
@@ -53,7 +54,7 @@ public class UserEntity {
 	@Column(name = "role")
 	private Collection<RoleEnum> roles;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name="fav_artists",
 		joinColumns=@JoinColumn(name="user_id"),
@@ -62,7 +63,7 @@ public class UserEntity {
 	@JsonBackReference
 	private Collection<UserEntity> favArtists;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name="fav_cities",
 		joinColumns=@JoinColumn(name="user_id"),
@@ -71,7 +72,7 @@ public class UserEntity {
 	@JsonBackReference
 	private Collection<CityEntity> favCities;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name="fav_arts",
 		joinColumns=@JoinColumn(name="user_id"),
