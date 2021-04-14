@@ -117,6 +117,8 @@ public class TestUtil {
 		ContribEntity contrib = new ContribEntity();
 		contrib.setName("Oeuvre 2");
         contrib.setDescription("description de l'oeuvre");
+		contrib.setLatitude(1.0);
+		contrib.setLongitude(2.0);
         contrib.setCreationDateTime(LocalDateTime.now());
 		return contrib;
 	}

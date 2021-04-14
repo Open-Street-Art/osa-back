@@ -136,7 +136,7 @@ public class ContribController {
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
     }
 
-	@GetMapping(value = "/contrib/{art_id}")
+	@GetMapping(value = "/contrib/art/{art_id}")
     public ResponseEntity<OSAResponseDTO> getContribsOfArt(@PathVariable("art_id") Integer artId) throws OSA404Exception {
 		Optional<ArtEntity> art = artRepo.findById(artId);
 		if(!art.isPresent())
@@ -147,6 +147,19 @@ public class ContribController {
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
 				contribTransf.modelsToDtos(contribs)
+			)
+		);
+	}
+
+	@GetMapping(value = "/contrib/{contrib_id}")
+	public ResponseEntity<OSAResponseDTO> getContribWithId(@PathVariable("contrib_id") Integer contribId) throws OSA404Exception {
+		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
+		if (!contrib.isPresent())
+			throw new OSA404Exception("Contribution not found.");
+
+		return ResponseEntity.ok(
+			new OSAResponseDTO(
+				contrib.get()
 			)
 		);
 	}

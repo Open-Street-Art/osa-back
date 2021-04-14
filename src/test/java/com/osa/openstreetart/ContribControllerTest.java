@@ -237,7 +237,7 @@ class ContribControllerTest {
     }
 
     @Test
-    void getContribsTest() throws Exception {
+    void getContribsByArtTest() throws Exception {
         testUtil.cleanDB();
 
         //l'oeuvre recevant la contribution
@@ -254,11 +254,26 @@ class ContribControllerTest {
  
 
         //retournner les contribution de l'oeuvre
-        MvcResult res = mvc.perform(get("/api/contrib/" + art.getId())
+        MvcResult res = mvc.perform(get("/api/contrib/art/" + art.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk()).andReturn();
 		
+        assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre 2\""));
+    }
+
+	@Test
+    void getContribTest() throws Exception {
+        testUtil.cleanDB();
+
+        ContribEntity contrib = testUtil.createContrib(); 
+        contrib = contribRepo.save(contrib);
+ 
+        MvcResult res = mvc.perform(get("/api/contrib/" + contrib.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andReturn();
+
         assertTrue(res.getResponse().getContentAsString().contains("\"name\":\"Oeuvre 2\""));
     }
 
