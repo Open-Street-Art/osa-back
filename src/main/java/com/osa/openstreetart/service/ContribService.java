@@ -42,7 +42,18 @@ public class ContribService {
 		contrib.setApproved(true);
 		contribRepo.save(contrib);
 
-		ArtEntity art = contrib.getArt();
+		ArtEntity art;
+		if ((art = contrib.getArt()) == null) {
+			art = new ArtEntity();
+			if (contrib.getAuthorName().isEmpty())
+				art.setAuthor(contrib.getContributor());
+			else
+				art.setAuthorName(contrib.getAuthorName());
+			
+			art.setLatitude(contrib.getLatitude());
+			art.setLongitude(contrib.getLongitude());
+			art.setCreationDateTime(LocalDateTime.now());
+		}
 		art.setName(contrib.getName());
 		art.setDescription(contrib.getDescription());
 		Collection<String> newPictures = new ArrayList<>();
