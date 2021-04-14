@@ -21,6 +21,8 @@ public interface ArtRepository extends CrudRepository<ArtEntity, Integer> {
 
 	Collection<ArtEntity> findByAuthorId(Integer id);
 
+	Collection<ArtEntity> findByCityId(Integer id);
+
 	@Query("select a from ArtEntity a where lower(a.name) like lower(concat('%', concat(?1, '%')))")
 	Collection<ArtEntity> findByNameWithSub(String substring);
 

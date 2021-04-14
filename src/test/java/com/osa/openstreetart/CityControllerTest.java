@@ -1,6 +1,8 @@
 package com.osa.openstreetart;
 
+import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
+import com.osa.openstreetart.repository.ArtRepository;
 import com.osa.openstreetart.repository.CityRepository;
 
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,9 @@ class CityControllerTest {
 	CityRepository cityRepo;
 
 	@Autowired
+	ArtRepository artRepo;
+
+	@Autowired
 	MockMvc mvc;
 
 	@Test
@@ -45,6 +50,25 @@ class CityControllerTest {
 				.getContentAsString()
 				.contains("rouen")
 		);
+	}
+
+	@Test
+	void getArtsByCityTest() throws Exception {
+		testUtil.cleanDB();
+
+		CityEntity city = testUtil.createCity();
+		cityRepo.save(city);
+
+		ArtEntity art = testUtil.createArt();
+		art.setCity(city);
+		artRepo.save(art);
+
+		MvcResult res = mvc.perform(get("/api/city/arts/" + city.getId())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk()).andReturn();
+
+		assertTrue(res.getResponse().getContentAsString().contains("Oeuvre"));
 	}
 
 }

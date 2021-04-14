@@ -25,5 +25,6 @@ public class CityEntity {
     private String name;
 
 	@OneToMany(mappedBy="city")
+	@JsonBackReference
 	private Collection<ArtEntity> arts;
 }

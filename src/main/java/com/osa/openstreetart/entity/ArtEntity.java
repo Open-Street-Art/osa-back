@@ -14,7 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -62,7 +62,7 @@ public class ArtEntity {
 
 	@ManyToOne
 	@JoinColumn(name="city_id")
-	@JsonBackReference
+	@JsonManagedReference
 	private CityEntity city;
 
 	@Column(nullable = false)
