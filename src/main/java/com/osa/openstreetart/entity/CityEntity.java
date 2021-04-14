@@ -7,8 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.GeneratedValue;
 
@@ -26,6 +25,5 @@ public class CityEntity {
     private String name;
 
 	@OneToMany(mappedBy="city")
-	@JsonIdentityInfo(generator= ObjectIdGenerators.UUIDGenerator.class, property="uuid")
 	private Collection<ArtEntity> arts;
 }
