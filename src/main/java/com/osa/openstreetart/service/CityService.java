@@ -9,6 +9,7 @@ import com.osa.openstreetart.repository.CityRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -30,15 +31,19 @@ public class CityService {
 			+ lng;
 		
 		RestTemplate restTemplate = new RestTemplate();
-		String json = restTemplate.getForObject(url, String.class);
+		String json;
+		try {
+			json = restTemplate.getForObject(url, String.class);
+		} catch(RestClientException e) {
+			return null;
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			city.setName(mapper.readTree(json).get("data").get(0).get("locality").asText());
 		} catch (JsonProcessingException e) {
-			city = null;
+			return null;
 		}
-		if (city == null
-				|| city.getName() == null 
+		if (city.getName() == null 
 				|| city.getName().isEmpty() 
 				|| city.getName().contains("null"))
 			city = null;
