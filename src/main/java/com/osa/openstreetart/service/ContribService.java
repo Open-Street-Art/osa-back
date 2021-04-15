@@ -81,67 +81,58 @@ public class ContribService {
 		contribRepo.save(contrib);
 	}
 
-    public void save(PostContribDTO contrib1, PostNewContribDTO contrib2, UserEntity contribUser, Integer artId) throws  OSA400Exception{
+    public void saveExistingContrib(PostContribDTO contrib, UserEntity contribUser, Integer artId) throws  OSA400Exception {
 		
-		Optional<ArtEntity> art;
-		//la contribution qui sera enregistreé
 		ContribEntity contribArt = new ContribEntity();
-
-		// contribution modifiant une oeuvre existante
-		if	(contrib1 != null) {
-			// l'oeuvre recevant la contribution
-			art = artRepo.findById(artId);
-			if (!art.isPresent()) {
-				throw new OSA400Exception("Art not found.");
-			}
-
-			contribArt.setName(contrib1.getName());
-			contribArt.setDescription(contrib1.getDescription());
-			contribArt.setArt(art.get());
-
-			// les images de la contribution
-			Collection<String> pictures = new ArrayList<>();
-			if (contrib1.getPicture1() != null && !contrib1.getPicture1().isEmpty())
-				pictures.add(contrib1.getPicture1());
-			if (contrib1.getPicture2() != null && !contrib1.getPicture2().isEmpty())
-				pictures.add(contrib1.getPicture2());
-			if (contrib1.getPicture3() != null && !contrib1.getPicture3().isEmpty())
-				pictures.add(contrib1.getPicture3());
-			contribArt.setPictures(pictures);
-
-			//la ville
-			contribArt.setCity(art.get().getCity());
-			contribArt.setAuthorName(contrib1.getAuthorName());
-
-			//les coordonnées Géo
-			contribArt.setLongitude(art.get().getLongitude());
-			contribArt.setLatitude(art.get().getLatitude());
+		Optional<ArtEntity> art = artRepo.findById(artId);
+		if (!art.isPresent()) {
+			throw new OSA400Exception("Art not found.");
 		}
-		
-		//nouvelle contribution
-		if(contrib2 != null) {
-			if (contrib2.getName().isEmpty() || contrib2.getDescription().isEmpty()) 
-				throw new OSA400Exception("Empty content");
 
-			contribArt.setName(contrib2.getName());
-			contribArt.setDescription(contrib2.getDescription());
+		contribArt.setName(contrib.getName());
+		contribArt.setDescription(contrib.getDescription());
+		contribArt.setArt(art.get());
 
-			// les images de la contribution
-			Collection<String> pictures = new ArrayList<>();
-			pictures.add(contrib2.getPicture1());
-			pictures.add(contrib2.getPicture2());
-			pictures.add(contrib2.getPicture3());
-			contribArt.setPictures(pictures);
-			
-			contribArt.setAuthorName(contrib2.getAuthorName());
-			
-			//les coordonnées Géo
-			contribArt.setLongitude(contrib2.getLongitude());
-			contribArt.setLatitude(contrib2.getLatitude());
-		}
+		Collection<String> pictures = new ArrayList<>();
+		if (contrib.getPicture1() != null && !contrib.getPicture1().isEmpty())
+			pictures.add(contrib.getPicture1());
+		if (contrib.getPicture2() != null && !contrib.getPicture2().isEmpty())
+			pictures.add(contrib.getPicture2());
+		if (contrib.getPicture3() != null && !contrib.getPicture3().isEmpty())
+			pictures.add(contrib.getPicture3());
+		contribArt.setPictures(pictures);
+
+		contribArt.setCity(art.get().getCity());
+		contribArt.setAuthorName(contrib.getAuthorName());
+
+		contribArt.setLongitude(art.get().getLongitude());
+		contribArt.setLatitude(art.get().getLatitude());
+
 		contribArt.setContributor(contribUser);
 		contribArt.setCreationDateTime(LocalDateTime.now());
+		contribRepo.save(contribArt);
+	}
 
+	public void saveNewContrib(PostNewContribDTO contrib, UserEntity contribUser) throws OSA400Exception {
+		ContribEntity contribArt = new ContribEntity();
+		if (contrib.getName().isEmpty() || contrib.getDescription().isEmpty()) 
+			throw new OSA400Exception("Empty content");
+
+		contribArt.setName(contrib.getName());
+		contribArt.setDescription(contrib.getDescription());
+
+		Collection<String> pictures = new ArrayList<>();
+		pictures.add(contrib.getPicture1());
+		pictures.add(contrib.getPicture2());
+		pictures.add(contrib.getPicture3());
+		contribArt.setPictures(pictures);
+		
+		contribArt.setLongitude(contrib.getLongitude());
+		contribArt.setLatitude(contrib.getLatitude());
+		
+		contribArt.setContributor(contribUser);
+		contribArt.setCreationDateTime(LocalDateTime.now());
+		contribArt.setAuthorName(contrib.getAuthorName());
 		contribRepo.save(contribArt);
 	}
 

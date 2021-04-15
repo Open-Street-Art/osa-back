@@ -80,7 +80,7 @@ public class FavouriteController {
 		if (!art.isPresent())
 			throw new OSA404Exception(artNotFoundMsg);
 		
-		Boolean isFavArt = false;
+		boolean isFavArt = false;
 		for(ArtEntity FavArt: user.get().getFavArts())
 		{
 			if(FavArt.getId().intValue() == artId.intValue())

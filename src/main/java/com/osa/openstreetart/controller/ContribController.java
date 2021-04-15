@@ -66,7 +66,7 @@ public class ContribController {
 		if (!contribUser.isPresent())
 			throw new OSA400Exception(userNotFoundMsg);
 
-		contribService.save(null, dto, contribUser.get(), null);
+		contribService.saveNewContrib(dto, contribUser.get());
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
@@ -80,7 +80,7 @@ public class ContribController {
 		if (!contribUser.isPresent())
 			throw new OSA400Exception(userNotFoundMsg);
 		
-		contribService.save(contrib, null, contribUser.get(), artId);
+		contribService.saveExistingContrib(contrib, contribUser.get(), artId);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 

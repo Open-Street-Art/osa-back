@@ -96,7 +96,7 @@ public class FavouriteControllerTest {
 	}
 
 	@Test
-	public void postFavouriteArtistTest() throws Exception {
+	void postFavouriteArtistTest() throws Exception {
 		testUtil.cleanDB();
 		//utilisateur
 		UserEntity user = testUtil.createUser();
@@ -124,7 +124,7 @@ public class FavouriteControllerTest {
 	}
 
 	@Test
-	public void deleteFavouriteArtistTest() throws Exception {
+	void deleteFavouriteArtistTest() throws Exception {
 		testUtil.cleanDB();
 		//utilisateur
 		UserEntity user = testUtil.createUser();
@@ -151,7 +151,7 @@ public class FavouriteControllerTest {
 	}
 
 	@Test
-	public void postFavouriteCityTest() throws Exception {
+	void postFavouriteCityTest() throws Exception {
 		testUtil.cleanDB();
 
 		UserEntity admin = testUtil.createAdmin();
@@ -179,7 +179,7 @@ public class FavouriteControllerTest {
 	}
 
 	@Test
-	public void deleteFavouriteCityTest() throws Exception {
+	void deleteFavouriteCityTest() throws Exception {
 		testUtil.cleanDB();
 		//utilisateur 
 		UserEntity user = testUtil.createUser();
