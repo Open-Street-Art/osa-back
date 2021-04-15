@@ -1,5 +1,6 @@
 package com.osa.openstreetart.controller;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.OSAResponseDTO;
@@ -65,7 +66,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA401Exception, OSA404Exception, OSA500Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(tokenPrefix.length()));
+		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
 			&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 				throw new OSA401Exception(unauthorizedMsg);
 
@@ -108,7 +110,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA401Exception,OSA404Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(tokenPrefix.length()));
+		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
 			&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 				throw new OSA401Exception(unauthorizedMsg);
 	
@@ -147,7 +150,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA401Exception,OSA404Exception, OSA500Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(tokenPrefix.length()));
+		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
 			    &&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
 	
@@ -189,7 +193,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("artist_id") Integer artistId) throws OSA400Exception,OSA401Exception,OSA404Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(tokenPrefix.length()));
+		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
 				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
 		
@@ -226,7 +231,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("city_id") Integer cityId) throws OSA400Exception, OSA401Exception, OSA404Exception, OSA500Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(tokenPrefix.length()));
+		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
 				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
 		
@@ -265,7 +271,8 @@ public class FavouriteController {
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("city_id") Integer cityId) throws OSA400Exception,OSA401Exception, OSA404Exception {
 		
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_USER)  
+		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(tokenPrefix.length()));
+		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
 				&&	!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(unauthorizedMsg);
 		
