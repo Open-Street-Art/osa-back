@@ -79,6 +79,7 @@ public class UserService {
 		dto.setUsername(user.getUsername());
 		dto.setDescription(user.getDescription());
 		dto.setProfilePicture(user.getProfilePicture());
+		dto.setIsPublic(user.getIsPublic());
 
 		// Remplissage des roles dans la collection de String
 		Collection<String> rolesString = new ArrayList<>();

@@ -15,6 +15,7 @@ public class UserProfileDTO {
 	private Collection<String> roles;
 	private String profilePicture;
 	private String description;
+	private Boolean isPublic;
 	private Collection<UserEntity> favArtists;
 	private Collection<ArtEntity> favArts;
 	private Collection<CityEntity> favCities;
