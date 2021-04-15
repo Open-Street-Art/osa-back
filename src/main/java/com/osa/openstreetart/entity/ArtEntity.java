@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import org.hibernate.annotations.LazyCollection;
@@ -55,6 +56,7 @@ public class ArtEntity {
 
 	@OneToMany(targetEntity=ContribEntity.class, mappedBy="art")
 	@LazyCollection(LazyCollectionOption.FALSE)
+	@JsonBackReference
 	private Collection<ContribEntity> contributions;
 
 	@Column(nullable = false)
