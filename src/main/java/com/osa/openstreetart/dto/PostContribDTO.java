@@ -9,4 +9,5 @@ public class PostContribDTO {
 	private String picture1;
 	private String picture2;
 	private String picture3;
+	private String authorName;
 }

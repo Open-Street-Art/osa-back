@@ -101,16 +101,17 @@ public class ContribService {
 
 			// les images de la contribution
 			Collection<String> pictures = new ArrayList<>();
-			if (!contrib1.getPicture1().isEmpty())
+			if (contrib1.getPicture1() != null && !contrib1.getPicture1().isEmpty())
 				pictures.add(contrib1.getPicture1());
-			if (!contrib1.getPicture2().isEmpty())
+			if (contrib1.getPicture2() != null && !contrib1.getPicture2().isEmpty())
 				pictures.add(contrib1.getPicture2());
-			if (!contrib1.getPicture3().isEmpty())
+			if (contrib1.getPicture3() != null && !contrib1.getPicture3().isEmpty())
 				pictures.add(contrib1.getPicture3());
 			contribArt.setPictures(pictures);
 
 			//la ville
 			contribArt.setCity(art.get().getCity());
+			contribArt.setAuthorName(contrib1.getAuthorName());
 
 			//les coordonnées Géo
 			contribArt.setLongitude(art.get().getLongitude());
@@ -138,9 +139,7 @@ public class ContribService {
 			contribArt.setLongitude(contrib2.getLongitude());
 			contribArt.setLatitude(contrib2.getLatitude());
 		}
-		//le contributeur
 		contribArt.setContributor(contribUser);
-
 		contribArt.setCreationDateTime(LocalDateTime.now());
 
 		contribRepo.save(contribArt);
