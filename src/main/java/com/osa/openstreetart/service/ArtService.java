@@ -32,6 +32,8 @@ public class ArtService {
 	@Autowired
 	CityRepository cityRepo;
 
+	@Autowired
+	CityService cityService;
 	public void patch(Integer artId, EditArtDTO dto) throws OSA404Exception, OSA400Exception {
 		if (dto == null)
 			throw new OSA400Exception("empty values");
@@ -78,6 +80,7 @@ public class ArtService {
 	}
 
 	public void save(ArtDTO artDTO) throws OSA400Exception{
+		
 		ArtEntity art = validateArt(artDTO);
 		art.setCreationDateTime(LocalDateTime.now());
 		artRepo.save(art);
@@ -134,4 +137,12 @@ public class ArtService {
 		
 		artRepo.delete(deletedArt.get());
 	}
+	
+	public ArtEntity getArt(Integer artId) {
+		Optional<ArtEntity> art =  artRepo.findById(artId);
+		if (art.isEmpty())
+			return null;
+		
+		return art.get(); 
+	} 
 }

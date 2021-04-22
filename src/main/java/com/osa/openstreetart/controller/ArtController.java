@@ -47,16 +47,16 @@ public class ArtController {
 	@Autowired
 	ArtRepository artRepo;
 
-	private static String tokenPrefix = "Bearer ";
-	private static String unauthorizedMsg = "Unauthorized.";
+	private static final String TOKEN_PREFIX = "Bearer ";
+	private static final String UNAUTHORIZE_MSG = "Unauthorized.";
 
-	@PostMapping(value = "/admin/art")
+	@PostMapping(value = "/admin/arts")
 	public ResponseEntity<OSAResponseDTO> postArt(@RequestHeader(value = "Authorization") String token,
 			@RequestBody ArtDTO art)
 			throws OSA401Exception, OSA400Exception {
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(unauthorizedMsg);
-
+		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(UNAUTHORIZE_MSG);
+		
 		CityEntity city = cityService.getCityFromLatLong(
 			art.getLatitude(),
 			art.getLongitude()
@@ -67,42 +67,43 @@ public class ArtController {
 			if (cityToLink != null)
 				art.setCityId(cityToLink.getId());
 		}
-
+			
 		artService.save(art);
 		return ResponseEntity.ok(new OSAResponseDTO("Art created."));
 	}
 
-	@PatchMapping(value = "/admin/art/{art_id}")
+	@PatchMapping(value = "/admin/arts/{art_id}")
 	public ResponseEntity<OSAResponseDTO> patchArt(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId, @RequestBody EditArtDTO art)
 			throws OSA401Exception, OSA404Exception, OSA400Exception {
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(unauthorizedMsg);
+		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(UNAUTHORIZE_MSG);
 
 		artService.patch(artId, art);
 		return ResponseEntity.ok(new OSAResponseDTO("Art modified."));
 	}
 
-	@GetMapping(value = "/art/locations")
+	@GetMapping(value = "/arts/locations")
 	public ResponseEntity<OSAResponseDTO> getArtsLocations() {
 		List<ArtEntity> arts = new ArrayList<>();
 		Iterable<ArtEntity> iterable = artRepo.findAll();
 		iterable.forEach(arts::add);
+
 		return ResponseEntity.ok(new OSAResponseDTO(artTransf.modelsToDtos(arts)));
 	}
 
-	@DeleteMapping(value = "/admin/art/{art_id}")
+	@DeleteMapping(value = "/admin/arts/{art_id}")
 	public ResponseEntity<OSAResponseDTO> deleteArt(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("art_id") Integer artId) throws OSA401Exception, OSA404Exception {
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(unauthorizedMsg);
+		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(UNAUTHORIZE_MSG);
 		
 		artService.delete(artId);
 		return ResponseEntity.ok(new OSAResponseDTO("Art deleted"));
 	}
 
-	@GetMapping(value = "/art/{art_id}")
+	@GetMapping(value = "/arts/{art_id}")
 	public ResponseEntity<OSAResponseDTO> getArt(@PathVariable("art_id") Integer artId) {
-		return ResponseEntity.ok(new OSAResponseDTO(artRepo.findById(artId)));
+		return ResponseEntity.ok(new OSAResponseDTO(artService.getArt(artId)));
 	}
 }

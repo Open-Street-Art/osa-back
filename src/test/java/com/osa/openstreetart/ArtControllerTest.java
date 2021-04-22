@@ -73,14 +73,14 @@ class ArtControllerTest {
 		artDTO.setAuthor("Toto");
 
 		// Changement des informations de l'art
-		mvc.perform(patch("/api/admin/art/" + art.getId())
+		mvc.perform(patch("/api/admin/arts/" + art.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(testUtil.asJsonString(artDTO)))
 			.andExpect(status().isOk());
 
 		// Fausse tentative
-		mvc.perform(patch("/api/admin/art/0")
+		mvc.perform(patch("/api/admin/arts/0")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(testUtil.asJsonString(artDTO)))
@@ -95,7 +95,7 @@ class ArtControllerTest {
 	void getArtsLocationsTest() throws Exception {
 		ArtEntity art = testUtil.createArt();
 		art = artRepo.save(art);
-		MvcResult res = mvc.perform(get("/api/art/locations"))
+		MvcResult res = mvc.perform(get("/api/arts/locations"))
 			.andExpect(status().isOk()).andReturn();
 
 		assertTrue(
@@ -126,7 +126,7 @@ class ArtControllerTest {
 		art.setCityId(city.getId());
 		
 		// enregister l'oeuvre
-		mvc.perform(post("/api/admin/art")
+		mvc.perform(post("/api/admin/arts")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ class ArtControllerTest {
 
 		// mauvaise réquête avec  author_id de role ROLE_ADMIN
 		art.setAuthorId(createdAuthor.getId());
-		mvc.perform(post("/api/admin/art")
+		mvc.perform(post("/api/admin/arts")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -162,7 +162,7 @@ class ArtControllerTest {
 		ArtEntity artToDelete = artRepo.save(art);
 
 		// supprimer l'oeuvre
-		mvc.perform(delete("/api/admin/art/" + artToDelete.getId())
+		mvc.perform(delete("/api/admin/arts/" + artToDelete.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -172,7 +172,7 @@ class ArtControllerTest {
 		assertFalse(optArt.isPresent());
 
 		// Oeuvre inexistante
-		mvc.perform(delete("/api/admin/art/9")
+		mvc.perform(delete("/api/admin/arts/9")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
