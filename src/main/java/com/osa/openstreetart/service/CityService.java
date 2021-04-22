@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.entity.CityEntity;
+import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.CityRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,15 @@ public class CityService {
 			return null;
 		// On la sauvegarde puis on retourne l'id de l'entité pour l'associer a l'oeuvre.
 		return cityRepo.save(city);
+	}
+
+	public CityEntity getOrFail(Integer cityId) throws OSA404Exception{
+		Optional<CityEntity> city = cityRepo.findById(cityId);
+		if (city.isEmpty()) {
+			throw new OSA404Exception("City not found.");
+		}
+		
+		return city.get();
 	}
 
 }

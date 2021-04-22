@@ -40,7 +40,7 @@ class CityControllerTest {
 		CityEntity city = testUtil.createCity();
 		cityRepo.save(city);
 
-		MvcResult res = mvc.perform(get("/api/city/" + city.getId())
+		MvcResult res = mvc.perform(get("/api/cities/" + city.getId())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();
@@ -63,7 +63,7 @@ class CityControllerTest {
 		art.setCity(city);
 		artRepo.save(art);
 
-		MvcResult res = mvc.perform(get("/api/city/arts/" + city.getId())
+		MvcResult res = mvc.perform(get("/api/cities/" + city.getId() + "/arts")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();

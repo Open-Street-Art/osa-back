@@ -1,7 +1,5 @@
 package com.osa.openstreetart.controller;
 
-import java.util.Optional;
-
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.dto.UserPatchProfileDTO;
 import com.osa.openstreetart.entity.UserEntity;

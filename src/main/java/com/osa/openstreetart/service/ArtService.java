@@ -145,4 +145,8 @@ public class ArtService {
 		
 		return art.get(); 
 	} 
+
+	public Collection<ArtEntity> findByCityId(Integer cityId) {
+		return artRepo.findByCityId(cityId);
+	}
 }
