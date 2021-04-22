@@ -31,19 +31,14 @@ public class UserController {
 	@Autowired
 	UserRepository userRepo;
 
-	private static String tokenPrefix = "Bearer ";
-	private static String userNotFoundMsg = "User not found.";
+	private static final String  TOKEN_PREFIX = "Bearer ";
 
 	@GetMapping(value = "/user/{user_id}")
 	public ResponseEntity<OSAResponseDTO> getUserProfile(
 			@PathVariable("user_id") Integer userId) throws OSA400Exception {
-		Optional<UserEntity> optUser = userRepo.findById(userId);
-		if (!optUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
-
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
-				userService.loadUserProfileDTO(optUser.get())
+				userService.loadUserProfileDTO(userService.getOrFail(userId))
 			)
 		);
 	}
@@ -51,17 +46,14 @@ public class UserController {
 	@PatchMapping(value = "/user/email")
 	public ResponseEntity<OSAResponseDTO> patchUserEmail(@RequestHeader(value = "Authorization") String token, 
 			@RequestBody String newMail) throws OSA400Exception {
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		
-		if (!optionalUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
-
+		UserEntity user = userService.getOrFail(username);
 		if (!userService.isValidEmailAddress(newMail))
 			throw new OSA400Exception("Invalid email address.");
 
-		optionalUser.get().setEmail(newMail);
-		userRepo.save(optionalUser.get());
+		user.setEmail(newMail);
+		userService.save(user);
 		
 		return ResponseEntity.ok(new OSAResponseDTO("Email modified."));
 	}
@@ -70,16 +62,13 @@ public class UserController {
 	public ResponseEntity<OSAResponseDTO> patchUserPassword(@RequestHeader(value = "Authorization") String token,
 			@RequestBody String newPassword) throws OSA400Exception {
 		
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
-
-		if (!optionalUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
-
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
+		
+		UserEntity user = userService.getOrFail(username);
 		if (newPassword.length() < UserEntity.PSW_MIN_LENGTH)
 			throw new OSA400Exception("Invalid password.");
 
-		userService.changeUserPassword(optionalUser.get(), newPassword);
+		userService.changeUserPassword(user, newPassword);
 
 		return ResponseEntity.ok(new OSAResponseDTO("Password modified."));
 	}
@@ -87,13 +76,11 @@ public class UserController {
 	@PatchMapping(value = "/user/profile")
 	public ResponseEntity<OSAResponseDTO> patchUserProfile(@RequestHeader(value = "Authorization") String token,
 			@RequestBody UserPatchProfileDTO dto) throws OSA400Exception {
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
-		if (!optionalUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
-
-		userService.patchUser(optionalUser.get(), dto);
-		userRepo.save(optionalUser.get());
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
+		
+		UserEntity user = userService.getOrFail(username);
+		userService.patchUser(user, dto);
+		userService.save(user);
 
 		return ResponseEntity.ok(new OSAResponseDTO("Profile modified."));
 	}
@@ -102,11 +89,10 @@ public class UserController {
 	public ResponseEntity<OSAResponseDTO> getUserProfile(
 			@RequestHeader(value = "Authorization") String token) throws OSA400Exception {
 
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
-		if (!optionalUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
+		
+		UserEntity user = userService.getOrFail(username);
 
-		return ResponseEntity.ok(new OSAResponseDTO(userService.loadUserProfileDTO(optionalUser.get())));
+		return ResponseEntity.ok(new OSAResponseDTO(userService.loadUserProfileDTO(user)));
 	}
 }

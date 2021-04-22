@@ -133,5 +133,23 @@ public class UserService {
 		java.util.regex.Matcher m = p.matcher(email);
 		return m.matches();
  	}
+	
+	public <T> UserEntity getOrFail(T value) throws OSA400Exception{
+
+		Optional<UserEntity> optUser;
+		if (value instanceof Integer)
+			optUser = userRepo.findById((Integer)value);
+		else
+			optUser = userRepo.findByUsername((String)value);
+
+		if (optUser.isEmpty())
+			throw new OSA400Exception("User not found.");
+		
+		return optUser.get();
+	}
+
+	public void save(UserEntity user) {
+		userRepo.save(user);
+	}
 
 }
