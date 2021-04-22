@@ -149,4 +149,12 @@ public class ArtService {
 	public Collection<ArtEntity> findByCityId(Integer cityId) {
 		return artRepo.findByCityId(cityId);
 	}
+
+	public ArtEntity getOrFail(Integer artId) throws OSA400Exception{
+		Optional<ArtEntity> art = artRepo.findById(artId);
+		if (art.isEmpty())
+			throw new OSA400Exception("Art not found.");
+
+		 return art.get();
+	}
 }

@@ -79,7 +79,7 @@ class ContribControllerTest {
 		contribArt.setPicture3("hdhc.png");
 
         //enregister la contribution
-		mvc.perform(post("/api/contrib/" + art.getId())
+		mvc.perform(post("/api/contribs/" + art.getId())
         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ class ContribControllerTest {
 		contribArt.setLongitude(56.78);
 
         //enregister la contribution
-		mvc.perform(post("/api/contrib")
+		mvc.perform(post("/api/contribs")
         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
@@ -149,7 +149,7 @@ class ContribControllerTest {
         contrib = contribRepo.save(contrib);
          
          //supprimer la contribution
-		mvc.perform(delete("/api/contrib/" + contrib.getId())
+		mvc.perform(delete("/api/contribs/" + contrib.getId())
         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON))
@@ -184,7 +184,7 @@ class ContribControllerTest {
         
 
         //accepter la contribution
-		mvc.perform(post("/api/contrib/accept/" + contrib.getId())
+		mvc.perform(post("/api/contribs/" + contrib.getId() + "/accept")
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -222,7 +222,7 @@ class ContribControllerTest {
         
 
         //refuser la contribution
-		mvc.perform(post("/api/contrib/deny/" + contrib.getId())
+		mvc.perform(post("/api/contribs/" +  contrib.getId() + "/deny")
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -254,7 +254,7 @@ class ContribControllerTest {
  
 
         //retournner les contribution de l'oeuvre
-        MvcResult res = mvc.perform(get("/api/contrib/art/" + art.getId())
+        MvcResult res = mvc.perform(get("/api/contribs/arts/" + art.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk()).andReturn();
@@ -269,7 +269,7 @@ class ContribControllerTest {
         ContribEntity contrib = testUtil.createContrib(); 
         contrib = contribRepo.save(contrib);
  
-        MvcResult res = mvc.perform(get("/api/contrib/" + contrib.getId())
+        MvcResult res = mvc.perform(get("/api/contribs/" + contrib.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk()).andReturn();
@@ -292,7 +292,7 @@ class ContribControllerTest {
         contrib = contribRepo.save(contrib);
  
 
-        MvcResult res = mvc.perform(get("/api/contrib/unapproved")
+        MvcResult res = mvc.perform(get("/api/contribs/unapproved")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk()).andReturn();
@@ -322,7 +322,7 @@ class ContribControllerTest {
         contrib = contribRepo.save(contrib);
  
 
-        MvcResult res = mvc.perform(get("/api/contrib/personnal")
+        MvcResult res = mvc.perform(get("/api/contribs/personnal")
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -353,7 +353,7 @@ class ContribControllerTest {
         contrib = contribRepo.save(contrib);
  
 
-        MvcResult res = mvc.perform(get("/api/contrib/user/" + user.getId())
+        MvcResult res = mvc.perform(get("/api/contribs/users/" + user.getId())
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))

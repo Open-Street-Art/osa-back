@@ -2,7 +2,6 @@ package com.osa.openstreetart.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.dto.PostContribDTO;
@@ -13,11 +12,10 @@ import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
-import com.osa.openstreetart.repository.ArtRepository;
-import com.osa.openstreetart.repository.ContribRepository;
-import com.osa.openstreetart.repository.UserRepository;
+import com.osa.openstreetart.service.ArtService;
 import com.osa.openstreetart.service.ContribService;
 import com.osa.openstreetart.service.JwtService;
+import com.osa.openstreetart.service.UserService;
 import com.osa.openstreetart.tranformator.ContribTransformator;
 import com.osa.openstreetart.util.ApiRestController;
 import com.osa.openstreetart.util.JwtUtil;
@@ -35,115 +33,96 @@ public class ContribController {
 	private JwtService jwtService;
 
 	@Autowired
-	private UserRepository userRepo;
+	private UserService userService;
 
 	@Autowired
 	private ContribService contribService;
-
-	@Autowired
-	private ContribRepository contribRepo;
-
-	@Autowired
-	private ArtRepository artRepo;
 	
+	@Autowired
+	private ArtService artService;
+
 	@Autowired
 	private JwtUtil jwtUtil;
 
 	@Autowired
 	private ContribTransformator contribTransf;
 
-	private static String tokenPrefix = "Bearer ";
-	private static String unauthorizedMsg = "Unauthorized.";
-	private static String userNotFoundMsg = "User not found.";
-	private static String contribNotFoundMsg = "Contribution not found.";
+	private static final String TOKEN_PREFIX = "Bearer ";
+	private static final String UNAUTHORIZE_MSG = "Unauthorized.";
 	
-	@PostMapping(value = "/contrib")
+	@PostMapping(value = "/contribs")
 	public ResponseEntity<OSAResponseDTO> postContrib(@RequestHeader(value = "Authorization") String token,
 			@RequestBody PostNewContribDTO dto) throws OSA400Exception {
 		
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> contribUser = userRepo.findByUsername(username);
-		if (!contribUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 
-		contribService.saveNewContrib(dto, contribUser.get());
+		contribService.saveNewContrib(dto, userService.getOrFail(username));
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
-    @PostMapping(value = "/contrib/{art_id}")
+    @PostMapping(value = "/contribs/{art_id}")
 	public ResponseEntity<OSAResponseDTO> postContribArtId(@RequestHeader(value = "Authorization") String token,
     		@PathVariable("art_id") Integer artId, @RequestBody PostContribDTO contrib)
 			throws OSA400Exception {
 
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> contribUser = userRepo.findByUsername(username);
-		if (!contribUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		
-		contribService.saveExistingContrib(contrib, contribUser.get(), artId);
+		contribService.saveExistingContrib(contrib,
+			userService.getOrFail(username),
+			artId);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
-    @DeleteMapping(value = "/contrib/{contrib_id}")
+    @DeleteMapping(value = "/contribs/{contrib_id}")
 	public ResponseEntity<OSAResponseDTO> deleteContrib(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA404Exception, OSA400Exception {
 
-		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
-		if (!contrib.isPresent())
-			throw new OSA400Exception(contribNotFoundMsg);
-
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> optionalUser = userRepo.findByUsername(username);
-		if (!optionalUser.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
-
+		ContribEntity contrib = contribService.getOrFail(contribId);
+		
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
+		UserEntity user = userService.getOrFail(username);
+		
 		// Vérification si l'auteur de la requete est l'auteur de la contrib ou admin
-		if (!contrib.get().getContributor().equals(optionalUser.get())
-				&& !jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(unauthorizedMsg);										
+		if (!contrib.getContributor().equals(user)
+				&& !jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(UNAUTHORIZE_MSG);										
 
 		contribService.delete(contribId);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
 	}
 
-	@PostMapping(value = "/contrib/accept/{contrib_id}")
+	@PostMapping(value = "/contribs/{contrib_id}/accept")
 	public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,
 			@PathVariable("contrib_id") Integer contribId) throws OSA404Exception, OSA401Exception, OSA400Exception {
 
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(unauthorizedMsg);
+		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(UNAUTHORIZE_MSG);
 		
-		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
-		if(!contrib.isPresent())
-			throw new OSA404Exception(contribNotFoundMsg);
+		ContribEntity contrib = contribService.getOrFail(contribId);
 
-		contribService.acceptContrib(contrib.get());
+		contribService.acceptContrib(contrib);
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
     }
 
-	@PostMapping(value = "/contrib/deny/{contrib_id}")
+	@PostMapping(value = "/contribs/{contrib_id}/deny")
 	public ResponseEntity<OSAResponseDTO> denyContrib(@RequestHeader(value = "Authorization") String token,
-			@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA404Exception, OSA400Exception {
+			@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA400Exception {
 
-		if (!jwtService.getRolesByToken(token.substring(tokenPrefix.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(unauthorizedMsg);
+		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
+			throw new OSA401Exception(UNAUTHORIZE_MSG);
 
-		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
-		if(!contrib.isPresent())
-			throw new OSA404Exception(contribNotFoundMsg);
-
-		contribService.denyContrib(contrib.get());
+		ContribEntity contrib = contribService.getOrFail(contribId);
+		
+		contribService.denyContrib(contrib);
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
     }
 
-	@GetMapping(value = "/contrib/art/{art_id}")
-    public ResponseEntity<OSAResponseDTO> getContribsOfArt(@PathVariable("art_id") Integer artId) throws OSA404Exception {
-		Optional<ArtEntity> art = artRepo.findById(artId);
-		if(!art.isPresent())
-			throw new OSA404Exception("Art not found.");
-
-		List<ContribEntity> contribs = new ArrayList<>(contribRepo.findByArtId(artId));
+	@GetMapping(value = "/contribs/arts/{art_id}")
+    public ResponseEntity<OSAResponseDTO> getContribsOfArt(@PathVariable("art_id") Integer artId) throws OSA400Exception {
+		ArtEntity art = artService.getOrFail(artId);
 		
+		List<ContribEntity> contribs = new ArrayList<>(contribService.findByArtId(art.getId()));
+
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
 				contribTransf.modelsToDtos(contribs)
@@ -151,24 +130,20 @@ public class ContribController {
 		);
 	}
 
-	@GetMapping(value = "/contrib/{contrib_id}")
-	public ResponseEntity<OSAResponseDTO> getContribWithId(@PathVariable("contrib_id") Integer contribId) throws OSA404Exception {
-		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
-		if (!contrib.isPresent())
-			throw new OSA404Exception("Contribution not found.");
+	@GetMapping(value = "/contribs/{contrib_id}")
+	public ResponseEntity<OSAResponseDTO> getContribWithId(@PathVariable("contrib_id") Integer contribId) throws OSA400Exception {
+		ContribEntity contrib = contribService.getOrFail(contribId);
 
 		return ResponseEntity.ok(
-			new OSAResponseDTO(
-				contrib.get()
-			)
+			new OSAResponseDTO(contrib)
 		);
 	}
 
-	@GetMapping(value = "/contrib/unapproved")
+	@GetMapping(value = "/contribs/unapproved")
 	public ResponseEntity<OSAResponseDTO> getUnapprovedContribs() {
 
 		List<ContribEntity> contribs = new ArrayList<>();
-		for (ContribEntity contrib : contribRepo.findAll()) {
+		for (ContribEntity contrib : contribService.findAll()) {
 			if (contrib.getApproved() == null)
 				contribs.add(contrib);
 		}
@@ -180,39 +155,35 @@ public class ContribController {
 		);
 	}
 
-	@GetMapping(value = "/contrib/personnal")
+	@GetMapping(value = "/contribs/personnal")
 	public ResponseEntity<OSAResponseDTO> getUserContribs(@RequestHeader(value = "Authorization") String token) throws OSA400Exception {
-		String username = jwtUtil.getUsernameFromToken(token.substring(tokenPrefix.length()));
-		Optional<UserEntity> user = userRepo.findByUsername(username);
-		if (!user.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
-
-			List<ContribEntity> contribs = new ArrayList<>();
-			//récupérer les contributions de l'utilisateur
-			for (ContribEntity contrib : contribRepo.findAll()) {
-				if (contrib.getContributor().equals(user.get()))
-					contribs.add(contrib);
-			}
+		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
+		UserEntity user = userService.getOrFail(username);
+		
+		List<ContribEntity> contribs = new ArrayList<>();
+		//récupérer les contributions de l'utilisateur
+		for (ContribEntity contrib : contribService.findAll()) {
+			if (contrib.getContributor().equals(user))
+				contribs.add(contrib);
+		}
 	
-			return ResponseEntity.ok(new OSAResponseDTO(contribTransf.modelsToDtos(contribs)));
+		return ResponseEntity.ok(new OSAResponseDTO(contribTransf.modelsToDtos(contribs)));
 	}
 
-	@GetMapping(value = "/contrib/user/{user_id}")
+	@GetMapping(value = "/contribs/users/{user_id}")
 	public ResponseEntity<OSAResponseDTO> getUserContribs(
 			@RequestHeader(value = "Authorization") String token,
 			@PathVariable("user_id") Integer userId) throws OSA400Exception {
 
-		Optional<UserEntity> user = userRepo.findById(userId);
-		if (!user.isPresent())
-			throw new OSA400Exception(userNotFoundMsg);
+		UserEntity user = userService.getOrFail(userId);
 
-			List<ContribEntity> contribs = new ArrayList<>();
-			//récupérer les contributions de l'utilisateur
-			for (ContribEntity contrib : contribRepo.findAll()) {
-				if (contrib.getContributor().equals(user.get()))
-					contribs.add(contrib);
-			}
+		List<ContribEntity> contribs = new ArrayList<>();
+		//récupérer les contributions de l'utilisateur
+		for (ContribEntity contrib : contribService.findAll()) {
+			if (contrib.getContributor().equals(user))
+				contribs.add(contrib);
+		}
 	
-			return ResponseEntity.ok(new OSAResponseDTO(contribTransf.modelsToDtos(contribs)));
+		return ResponseEntity.ok(new OSAResponseDTO(contribTransf.modelsToDtos(contribs)));
 	}
 }

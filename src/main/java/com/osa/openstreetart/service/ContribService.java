@@ -144,4 +144,20 @@ public class ContribService {
         }
 		contribRepo.delete(contrib.get());
 	}
+
+	public ContribEntity getOrFail(Integer contribId) throws OSA400Exception{
+		Optional<ContribEntity> contrib = contribRepo.findById(contribId);
+		if (contrib.isEmpty())
+			throw new OSA400Exception("Contribution not found.");
+
+		 return contrib.get();
+	}
+
+	public Collection<ContribEntity> findByArtId(Integer artId) {
+		return contribRepo.findByArtId(artId);
+	}
+
+	public Iterable<ContribEntity> findAll() {
+		return contribRepo.findAll();
+	}
 }
