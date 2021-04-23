@@ -55,7 +55,7 @@ public class FavouriteControllerTest {
 
 		String token = testUtil.getJWTwithUsername(user.getUsername());
 
-		mvc.perform(post("/api/fav/art/" + art.getId())
+		mvc.perform(post("/api/fav/arts/" + art.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk());
@@ -82,7 +82,7 @@ public class FavouriteControllerTest {
 
 		String token = testUtil.getJWTwithUsername(user.getUsername());
 
-		mvc.perform(delete("/api/fav/art/" + art.getId())
+		mvc.perform(delete("/api/fav/arts/" + art.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk());
@@ -108,7 +108,7 @@ public class FavouriteControllerTest {
 
 		String token = testUtil.getJWTwithUsername(user.getUsername());
 
-		mvc.perform(post("/api/fav/artist/" + artist.getId())
+		mvc.perform(post("/api/fav/artists/" + artist.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk());
@@ -140,7 +140,7 @@ public class FavouriteControllerTest {
 		
 		String token = testUtil.getJWTwithUsername(user.getUsername());
 
-		mvc.perform(delete("/api/fav/artist/" + artist.getId())
+		mvc.perform(delete("/api/fav/artists/" + artist.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk());
@@ -164,7 +164,7 @@ public class FavouriteControllerTest {
 		cityFav = cityRepo.save(cityFav);
 
 		//ajouter la ville à la liste favorite
-		mvc.perform(post("/api/fav/city/" + cityFav.getId())
+		mvc.perform(post("/api/fav/cities/" + cityFav.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk());
@@ -196,7 +196,7 @@ public class FavouriteControllerTest {
 		
 		String token = testUtil.getJWTwithUsername(user.getUsername());
 
-		mvc.perform(delete("/api/fav/city/" + cityFav.getId())
+		mvc.perform(delete("/api/fav/cities/" + cityFav.getId())
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk());
