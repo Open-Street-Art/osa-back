@@ -152,4 +152,8 @@ public class UserService {
 		userRepo.save(user);
 	}
 
+	public Collection<UserEntity> findByUsernameWithSub(String substring) {
+		return userRepo.findByUsernameWithSub(substring);
+	}
+	
 }

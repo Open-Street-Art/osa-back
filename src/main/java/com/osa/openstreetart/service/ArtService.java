@@ -157,4 +157,20 @@ public class ArtService {
 
 		 return art.get();
 	}
+
+    public Collection<ArtEntity> findByNameWithSub(String content) {
+        return artRepo.findByNameWithSub(content);
+    }
+
+    public Collection<ArtEntity> findByAuthorNameWithSub(String username) {
+        return artRepo.findByAuthorNameWithSub(username);
+    }
+
+    public Collection<ArtEntity> findByAuthorId(Integer id) {
+        return artRepo.findByAuthorId(id);
+    }
+
+	public Collection<ArtEntity> findByCitiesName(String content) {
+		return artRepo.findByCitiesName(content);
+	}
 }

@@ -79,7 +79,7 @@ class SearchControllerTest {
 		art.setAuthorName("tata");
 		artRepo.save(art);
 
-		MvcResult res = mvc.perform(get("/api/search/arts/artist/tat")
+		MvcResult res = mvc.perform(get("/api/search/arts/artists/tat")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();
@@ -95,7 +95,7 @@ class SearchControllerTest {
 		art.setAuthor(artist);
 		artRepo.save(art);
 
-		res = mvc.perform(get("/api/search/arts/artist/arti")
+		res = mvc.perform(get("/api/search/arts/artists/arti")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk()).andReturn();

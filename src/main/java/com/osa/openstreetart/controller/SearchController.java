@@ -10,6 +10,7 @@ import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.repository.ArtRepository;
 import com.osa.openstreetart.repository.UserRepository;
+import com.osa.openstreetart.service.ArtService;
 import com.osa.openstreetart.service.UserService;
 import com.osa.openstreetart.util.ApiRestController;
 
@@ -22,25 +23,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class SearchController {
 	
 	@Autowired
-	private ArtRepository artRepo;
-
-	@Autowired
-	private UserRepository userRepo;
+	private ArtService artService;
 
 	@Autowired
 	private UserService userService;
 
-	private static String emptySearchMsg = "Empty search content.";
+	private static final String EMPTY_SEARCH_MSG = "Empty search content.";
 
 	@GetMapping(value = "/search/users/{content}")
 	public ResponseEntity<OSAResponseDTO> getSearchUsers(@PathVariable("content") String content)
 			throws OSA400Exception {
 		if (content.isEmpty() || content.isBlank())
-			throw new OSA400Exception(emptySearchMsg);
+			throw new OSA400Exception(EMPTY_SEARCH_MSG);
 
 		Collection<UserProfileDTO> searchResult = new ArrayList<>();
 		
-		for (UserEntity user : userRepo.findByUsernameWithSub(content)) {
+		for (UserEntity user : userService.findByUsernameWithSub(content)) {
 			searchResult.add(userService.loadUserProfileDTO(user));
 		}
 
@@ -53,30 +51,28 @@ public class SearchController {
 	public ResponseEntity<OSAResponseDTO> getSearchArts(@PathVariable("content") String content)
 			throws OSA400Exception {
 		if (content.isEmpty() || content.isBlank())
-			throw new OSA400Exception(emptySearchMsg);
+			throw new OSA400Exception(EMPTY_SEARCH_MSG);
 
 		return ResponseEntity.ok(
-			new OSAResponseDTO(artRepo.findByNameWithSub(content))
+			new OSAResponseDTO(artService.findByNameWithSub(content))
 		);
 	}
 
-	@GetMapping(value = "/search/arts/artist/{username}")
+	@GetMapping(value = "/search/arts/artists/{username}")
 	public ResponseEntity<OSAResponseDTO> getSearchArtsByArtist(@PathVariable("username") String username)
 			throws OSA400Exception {
 		if (username.isEmpty() || username.isBlank())
-			throw new OSA400Exception(emptySearchMsg);
+			throw new OSA400Exception(EMPTY_SEARCH_MSG);
 
 		// Résultat à renvoyer
-		Collection<ArtEntity> result = new ArrayList<>();
-
-		// Récuperation des oeuvres via le champ String author_name
-		result.addAll(artRepo.findByAuthorNameWithSub(username));
+		Collection<ArtEntity> result = new ArrayList<>(
+			artService.findByAuthorNameWithSub(username));
 
 		// Récuperation de la liste d'artistes par référence
-		Collection<UserEntity> artists = userRepo.findByUsernameWithSub(username);
+		Collection<UserEntity> artists = userService.findByUsernameWithSub(username);
 
 		for (UserEntity artist : artists)
-			result.addAll(artRepo.findByAuthorId(artist.getId()));
+			result.addAll(artService.findByAuthorId(artist.getId()));
 
 		return ResponseEntity.ok(new OSAResponseDTO(result));
 	}
@@ -85,8 +81,8 @@ public class SearchController {
 	public ResponseEntity<OSAResponseDTO> getSearchCities(@PathVariable("content") String content)
 			throws OSA400Exception {
 		if (content.isEmpty() || content.isBlank())
-			throw new OSA400Exception(emptySearchMsg);
+			throw new OSA400Exception(EMPTY_SEARCH_MSG);
 
-		return ResponseEntity.ok(new OSAResponseDTO(artRepo.findByCitiesName(content)));
+		return ResponseEntity.ok(new OSAResponseDTO(artService.findByCitiesName(content)));
 	}
 }
