@@ -2,6 +2,7 @@ package com.osa.openstreetart.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -93,15 +94,16 @@ public class ContribService {
 		contribArt.setDescription(contrib.getDescription());
 		contribArt.setArt(art.get());
 
-		Collection<String> pictures = new ArrayList<>();
-		if (contrib.getPicture1() != null && !contrib.getPicture1().isEmpty())
-			pictures.add(contrib.getPicture1());
-		if (contrib.getPicture2() != null && !contrib.getPicture2().isEmpty())
-			pictures.add(contrib.getPicture2());
-		if (contrib.getPicture3() != null && !contrib.getPicture3().isEmpty())
-			pictures.add(contrib.getPicture3());
-		contribArt.setPictures(pictures);
+		Collection<String> pictures = new ArrayList<>(Arrays.asList(
+			contrib.getPicture1(),
+			contrib.getPicture2(),
+			contrib.getPicture3()
+		));
 
+		if (pictures.isEmpty())
+			throw new OSA400Exception("No image for Contrib");
+		
+		contribArt.setPictures(pictures);
 		contribArt.setCity(art.get().getCity());
 		contribArt.setAuthorName(contrib.getAuthorName());
 
@@ -121,11 +123,17 @@ public class ContribService {
 		contribArt.setName(contrib.getName());
 		contribArt.setDescription(contrib.getDescription());
 
-		Collection<String> pictures = new ArrayList<>();
-		pictures.add(contrib.getPicture1());
-		pictures.add(contrib.getPicture2());
-		pictures.add(contrib.getPicture3());
+		Collection<String> pictures = new ArrayList<>(Arrays.asList(
+			contrib.getPicture1(),
+			contrib.getPicture2(),
+			contrib.getPicture3()
+		));
+
+		if (pictures.isEmpty())
+			throw new OSA400Exception("No image for Contrib");
+
 		contribArt.setPictures(pictures);
+		
 		
 		contribArt.setLongitude(contrib.getLongitude());
 		contribArt.setLatitude(contrib.getLatitude());
@@ -136,7 +144,6 @@ public class ContribService {
 		contribRepo.save(contribArt);
 	}
 
-	
 	public void delete(Integer artId) throws OSA404Exception {
 		Optional<ContribEntity> contrib = contribRepo.findById(artId);
 		if(!contrib.isPresent()) {

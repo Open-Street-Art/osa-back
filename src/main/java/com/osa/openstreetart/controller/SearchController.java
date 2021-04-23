@@ -8,8 +8,6 @@ import com.osa.openstreetart.dto.UserProfileDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
-import com.osa.openstreetart.repository.ArtRepository;
-import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.ArtService;
 import com.osa.openstreetart.service.UserService;
 import com.osa.openstreetart.util.ApiRestController;
