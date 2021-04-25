@@ -123,8 +123,6 @@ class ArtControllerTest {
 		CityEntity city = testUtil.createCity();
 		city = cityRepo.save(city);
 		
-		art.setCityId(city.getId());
-		
 		// enregister l'oeuvre
 		mvc.perform(post("/api/admin/arts")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
