@@ -8,11 +8,13 @@
 		<version>2.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.osa</groupId>
 	<artifactId>openstreetart</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>openstreetart</name>
 	<description>API REST Projet Open Street Art</description>
+	
 	<properties>
 		<sonar.projectKey>Open-Street-Art_osa-back</sonar.projectKey>
   		<sonar.organization>open-street-art</sonar.organization>
@@ -20,6 +22,26 @@
 		<java.version>11</java.version>
 		<springfox.version>2.9.2</springfox.version>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<activatedProperties>dev</activatedProperties>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		
+		<profile>
+			<id>prod</id>
+			<properties>
+				<activatedProperties>recette</activatedProperties>
+			</properties>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
