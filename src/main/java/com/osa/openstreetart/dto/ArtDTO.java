@@ -11,7 +11,6 @@ public class ArtDTO {
 	private String picture3;	
 	private String author;
 	private Integer authorId;
-	private Integer cityId;
 	private Double longitude;
 	private Double latitude;
 }

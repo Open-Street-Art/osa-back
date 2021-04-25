@@ -34,6 +34,7 @@ public class ArtService {
 
 	@Autowired
 	CityService cityService;
+
 	public void patch(Integer artId, EditArtDTO dto) throws OSA404Exception, OSA400Exception {
 		if (dto == null)
 			throw new OSA400Exception("empty values");
@@ -119,15 +120,20 @@ public class ArtService {
 				newArt.setAuthor(optAuthor.get());
 		}
 		
-		// une oeuvre est associé à un city
-		if (dto.getCityId() != null) {
-			Optional<CityEntity> artCity = cityRepo.findById(dto.getCityId());
-			if(!artCity.isPresent())
-				throw new OSA400Exception("City not found");
-	
-			newArt.setCity(artCity.get());
+		// On récupère une possible ville
+		CityEntity city = cityService.getCityFromLatLong(
+			dto.getLatitude(),
+			dto.getLongitude()
+		);
+
+		if (city != null) {
+			CityEntity cityToLink = cityService.registerCity(city);
+			if (cityToLink != null) {
+				newArt.setCity(cityToLink);
+			}
 		}
-		return newArt; 
+
+		return newArt;
 	}
 
 	public void delete(Integer artId) throws OSA404Exception {

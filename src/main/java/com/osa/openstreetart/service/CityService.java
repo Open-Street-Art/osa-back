@@ -56,7 +56,7 @@ public class CityService {
 		// On verifie si la ville n'existe pas en base
 		Optional<CityEntity> res = cityRepo.findByName(city.getName());
 		if (res.isPresent())
-			return null;
+			return res.get();
 		// On la sauvegarde puis on retourne l'id de l'entité pour l'associer a l'oeuvre.
 		return cityRepo.save(city);
 	}

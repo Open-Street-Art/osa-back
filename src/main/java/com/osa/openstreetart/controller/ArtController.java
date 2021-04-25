@@ -13,6 +13,7 @@ import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ArtRepository;
+import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.service.ArtService;
 import com.osa.openstreetart.service.CityService;
 import com.osa.openstreetart.service.JwtService;
@@ -56,18 +57,7 @@ public class ArtController {
 			throws OSA401Exception, OSA400Exception {
 		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
 			throw new OSA401Exception(UNAUTHORIZE_MSG);
-		
-		CityEntity city = cityService.getCityFromLatLong(
-			art.getLatitude(),
-			art.getLongitude()
-		);
 
-		if (city != null) {
-			CityEntity cityToLink = cityService.registerCity(city);
-			if (cityToLink != null)
-				art.setCityId(cityToLink.getId());
-		}
-			
 		artService.save(art);
 		return ResponseEntity.ok(new OSAResponseDTO("Art created."));
 	}
