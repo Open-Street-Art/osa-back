@@ -40,8 +40,13 @@ public class CityService {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			city.setName(mapper.readTree(json).get("data").get(0).get("locality").asText());
-		} catch (JsonProcessingException e) {
+			city
+				.setName(mapper.readTree(json)
+				.get("data")
+				.get(0)
+				.get("locality")
+				.asText());
+		} catch (Exception e) {
 			return null;
 		}
 		if (city.getName() == null 
