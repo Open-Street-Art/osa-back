@@ -2,7 +2,6 @@ package com.osa.openstreetart.service;
 
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.exceptions.OSA404Exception;
