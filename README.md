@@ -22,6 +22,11 @@ Lancement du projet en arrière plan
 mvn spring-boot:start
 ```
 
+Lancement du projet en arrière plan en mode production
+```
+mvn spring-boot:start -Pprod
+```
+
 Accès à la documentation Swagger
 ```
 http://localhost:8080/swagger-ui.html

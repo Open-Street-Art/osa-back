@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<style>
+			div {
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			p {
+				margin: 0px;
+			}
+			h4 {
+				margin: 0px;
+			}
+			h1 {
+				color: #00BAAF;
+			}
+			h3 {
+				color: #00BAAF;
+			}
+			img {
+				float: right;
+				width: 140px;
+				padding-top: 12px;
+				padding-right: 20px;
+			}
+			li {
+				margin-top: 30px;
+				margin-bottom: 60px;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="margin-top: 25px;margin-bottom: 25px; margin-left: 20px; margin-right: 20px;">
+			<h1>Open Street Art</h1>
+			<h2>Liste des oeuvres de la ville : </h2>
+			<div>
+				<ul>
+					<li th:each="art: ${arts}">
+						<img th:src="${art.pictures[0]}" />
+						<h3 th:text="${art.name}" />
+						<p th:text="${'Auteur : ' + art.authorName}" />
+						<p th:text="${'Description : ' + art.description}" />
+						<p th:text="${'Longitude : ' + art.longitude}" />
+						<p th:text="${'Latitude : ' + art.latitude}" />
+						<p th:text="${'Date de création : ' + #temporals.format(art.creationDateTime, 'dd/MM/yyyy')}" />
+						<p th:text="${'Heure de création : ' + #temporals.format(art.creationDateTime, 'HH:mm:ss')}" />
+					</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>
