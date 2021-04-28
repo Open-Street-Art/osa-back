@@ -7,13 +7,11 @@ import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.dto.EditArtDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.entity.ArtEntity;
-import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.repository.ArtRepository;
-import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.service.ArtService;
 import com.osa.openstreetart.service.CityService;
 import com.osa.openstreetart.service.JwtService;
@@ -30,7 +28,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ApiRestController
+@Slf4j
 public class ArtController {
 
 	@Autowired
@@ -59,6 +60,8 @@ public class ArtController {
 			throw new OSA401Exception(UNAUTHORIZE_MSG);
 
 		artService.save(art);
+		log.info("New Art created");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Art created."));
 	}
 
@@ -70,6 +73,7 @@ public class ArtController {
 			throw new OSA401Exception(UNAUTHORIZE_MSG);
 
 		artService.patch(artId, art);
+		log.info("Art : " + artId + " modified");
 		return ResponseEntity.ok(new OSAResponseDTO("Art modified."));
 	}
 
@@ -79,6 +83,7 @@ public class ArtController {
 		Iterable<ArtEntity> iterable = artRepo.findAll();
 		iterable.forEach(arts::add);
 
+		log.info("Arts locations served");
 		return ResponseEntity.ok(new OSAResponseDTO(artTransf.modelsToDtos(arts)));
 	}
 
@@ -89,11 +94,15 @@ public class ArtController {
 			throw new OSA401Exception(UNAUTHORIZE_MSG);
 		
 		artService.delete(artId);
+		log.info("Art : " + artId + " deleted");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Art deleted"));
 	}
 
 	@GetMapping(value = "/arts/{art_id}")
 	public ResponseEntity<OSAResponseDTO> getArt(@PathVariable("art_id") Integer artId) {
+		
+		log.info("Art : " + artId + " served");
 		return ResponseEntity.ok(new OSAResponseDTO(artService.getArt(artId)));
 	}
 }

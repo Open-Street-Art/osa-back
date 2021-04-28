@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
 @ApiRestController
+@Slf4j
 public class FavouriteController {
 
 	@Autowired
@@ -88,7 +90,8 @@ public class FavouriteController {
 
 		user.getFavArts().add(art);
 		userService.save(user);
-		
+		log.info("Art : " + artId + " added to User :" + user.getId() + "favourite list");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Art added to the favourite arts list."));
 	}
 
@@ -125,7 +128,8 @@ public class FavouriteController {
 		
 		user.getFavArts().remove(toDelete);
 		userService.save(user);
-		
+		log.info("Art : " + artId + " removed to User :" + user.getId() + "favourite list");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Art removed from the favourite arts list."));
 	}
 
@@ -165,7 +169,8 @@ public class FavouriteController {
 		
 		user.getFavArtists().add(artist);
 		userService.save(user);
-		
+		log.info("Artist : " + artistId + " deleted to User :" + user.getId() + "favourite list");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Artist added to the favourite artists list."));
 	}
 
@@ -201,7 +206,8 @@ public class FavouriteController {
 		//retirer l'artist de la liste
 		user.getFavArtists().remove(artistFav.get());
 		userService.save(user);
-		
+		log.info("Artist : " + artistId + " removed to User :" + user.getId() + "favourite list");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Artist remove to the favourite artists list."));
 	}
 
@@ -238,7 +244,8 @@ public class FavouriteController {
 
 		user.getFavCities().add(cityFavToAdd);
 		userService.save(user);
-		
+		log.info("City : " + cityId + " added to User :" + user.getId() + " favourite list");
+
 		return ResponseEntity.ok(new OSAResponseDTO("City added to the favourite Cities list."));
 	}
 
@@ -278,7 +285,8 @@ public class FavouriteController {
 		
 		user.getFavCities().remove(cityFav);
 		userService.save(user);
-		
+		log.info("City : " + cityId + " removed to User :" + user.getId() + " favourite list");
+
 		return ResponseEntity.ok(new OSAResponseDTO("City remove to the favourite Cities list."));
 	}
 }

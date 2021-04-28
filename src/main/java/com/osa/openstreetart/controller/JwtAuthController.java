@@ -18,8 +18,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
 @ApiRestController
+@Slf4j
 public class JwtAuthController {
 
 	@Autowired
@@ -36,6 +38,8 @@ public class JwtAuthController {
 	public ResponseEntity<OSAResponseDTO> postRegister(@RequestBody UserRegisterDTO user)
 			throws OSA409Exception, OSA400Exception {
 		userService.register(user);
+
+		log.info("New user registered on Open Street Art");
 		return ResponseEntity.ok(new OSAResponseDTO("User registered."));
 	}
 
@@ -50,6 +54,8 @@ public class JwtAuthController {
 	@PostMapping(value = "/authenticate")
 	public ResponseEntity<OSAResponseDTO> postAuthenticate(@RequestBody UserLoginDTO request) {
 		final String token = userService.login(request);
+		log.info("New connection to Open Street Art");
+
 		return ResponseEntity.ok(new OSAResponseDTO(new JwtDTO(token)));
 	}
 	

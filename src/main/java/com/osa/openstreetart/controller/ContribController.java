@@ -26,7 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ApiRestController
+@Slf4j
 public class ContribController {
 
 	@Autowired
@@ -57,6 +60,8 @@ public class ContribController {
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 
 		contribService.saveNewContrib(dto, userService.getOrFail(username));
+		log.info("New Contrib Created");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
@@ -70,6 +75,8 @@ public class ContribController {
 		contribService.saveExistingContrib(contrib,
 			userService.getOrFail(username),
 			artId);
+		log.info("New Contrib created for Art : " + artId);
+
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution created."));
 	}
 
@@ -88,6 +95,8 @@ public class ContribController {
 			throw new OSA401Exception(UNAUTHORIZE_MSG);										
 
 		contribService.delete(contribId);
+		log.info("Contrib  : " + contribId + " deleted");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
 	}
 
@@ -101,6 +110,7 @@ public class ContribController {
 		ContribEntity contrib = contribService.getOrFail(contribId);
 
 		contribService.acceptContrib(contrib);
+		log.info("Contrib  : " + contribId + " accepted");
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
     }
 
@@ -114,6 +124,8 @@ public class ContribController {
 		ContribEntity contrib = contribService.getOrFail(contribId);
 		
 		contribService.denyContrib(contrib);
+		log.info("Contrib  : " + contribId + " refused");
+
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
     }
 
@@ -122,6 +134,7 @@ public class ContribController {
 		ArtEntity art = artService.getOrFail(artId);
 		
 		List<ContribEntity> contribs = new ArrayList<>(contribService.findByArtId(art.getId()));
+		log.info("Served Contribs  of Art : " + artId);
 
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
@@ -133,6 +146,7 @@ public class ContribController {
 	@GetMapping(value = "/contribs/{contrib_id}")
 	public ResponseEntity<OSAResponseDTO> getContribWithId(@PathVariable("contrib_id") Integer contribId) throws OSA400Exception {
 		ContribEntity contrib = contribService.getOrFail(contribId);
+		log.info("Contrib : " + contribId + " Served");
 
 		return ResponseEntity.ok(
 			new OSAResponseDTO(contrib)
@@ -147,6 +161,7 @@ public class ContribController {
 			if (contrib.getApproved() == null)
 				contribs.add(contrib);
 		}
+		log.info("Served unapproved Contribs");
 
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
@@ -166,7 +181,8 @@ public class ContribController {
 			if (contrib.getContributor().equals(user))
 				contribs.add(contrib);
 		}
-	
+		log.info("Served User: " + user.getId() + " Contribs");
+
 		return ResponseEntity.ok(new OSAResponseDTO(contribTransf.modelsToDtos(contribs)));
 	}
 
@@ -183,7 +199,8 @@ public class ContribController {
 			if (contrib.getContributor().equals(user))
 				contribs.add(contrib);
 		}
-	
+		log.info("Served User: " + userId + " Contribs");
+
 		return ResponseEntity.ok(new OSAResponseDTO(contribTransf.modelsToDtos(contribs)));
 	}
 }

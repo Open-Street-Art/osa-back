@@ -12,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ApiRestController
+@Slf4j
 public class CityController {
 	
 	@Autowired
@@ -24,6 +27,8 @@ public class CityController {
 	@GetMapping(value = "/cities/{city_id}")
 	public ResponseEntity<OSAResponseDTO> getCity(
 			@PathVariable("city_id") Integer cityId) throws OSA404Exception {
+		
+		log.info("City : " + cityId + " consulted");
 		return ResponseEntity.ok(
 			new OSAResponseDTO(cityService.getOrFail(cityId))
 		);
@@ -33,6 +38,7 @@ public class CityController {
 	public ResponseEntity<OSAResponseDTO> getArtsByCity(
 			@PathVariable("city_id") Integer cityId) throws OSA404Exception {
 		
+		log.info("Consulted City : " + cityId + " arts");
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
 				artService.findByCityId(cityService.getOrFail(cityId).getId())
