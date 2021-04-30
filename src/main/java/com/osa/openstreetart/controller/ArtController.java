@@ -1,19 +1,13 @@
 package com.osa.openstreetart.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.dto.EditArtDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
-import com.osa.openstreetart.entity.ArtEntity;
-import com.osa.openstreetart.entity.CityEntity;
 import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.exceptions.OSA400Exception;
 import com.osa.openstreetart.exceptions.OSA401Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
-import com.osa.openstreetart.repository.ArtRepository;
-import com.osa.openstreetart.repository.CityRepository;
 import com.osa.openstreetart.service.ArtService;
 import com.osa.openstreetart.service.CityService;
 import com.osa.openstreetart.service.JwtService;
@@ -45,9 +39,6 @@ public class ArtController {
 	@Autowired
 	ArtLocationTransformator artTransf;
 
-	@Autowired
-	ArtRepository artRepo;
-
 	private static final String TOKEN_PREFIX = "Bearer ";
 	private static final String UNAUTHORIZE_MSG = "Unauthorized.";
 
@@ -75,11 +66,10 @@ public class ArtController {
 
 	@GetMapping(value = "/arts/locations")
 	public ResponseEntity<OSAResponseDTO> getArtsLocations() {
-		List<ArtEntity> arts = new ArrayList<>();
-		Iterable<ArtEntity> iterable = artRepo.findAll();
-		iterable.forEach(arts::add);
-
-		return ResponseEntity.ok(new OSAResponseDTO(artTransf.modelsToDtos(arts)));
+		
+		return ResponseEntity.ok(new OSAResponseDTO(
+			artTransf.modelsToDtos(artService.findAll()))
+		);
 	}
 
 	@DeleteMapping(value = "/admin/arts/{art_id}")

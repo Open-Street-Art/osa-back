@@ -4,7 +4,6 @@ import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.dto.UserPatchProfileDTO;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
-import com.osa.openstreetart.repository.UserRepository;
 import com.osa.openstreetart.service.UserService;
 import com.osa.openstreetart.util.ApiRestController;
 import com.osa.openstreetart.util.JwtUtil;
@@ -25,9 +24,6 @@ public class UserController {
 
 	@Autowired
 	JwtUtil jwtUtil;
-
-	@Autowired
-	UserRepository userRepo;
 
 	private static final String  TOKEN_PREFIX = "Bearer ";
 

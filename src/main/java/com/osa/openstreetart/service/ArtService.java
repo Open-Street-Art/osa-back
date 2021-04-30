@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.List;
 
 import com.osa.openstreetart.dto.ArtDTO;
 import com.osa.openstreetart.dto.EditArtDTO;
@@ -19,6 +20,8 @@ import com.osa.openstreetart.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+
 
 @Service
 public class ArtService {
@@ -156,6 +159,7 @@ public class ArtService {
 		return artRepo.findByCityId(cityId);
 	}
 
+
 	public ArtEntity getOrFail(Integer artId) throws OSA400Exception{
 		Optional<ArtEntity> art = artRepo.findById(artId);
 		if (art.isEmpty())
@@ -178,5 +182,14 @@ public class ArtService {
 
 	public Collection<ArtEntity> findByCitiesName(String content) {
 		return artRepo.findByCitiesName(content);
+	}
+
+	public List<ArtEntity> findAll() {
+
+		List<ArtEntity> arts = new ArrayList<>();
+		Iterable<ArtEntity> iterable = artRepo.findAll();
+		iterable.forEach(arts::add);
+		
+		return arts;
 	}
 }
