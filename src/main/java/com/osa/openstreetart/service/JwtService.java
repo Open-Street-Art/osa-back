@@ -41,7 +41,7 @@ public class JwtService implements UserDetailsService{
 	@Override
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 		Optional<UserEntity> optUser = userRepo.findByUsername(username);
-		if (!optUser.isPresent())
+		if (optUser.isEmpty())
 			throw new UsernameNotFoundException("User not found with email: " + username);
 
 		List<GrantedAuthority> roles = new ArrayList<>();

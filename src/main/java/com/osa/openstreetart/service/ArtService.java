@@ -43,7 +43,7 @@ public class ArtService {
 			throw new OSA400Exception("empty values");
 			
 		Optional<ArtEntity> optArt = artRepo.findById(artId);
-		if (!optArt.isPresent())
+		if (optArt.isEmpty())
 			throw new OSA404Exception("Art not found.");
 		if (dto.getName().length() < ArtEntity.NAME_MIN_LENGTH)
 			throw new OSA400Exception("Name too short.");
@@ -75,7 +75,7 @@ public class ArtService {
 			art.setAuthorName(dto.getAuthor());
 		else {
 			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthorId());
-			if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
+			if (optAuthor.isEmpty() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
 				throw new OSA400Exception("Invalid author ID.");
 
 			art.setAuthor(optAuthor.get());
@@ -117,7 +117,7 @@ public class ArtService {
 			newArt.setAuthorName(dto.getAuthor());
 		else {
 			Optional<UserEntity> optAuthor = userRepo.findById(dto.getAuthorId());
-			if (!optAuthor.isPresent() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
+			if (optAuthor.isEmpty() || !optAuthor.get().getRoles().contains(RoleEnum.ROLE_ARTIST))
 				throw new OSA400Exception("Invalid author ID.");
 
 				newArt.setAuthor(optAuthor.get());
@@ -141,7 +141,7 @@ public class ArtService {
 
 	public void delete(Integer artId) throws OSA404Exception {
 		Optional<ArtEntity> deletedArt = artRepo.findById(artId);
-		if(!deletedArt.isPresent())
+		if(deletedArt.isEmpty())
 			throw new OSA404Exception("Art not found");
 		
 		artRepo.delete(deletedArt.get());
