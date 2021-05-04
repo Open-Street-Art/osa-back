@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class ChangeMailDTO {
-	private String oldMail;
 	private String newMail;
 }

@@ -45,8 +45,8 @@ public class UserController {
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		
 		UserEntity user = userService.getOrFail(username);
-		userService.changerUserMail(user, dto.getOldMail(), dto.getNewMail());
-		
+		userService.changerUserMail(user, dto.getNewMail());
+
 		return ResponseEntity.ok(new OSAResponseDTO("Email modified."));
 	}
 

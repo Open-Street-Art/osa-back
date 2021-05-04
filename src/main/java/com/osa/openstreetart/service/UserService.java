@@ -124,12 +124,9 @@ public class UserService {
 		userRepo.save(user);
 	}
 
-	public void changerUserMail(UserEntity user, String oldMail, String newMail) throws OSA400Exception {
+	public void changerUserMail(UserEntity user, String newMail) throws OSA400Exception {
 		if (!isValidEmailAddress(newMail))
 			throw new OSA400Exception("Invalid new email address.");
-
-		if (!user.getEmail().equals(oldMail))
-			throw new OSA400Exception("Invalid old email address.");
 
 		user.setEmail(newMail);
 		userRepo.save(user);

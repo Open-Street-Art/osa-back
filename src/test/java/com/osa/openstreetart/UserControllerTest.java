@@ -52,7 +52,6 @@ class UserControllerTest {
 
 		// Création du DTO
 		ChangeMailDTO dto = new ChangeMailDTO();
-		dto.setOldMail(user.getEmail());
 		dto.setNewMail("newmail@mail.fr");
 
 		// Changement de l'email
