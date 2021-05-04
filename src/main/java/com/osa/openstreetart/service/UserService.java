@@ -113,8 +113,25 @@ public class UserService {
 		return dto;
 	}
 
-	public void changeUserPassword(UserEntity user, String newPassword) {
+	public void changeUserPassword(UserEntity user, String oldPassword, String newPassword) throws OSA400Exception {
+		if (newPassword.length() < UserEntity.PSW_MIN_LENGTH)
+			throw new OSA400Exception("Invalid new password.");
+
+		if (!bcryptEncoder.matches(oldPassword, user.getPassword()))
+			throw new OSA400Exception("Incorrect old password.");
+
 		user.setPassword(bcryptEncoder.encode(newPassword));
+		userRepo.save(user);
+	}
+
+	public void changerUserMail(UserEntity user, String oldMail, String newMail) throws OSA400Exception {
+		if (!isValidEmailAddress(newMail))
+			throw new OSA400Exception("Invalid new email address.");
+
+		if (!user.getEmail().equals(oldMail))
+			throw new OSA400Exception("Invalid old email address.");
+
+		user.setEmail(newMail);
 		userRepo.save(user);
 	}
 

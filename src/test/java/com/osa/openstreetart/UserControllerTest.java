@@ -1,6 +1,8 @@
 package com.osa.openstreetart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.osa.openstreetart.dto.ChangeMailDTO;
+import com.osa.openstreetart.dto.ChangePswDTO;
 import com.osa.openstreetart.dto.UserPatchProfileDTO;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.repository.UserRepository;
@@ -48,16 +50,19 @@ class UserControllerTest {
 		// Génération d'un token JWT pour utiliser la route
 		String token = testUtil.getJWTwithUsername(user.getUsername());
 
+		// Création du DTO
+		ChangeMailDTO dto = new ChangeMailDTO();
+		dto.setOldMail(user.getEmail());
+		dto.setNewMail("newmail@mail.fr");
+
 		// Changement de l'email
 		mvc.perform(patch("/api/user/email").header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON).content("test@mail.fr")).andExpect(status().isOk());
-
-		// Fausse tentative
-		mvc.perform(patch("/api/user/email").header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON).content("testmail.fr")).andExpect(status().isBadRequest());
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.asJsonString(dto)))
+				.andExpect(status().isOk());
 
 		// Verificatiom de la modification
-		Optional<UserEntity> optionalUser = userRepo.findByEmail("test@mail.fr");
+		Optional<UserEntity> optionalUser = userRepo.findByEmail("newmail@mail.fr");
 		assertEquals("tester", optionalUser.get().getUsername());
 	}
 
@@ -72,17 +77,20 @@ class UserControllerTest {
 		// Génération d'un token JWT pour utiliser la route
 		String token = testUtil.getJWTwithUsername(user.getUsername());
 
+		// Création des DTO
+		ChangePswDTO dto = new ChangePswDTO();
+		dto.setOldPassword("psw123");
+		dto.setNewPassword("psw456789");
+
 		// Changement du mot de passe
 		mvc.perform(patch("/api/user/password").header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON).content("UnNouveauPass123")).andExpect(status().isOk());
-
-		// Fausse tentative
-		mvc.perform(patch("/api/user/email").header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON).content("unmauvaispass")).andExpect(status().isBadRequest());
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.asJsonString(dto)))
+				.andExpect(status().isOk());
 
 		// Verificatiom de la modification
 		Optional<UserEntity> optUser = userRepo.findByEmail(user.getEmail());
-		assertEquals(true, bcryptEncoder.matches("UnNouveauPass123", optUser.get().getPassword()));
+		assertEquals(true, bcryptEncoder.matches("psw456789", optUser.get().getPassword()));
 	}
 
 	@Test

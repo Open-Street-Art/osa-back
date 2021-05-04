@@ -1,5 +1,7 @@
 package com.osa.openstreetart.controller;
 
+import com.osa.openstreetart.dto.ChangeMailDTO;
+import com.osa.openstreetart.dto.ChangePswDTO;
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.dto.UserPatchProfileDTO;
 import com.osa.openstreetart.entity.UserEntity;
@@ -39,30 +41,24 @@ public class UserController {
 
 	@PatchMapping(value = "/user/email")
 	public ResponseEntity<OSAResponseDTO> patchUserEmail(@RequestHeader(value = "Authorization") String token, 
-			@RequestBody String newMail) throws OSA400Exception {
+			@RequestBody ChangeMailDTO dto) throws OSA400Exception {
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		
 		UserEntity user = userService.getOrFail(username);
-		if (!userService.isValidEmailAddress(newMail))
-			throw new OSA400Exception("Invalid email address.");
-
-		user.setEmail(newMail);
-		userService.save(user);
+		userService.changerUserMail(user, dto.getOldMail(), dto.getNewMail());
 		
 		return ResponseEntity.ok(new OSAResponseDTO("Email modified."));
 	}
 
 	@PatchMapping(value = "/user/password")
 	public ResponseEntity<OSAResponseDTO> patchUserPassword(@RequestHeader(value = "Authorization") String token,
-			@RequestBody String newPassword) throws OSA400Exception {
+			@RequestBody ChangePswDTO dto) throws OSA400Exception {
 		
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		
 		UserEntity user = userService.getOrFail(username);
-		if (newPassword.length() < UserEntity.PSW_MIN_LENGTH)
-			throw new OSA400Exception("Invalid password.");
 
-		userService.changeUserPassword(user, newPassword);
+		userService.changeUserPassword(user, dto.getOldPassword(), dto.getNewPassword());
 
 		return ResponseEntity.ok(new OSAResponseDTO("Password modified."));
 	}
