@@ -57,9 +57,7 @@ public class ContribService {
 		}
 		art.setName(contrib.getName());
 		art.setDescription(contrib.getDescription());
-		Collection<String> newPictures = new ArrayList<>();
-		for (String pic : contrib.getPictures())
-			newPictures.add(pic);
+		Collection<String> newPictures = new ArrayList<>(contrib.getPictures());
 		art.setPictures(newPictures);
 
 		// On créé la ville si nécessaire puis on l'attribue a la contribution
@@ -86,7 +84,7 @@ public class ContribService {
 		
 		ContribEntity contribArt = new ContribEntity();
 		Optional<ArtEntity> art = artRepo.findById(artId);
-		if (!art.isPresent()) {
+		if (art.isEmpty()) {
 			throw new OSA400Exception("Art not found.");
 		}
 
@@ -146,7 +144,7 @@ public class ContribService {
 
 	public void delete(Integer artId) throws OSA404Exception {
 		Optional<ContribEntity> contrib = contribRepo.findById(artId);
-		if(!contrib.isPresent()) {
+		if(contrib.isEmpty()) {
 			throw new OSA404Exception("Contribution not found.");
         }
 		contribRepo.delete(contrib.get());
