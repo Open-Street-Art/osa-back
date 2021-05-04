@@ -37,3 +37,8 @@ Compte administrateur
 username: root
 password: OsaAdmin1234
 ```
+
+Lancement d'une nouvelle migration de schéma Flyway
+```
+mvn flyway:migrate -Dflyway.url=... -Dflyway.user=... -Dflyway.password=...
+```

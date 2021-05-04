@@ -1,20 +1,16 @@
 package com.osa.openstreetart.controller;
 
-import java.util.Collection;
 import java.util.Optional;
 
 import com.osa.openstreetart.dto.OSAResponseDTO;
 import com.osa.openstreetart.entity.ArtEntity;
 import com.osa.openstreetart.entity.CityEntity;
-import com.osa.openstreetart.entity.RoleEnum;
 import com.osa.openstreetart.entity.UserEntity;
 import com.osa.openstreetart.exceptions.OSA400Exception;
-import com.osa.openstreetart.exceptions.OSA401Exception;
 import com.osa.openstreetart.exceptions.OSA404Exception;
 import com.osa.openstreetart.exceptions.OSA500Exception;
 import com.osa.openstreetart.service.ArtService;
 import com.osa.openstreetart.service.CityService;
-import com.osa.openstreetart.service.JwtService;
 import com.osa.openstreetart.service.UserService;
 import com.osa.openstreetart.util.ApiRestController;
 import com.osa.openstreetart.util.JwtUtil;
@@ -36,9 +32,6 @@ public class FavouriteController {
 
 	@Autowired
 	private JwtUtil jwtUtil;
-
-	@Autowired
-	private JwtService jwtService;
 
 	@Autowired
 	private UserService userService;
