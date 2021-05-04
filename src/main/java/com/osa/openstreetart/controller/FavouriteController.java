@@ -21,6 +21,7 @@ import com.osa.openstreetart.util.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +50,6 @@ public class FavouriteController {
 	private CityService cityService;
 
 	private static final String TOKEN_PREFIX = "Bearer ";
-	private static final String UNAUTHORIZE_MSG = "Unauthorized.";
 	
 	@ApiOperation(value = "Ajouter une œuvre dans la liste des œuvres Favorites.")
 	@ApiResponses(value = {
@@ -59,15 +59,11 @@ public class FavouriteController {
 		@ApiResponse(code = 404, message = "œuvre non trouvée ."),
 		@ApiResponse(code = 500, message = "œuvre déjà trouvée dans la liste favorite.")
 	})
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ARTIST', 'ROLE_USER')")
 	@PostMapping(value = "/fav/arts/{art_id}")
 	public ResponseEntity<OSAResponseDTO> postFavouriteArt(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA401Exception, OSA404Exception, OSA500Exception {
-		
-		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length()));
-		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
-			&&	!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-				throw new OSA401Exception(UNAUTHORIZE_MSG);
+			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA500Exception {
 
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		UserEntity user = userService.getOrFail(username);
@@ -99,15 +95,11 @@ public class FavouriteController {
 		@ApiResponse(code = 401, message = "Token invalid ."),
 		@ApiResponse(code = 404, message = "œuvre non trouvée dans la liste favorite.")
 	})
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ARTIST', 'ROLE_USER')")
 	@DeleteMapping(value = "/fav/arts/{art_id}")
 	public ResponseEntity<OSAResponseDTO> deleteFavouriteArt(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA401Exception,OSA404Exception {
-		
-		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length()));
-		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
-			&&	!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-				throw new OSA401Exception(UNAUTHORIZE_MSG);
+			@PathVariable("art_id") Integer artId) throws OSA400Exception, OSA404Exception {
 	
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		UserEntity user = userService.getOrFail(username);
@@ -137,19 +129,14 @@ public class FavouriteController {
 		@ApiResponse(code = 404, message = "Artiste non trouvé ."),
 		@ApiResponse(code = 500, message = "Artiste déjà trouvé dans la liste favorite.")
 	})
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ARTIST', 'ROLE_USER')")
 	@PostMapping(value = "/fav/artists/{artist_id}")
 	public ResponseEntity<OSAResponseDTO> postFavouriteArtist(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA401Exception,OSA404Exception, OSA500Exception {
-		
-		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length()));
-		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
-			    &&	!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(UNAUTHORIZE_MSG);
+			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA500Exception {
 	
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		UserEntity user = userService.getOrFail(username);
-		
 		if (user.getId().equals(artistId))
 				throw new OSA400Exception("Invalid artist Id");
 
@@ -176,21 +163,15 @@ public class FavouriteController {
 		@ApiResponse(code = 401, message = "Token invalid ."),
 		@ApiResponse(code = 404, message = "Artiste non trouvé dans la liste favorite.")
 	})
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ARTIST', 'ROLE_USER')")
 	@DeleteMapping(value = "/fav/artists/{artist_id}")
 	public ResponseEntity<OSAResponseDTO> deleteFavouriteArtist(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("artist_id") Integer artistId) throws OSA400Exception,OSA401Exception,OSA404Exception {
-		
-		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length()));
-		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
-				&&	!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(UNAUTHORIZE_MSG);
-		
+			@PathVariable("artist_id") Integer artistId) throws OSA400Exception, OSA404Exception {
+	
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		UserEntity user = userService.getOrFail(username);
 		
-		
-		//l'artist est un artist favori de l'utilisateur
 		Optional<UserEntity> artistFav = user.getFavArtists()
 													.stream()
 													.filter(u -> u.getId().equals(artistId))
@@ -213,16 +194,12 @@ public class FavouriteController {
 		@ApiResponse(code = 404, message = "Ville non trouvée ."),
 		@ApiResponse(code = 500, message = "Ville déjà trouvée dans la liste favorite .")
 	})
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ARTIST', 'ROLE_USER')")
 	@PostMapping(value = "/fav/cities/{city_id}")
 	public ResponseEntity<OSAResponseDTO> postFavouriteCity(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("city_id") Integer cityId) throws OSA400Exception, OSA401Exception, OSA404Exception, OSA500Exception {
-		
-		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length()));
-		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
-				&&	!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(UNAUTHORIZE_MSG);
-		
+			@PathVariable("city_id") Integer cityId) throws OSA400Exception, OSA404Exception, OSA500Exception {
+
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		UserEntity user = userService.getOrFail(username);
 		
@@ -249,15 +226,11 @@ public class FavouriteController {
 		@ApiResponse(code = 401, message = "Token invalid ."),
 		@ApiResponse(code = 404, message = "Ville non trouvée dans la liste favorite.")
 	})
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ARTIST', 'ROLE_USER')")
 	@DeleteMapping(value = "/fav/cities/{city_id}")
 	public ResponseEntity<OSAResponseDTO> deleteFavouriteCity(
 			@RequestHeader(value = "Authorization") String token,
-			@PathVariable("city_id") Integer cityId) throws OSA400Exception,OSA401Exception, OSA404Exception {
-		
-		Collection<RoleEnum> userRoles = jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length()));
-		if (!userRoles.contains(RoleEnum.ROLE_USER) && !userRoles.contains(RoleEnum.ROLE_ARTIST)
-				&&	!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(UNAUTHORIZE_MSG);
+			@PathVariable("city_id") Integer cityId) throws OSA400Exception, OSA404Exception {
 		
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		UserEntity user = userService.getOrFail(username);
@@ -273,7 +246,7 @@ public class FavouriteController {
 			}
 		}
 
-		if(cityFav == null)
+		if (cityFav == null)
 			throw new OSA404Exception("City not found in favorit list");
 		
 		user.getFavCities().remove(cityFav);

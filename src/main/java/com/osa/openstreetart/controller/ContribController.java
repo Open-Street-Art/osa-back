@@ -24,6 +24,7 @@ import com.osa.openstreetart.entity.UserEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @ApiRestController
@@ -85,18 +86,16 @@ public class ContribController {
 		// Vérification si l'auteur de la requete est l'auteur de la contrib ou admin
 		if (!contrib.getContributor().equals(user)
 				&& !jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(UNAUTHORIZE_MSG);										
+			throw new OSA401Exception(UNAUTHORIZE_MSG);
 
 		contribService.delete(contribId);
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/contribs/{contrib_id}/accept")
 	public ResponseEntity<OSAResponseDTO> acceptContrib(@RequestHeader(value = "Authorization") String token,
-			@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA400Exception {
-
-		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(UNAUTHORIZE_MSG);
+			@PathVariable("contrib_id") Integer contribId) throws OSA400Exception {
 		
 		ContribEntity contrib = contribService.getOrFail(contribId);
 
@@ -104,12 +103,10 @@ public class ContribController {
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
     }
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/contribs/{contrib_id}/deny")
 	public ResponseEntity<OSAResponseDTO> denyContrib(@RequestHeader(value = "Authorization") String token,
-			@PathVariable("contrib_id") Integer contribId) throws OSA401Exception, OSA400Exception {
-
-		if (!jwtService.getRolesByToken(token.substring(TOKEN_PREFIX.length())).contains(RoleEnum.ROLE_ADMIN))
-			throw new OSA401Exception(UNAUTHORIZE_MSG);
+			@PathVariable("contrib_id") Integer contribId) throws OSA400Exception {
 
 		ContribEntity contrib = contribService.getOrFail(contribId);
 		
