@@ -53,6 +53,7 @@ public class ContribTransformator implements AbstractTransformator<ContribEntity
 			dto.setPicture3(pictures.next());
 
 		dto.setAuthor(model.getAuthorName());
+		dto.setApproved(model.getApproved());
 		return dto;
 	}
 

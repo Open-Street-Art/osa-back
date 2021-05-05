@@ -12,4 +12,5 @@ public class GetContribDTO {
 	private String picture3;
 	private String author;
 	private Integer contributorId;
+	private Boolean approved;
 }
