@@ -42,3 +42,8 @@ Lancement d'une nouvelle migration de schéma Flyway
 ```
 mvn flyway:migrate -Dflyway.url=... -Dflyway.user=... -Dflyway.password=...
 ```
+
+Nettoyage de la base de données
+```
+mvn flyway:clean -Dflyway.url=... -Dflyway.user=... -Dflyway.password=...
+```

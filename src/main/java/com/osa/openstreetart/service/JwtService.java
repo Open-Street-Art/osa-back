@@ -54,6 +54,7 @@ public class JwtService implements UserDetailsService{
 	public UserEntity save(UserRegisterDTO user) {
 		UserEntity newUser = userTransf.dtoToModel(user);
 		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+		newUser.setIsPublic(true);
 		return userRepo.save(newUser);
 	}
 
