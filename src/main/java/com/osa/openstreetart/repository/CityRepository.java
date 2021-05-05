@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface CityRepository extends CrudRepository<CityEntity, Integer>{
-    Optional<CityEntity> findById(Integer id);
 
 	Optional<CityEntity> findByName(String name);
 }
