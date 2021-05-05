@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ApiRestController
+@Slf4j
 public class UserController {
 	
 	@Autowired
@@ -32,6 +35,8 @@ public class UserController {
 	@GetMapping(value = "/user/{user_id}")
 	public ResponseEntity<OSAResponseDTO> getUserProfile(
 			@PathVariable("user_id") Integer userId) throws OSA400Exception {
+		
+		log.info("Served User : " + userId + " profile");
 		return ResponseEntity.ok(
 			new OSAResponseDTO(
 				userService.loadUserProfileDTO(userService.getOrFail(userId))
@@ -47,9 +52,10 @@ public class UserController {
 		UserEntity user = userService.getOrFail(username);
 		userService.changerUserMail(user, dto.getNewMail());
 
+		log.info("User: " + user.getId() + " email modified");
 		return ResponseEntity.ok(new OSAResponseDTO("Email modified."));
 	}
-
+	
 	@PatchMapping(value = "/user/password")
 	public ResponseEntity<OSAResponseDTO> patchUserPassword(@RequestHeader(value = "Authorization") String token,
 			@RequestBody ChangePswDTO dto) throws OSA400Exception {
@@ -59,7 +65,8 @@ public class UserController {
 		UserEntity user = userService.getOrFail(username);
 
 		userService.changeUserPassword(user, dto.getOldPassword(), dto.getNewPassword());
-
+		
+		log.info("User: " + user.getId() + " password modified");
 		return ResponseEntity.ok(new OSAResponseDTO("Password modified."));
 	}
 
@@ -71,7 +78,8 @@ public class UserController {
 		UserEntity user = userService.getOrFail(username);
 		userService.patchUser(user, dto);
 		userService.save(user);
-
+		
+		log.info("User : " + user.getId() + " profile modified");
 		return ResponseEntity.ok(new OSAResponseDTO("Profile modified."));
 	}
 
@@ -82,6 +90,7 @@ public class UserController {
 		String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
 		
 		UserEntity user = userService.getOrFail(username);
+		log.info("User : " + user.getId() + " profile Served");
 
 		return ResponseEntity.ok(new OSAResponseDTO(userService.loadUserProfileDTO(user)));
 	}

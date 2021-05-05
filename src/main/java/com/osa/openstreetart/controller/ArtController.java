@@ -23,7 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ApiRestController
+@Slf4j
 public class ArtController {
 
 	@Autowired
@@ -44,6 +47,8 @@ public class ArtController {
 			@RequestBody ArtDTO art) throws OSA400Exception {
 
 		artService.save(art);
+		log.info("New Art created");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Art created."));
 	}
 
@@ -54,12 +59,14 @@ public class ArtController {
 			throws OSA404Exception, OSA400Exception {
 
 		artService.patch(artId, art);
+		log.info("Art: " + artId + " modified");
 		return ResponseEntity.ok(new OSAResponseDTO("Art modified."));
 	}
 
 	@GetMapping(value = "/arts/locations")
 	public ResponseEntity<OSAResponseDTO> getArtsLocations() {
 		
+		log.info("Arts locations served");
 		return ResponseEntity.ok(new OSAResponseDTO(
 			artTransf.modelsToDtos(artService.findAll()))
 		);
@@ -71,11 +78,15 @@ public class ArtController {
 			@PathVariable("art_id") Integer artId) throws OSA404Exception {
 		
 		artService.delete(artId);
+		log.info("Art : " + artId + " deleted");
+
 		return ResponseEntity.ok(new OSAResponseDTO("Art deleted"));
 	}
 
 	@GetMapping(value = "/arts/{art_id}")
 	public ResponseEntity<OSAResponseDTO> getArt(@PathVariable("art_id") Integer artId) {
+		
+		log.info("Art : " + artId + " served");
 		return ResponseEntity.ok(new OSAResponseDTO(artService.getArt(artId)));
 	}
 }

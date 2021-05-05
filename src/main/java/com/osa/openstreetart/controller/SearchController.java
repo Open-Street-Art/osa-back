@@ -17,7 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ApiRestController
+@Slf4j
 public class SearchController {
 	
 	@Autowired
@@ -39,6 +42,7 @@ public class SearchController {
 		for (UserEntity user : userService.findByUsernameWithSub(content)) {
 			searchResult.add(userService.loadUserProfileDTO(user));
 		}
+		log.info("Served users profiles with substring username : " + content);
 
 		return ResponseEntity.ok(
 				new OSAResponseDTO(searchResult)
@@ -50,6 +54,7 @@ public class SearchController {
 			throws OSA400Exception {
 		if (content.isEmpty() || content.isBlank())
 			throw new OSA400Exception(EMPTY_SEARCH_MSG);
+		log.info("Served Arts  with substring name : " + content);
 
 		return ResponseEntity.ok(
 			new OSAResponseDTO(artService.findByNameWithSub(content))
@@ -71,6 +76,7 @@ public class SearchController {
 
 		for (UserEntity artist : artists)
 			result.addAll(artService.findByAuthorId(artist.getId()));
+		log.info("Served Artists  with Substring username : " + username);
 
 		return ResponseEntity.ok(new OSAResponseDTO(result));
 	}
@@ -80,6 +86,7 @@ public class SearchController {
 			throws OSA400Exception {
 		if (content.isEmpty() || content.isBlank())
 			throw new OSA400Exception(EMPTY_SEARCH_MSG);
+		log.info("Served Cities  with Substring name: " + content);
 
 		return ResponseEntity.ok(new OSAResponseDTO(artService.findByCitiesName(content)));
 	}
