@@ -99,7 +99,7 @@ public class ArtService {
 		if (dto.getPicture1().isEmpty())
 			throw new OSA400Exception("Picture 1 is empty.");
 
-		ArtEntity newArt = new ArtEntity();
+		var newArt = new ArtEntity();
 		newArt.setName(dto.getName());
 		newArt.setDescription(dto.getDescription());
 		newArt.setLongitude(dto.getLongitude());

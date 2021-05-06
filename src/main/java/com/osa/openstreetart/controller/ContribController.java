@@ -53,6 +53,7 @@ public class ContribController {
 
 	private static final String TOKEN_PREFIX = "Bearer ";
 	private static final String UNAUTHORIZE_MSG = "Unauthorized.";
+	private static final String CONTRIB_LOGGING = "Contrib : ";
 	
 	@PostMapping(value = "/contribs")
 	public ResponseEntity<OSAResponseDTO> postContrib(@RequestHeader(value = "Authorization") String token,
@@ -96,7 +97,7 @@ public class ContribController {
 			throw new OSA401Exception(UNAUTHORIZE_MSG);
 
 		contribService.delete(contribId);
-		log.info("Contrib  : " + contribId + " deleted");
+		log.info(CONTRIB_LOGGING + contribId + " deleted");
 
 		return ResponseEntity.ok(new OSAResponseDTO("Contribution deleted"));
 	}
@@ -109,7 +110,7 @@ public class ContribController {
 		ContribEntity contrib = contribService.getOrFail(contribId);
 
 		contribService.acceptContrib(contrib);
-		log.info("Contrib  : " + contribId + " accepted");
+		log.info(CONTRIB_LOGGING + contribId + " accepted");
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution accepted"));
     }
 
@@ -121,7 +122,7 @@ public class ContribController {
 		ContribEntity contrib = contribService.getOrFail(contribId);
 		
 		contribService.denyContrib(contrib);
-		log.info("Contrib  : " + contribId + " refused");
+		log.info(CONTRIB_LOGGING + contribId + " refused");
 
     	return ResponseEntity.ok(new OSAResponseDTO("Contribution refused"));
     }
@@ -143,7 +144,7 @@ public class ContribController {
 	@GetMapping(value = "/contribs/{contrib_id}")
 	public ResponseEntity<OSAResponseDTO> getContribWithId(@PathVariable("contrib_id") Integer contribId) throws OSA400Exception {
 		ContribEntity contrib = contribService.getOrFail(contribId);
-		log.info("Contrib : " + contribId + " Served");
+		log.info(CONTRIB_LOGGING + contribId + " Served");
 
 		return ResponseEntity.ok(
 			new OSAResponseDTO(contrib)

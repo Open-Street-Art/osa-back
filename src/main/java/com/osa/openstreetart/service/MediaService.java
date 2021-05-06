@@ -40,8 +40,8 @@ public class MediaService {
 
 	public void sendCSV(HttpServletResponse response, Integer cityId) throws IOException {
 		response.setContentType("text/csv");
-		String headerKey = "Content-Disposition";
-		String headerValue = "attachment; filename=toto.csv";
+		var headerKey = "Content-Disposition";
+		var headerValue = "attachment; filename=toto.csv";
 		response.setHeader(headerKey, headerValue);
 
 		ICsvBeanWriter csvWriter = new CsvBeanWriter(
@@ -58,7 +58,7 @@ public class MediaService {
 		csvWriter.close();
 	}
 
-	public HttpEntity<byte[]> sendPDF(Integer cityId) throws DocumentException, IOException, OSA404Exception {
+	public HttpEntity<byte[]> sendPDF(Integer cityId) throws DocumentException, OSA404Exception {
 		// Récupération des données
 		Optional<CityEntity> city = cityRepo.findById(cityId);
 		if (city.isEmpty())
@@ -66,30 +66,28 @@ public class MediaService {
 		Collection<ArtEntity> arts = artRepo.findByCityId(cityId);
 
 		// Génération du PDF
-		ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+		var templateResolver = new ClassLoaderTemplateResolver();
 		templateResolver.setPrefix("templates/");
 		templateResolver.setSuffix(".html");
 		templateResolver.setTemplateMode(TemplateMode.HTML);
 		templateResolver.setOrder(0);
 
-		TemplateEngine templateEngine = new TemplateEngine();
+		var templateEngine = new TemplateEngine();
 		templateEngine.addDialect(new Java8TimeDialect());
 		templateEngine.setTemplateResolver(templateResolver);
 
-		Context context = new Context();
+		var context = new Context();
 		context.setVariable("city", city.get());
 		context.setVariable("arts", arts);
 		String html = templateEngine.process("pdf_template", context);
 
-		// System.out.println(html);
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ITextRenderer renderer = new ITextRenderer();
+		var baos = new ByteArrayOutputStream();
+		var renderer = new ITextRenderer();
 		renderer.setDocumentFromString(html);
 		renderer.layout();
 		renderer.createPDF(baos);
 		byte[] pdfAsBytes = baos.toByteArray();
-		HttpHeaders header = new HttpHeaders();
+		var header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_PDF);
 		header.set(
 			HttpHeaders.CONTENT_DISPOSITION,

@@ -45,6 +45,8 @@ public class FavouriteController {
 	private CityService cityService;
 
 	private static final String TOKEN_PREFIX = "Bearer ";
+	private static final String FAVOURITE_LOG_SUFFIX = "favourite list";
+	private static final String FAVOURITE_LOG_REMOVE = " removed from User :";
 	
 	@ApiOperation(value = "Ajouter une œuvre dans la liste des œuvres Favorites.")
 	@ApiResponses(value = {
@@ -65,7 +67,7 @@ public class FavouriteController {
 		
 		ArtEntity art = artService.getOrFail(artId);
 		
-		boolean isFavArt = false;
+		var isFavArt = false;
 		for(ArtEntity FavArt: user.getFavArts())
 		{
 			if(FavArt.getId().intValue() == artId.intValue())
@@ -79,7 +81,7 @@ public class FavouriteController {
 
 		user.getFavArts().add(art);
 		userService.save(user);
-		log.info("Art : " + artId + " added to User :" + user.getId() + "favourite list");
+		log.info("Art : " + artId + " added to User :" + user.getId() + FAVOURITE_LOG_SUFFIX);
 
 		return ResponseEntity.ok(new OSAResponseDTO("Art added to the favourite arts list."));
 	}
@@ -113,7 +115,7 @@ public class FavouriteController {
 		
 		user.getFavArts().remove(toDelete);
 		userService.save(user);
-		log.info("Art : " + artId + " removed to User :" + user.getId() + "favourite list");
+		log.info("Art : " + artId + FAVOURITE_LOG_REMOVE + user.getId() + FAVOURITE_LOG_SUFFIX);
 
 		return ResponseEntity.ok(new OSAResponseDTO("Art removed from the favourite arts list."));
 	}
@@ -149,7 +151,7 @@ public class FavouriteController {
 		
 		user.getFavArtists().add(artist);
 		userService.save(user);
-		log.info("Artist : " + artistId + " deleted to User :" + user.getId() + "favourite list");
+		log.info("Artist : " + artistId + FAVOURITE_LOG_REMOVE + user.getId() + FAVOURITE_LOG_SUFFIX);
 
 		return ResponseEntity.ok(new OSAResponseDTO("Artist added to the favourite artists list."));
 	}
@@ -180,7 +182,7 @@ public class FavouriteController {
 		//retirer l'artist de la liste
 		user.getFavArtists().remove(artistFav.get());
 		userService.save(user);
-		log.info("Artist : " + artistId + " removed to User :" + user.getId() + "favourite list");
+		log.info("Artist : " + artistId + FAVOURITE_LOG_REMOVE + user.getId() + FAVOURITE_LOG_SUFFIX);
 
 		return ResponseEntity.ok(new OSAResponseDTO("Artist remove to the favourite artists list."));
 	}
@@ -251,7 +253,7 @@ public class FavouriteController {
 		
 		user.getFavCities().remove(cityFav);
 		userService.save(user);
-		log.info("City : " + cityId + " removed to User :" + user.getId() + " favourite list");
+		log.info("City : " + cityId + FAVOURITE_LOG_REMOVE + user.getId() + " favourite list");
 
 		return ResponseEntity.ok(new OSAResponseDTO("City remove to the favourite Cities list."));
 	}

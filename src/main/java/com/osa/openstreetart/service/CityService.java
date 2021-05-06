@@ -22,7 +22,7 @@ public class CityService {
 	private static final String API_KEY = "f7408e47f5c62fc8c992332ed650d3eb";
 
 	public CityEntity getCityFromLatLong(Double lat, Double lng) {
-		CityEntity city = new CityEntity();
+		var city = new CityEntity();
 		String url = "http://api.positionstack.com/v1/reverse?access_key="
 			+ API_KEY
 			+ "&query="
@@ -30,14 +30,14 @@ public class CityService {
 			+ ","
 			+ lng;
 		
-		RestTemplate restTemplate = new RestTemplate();
+		var restTemplate = new RestTemplate();
 		String json;
 		try {
 			json = restTemplate.getForObject(url, String.class);
 		} catch(RestClientException e) {
 			return null;
 		}
-		ObjectMapper mapper = new ObjectMapper();
+		var mapper = new ObjectMapper();
 		try {
 			city
 				.setName(mapper.readTree(json)

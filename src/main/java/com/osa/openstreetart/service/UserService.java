@@ -20,7 +20,6 @@ import com.osa.openstreetart.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,13 +67,13 @@ public class UserService {
 
 	public String login(UserLoginDTO dto) {
 		authManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
-		final UserDetails userDetails = jwtService.loadUserByUsername(dto.getUsername());
+		final var userDetails = jwtService.loadUserByUsername(dto.getUsername());
 		return jwtUtil.generateToken(userDetails);
 	}
 
 	public UserProfileDTO loadUserProfileDTO(UserEntity user) {
 		// Remplissage du DTO
-		UserProfileDTO dto = new UserProfileDTO();
+		var dto = new UserProfileDTO();
 		dto.setId(user.getId());
 		dto.setUsername(user.getUsername());
 		dto.setDescription(user.getDescription());
@@ -132,9 +131,9 @@ public class UserService {
 	}
 
 	public boolean isValidEmailAddress(String email) {
-		String ePattern = "^(.+)@(.+)$";
-		java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
-		java.util.regex.Matcher m = p.matcher(email);
+		var ePattern = "^(.+)@(.+)$";
+		var p = java.util.regex.Pattern.compile(ePattern);
+		var m = p.matcher(email);
 		return m.matches();
  	}
 	

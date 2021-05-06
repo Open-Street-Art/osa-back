@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class FavouriteControllerTest {
+class FavouriteControllerTest {
 	
 	@Autowired
 	TestUtil testUtil;

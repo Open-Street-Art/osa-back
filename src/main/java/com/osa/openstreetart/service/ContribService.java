@@ -82,7 +82,7 @@ public class ContribService {
 
     public void saveExistingContrib(PostContribDTO contrib, UserEntity contribUser, Integer artId) throws  OSA400Exception {
 		
-		ContribEntity contribArt = new ContribEntity();
+		var contribArt = new ContribEntity();
 		Optional<ArtEntity> art = artRepo.findById(artId);
 		if (art.isEmpty()) {
 			throw new OSA400Exception("Art not found.");
@@ -114,7 +114,7 @@ public class ContribService {
 	}
 
 	public void saveNewContrib(PostNewContribDTO contrib, UserEntity contribUser) throws OSA400Exception {
-		ContribEntity contribArt = new ContribEntity();
+		var contribArt = new ContribEntity();
 		if (contrib.getName().isEmpty() || contrib.getDescription().isEmpty()) 
 			throw new OSA400Exception("Empty content");
 
