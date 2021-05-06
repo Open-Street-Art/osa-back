@@ -6,6 +6,7 @@
 			}
 			p {
 				margin: 0px;
+				max-width: 350px;
 			}
 			h4 {
 				margin: 0px;
@@ -18,7 +19,7 @@
 			}
 			img {
 				float: right;
-				width: 140px;
+				width: 200px;
 				padding-top: 12px;
 				padding-right: 20px;
 			}
@@ -35,7 +36,7 @@
 			<div>
 				<ul>
 					<li th:each="art: ${arts}">
-						<img th:src="${art.pictures[0]}" />
+						<img th:src="${#strings.replace(art.pictures[0], ' ', '')}" />
 						<h3 th:text="${art.name}" />
 						<p th:text="${'Auteur : ' + art.authorName}" />
 						<p th:text="${'Description : ' + art.description}" />
