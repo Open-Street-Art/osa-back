@@ -20,7 +20,7 @@
   		<sonar.organization>open-street-art</sonar.organization>
   		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<java.version>11</java.version>
-		<springfox.version>2.9.2</springfox.version>
+		<springfox.version>2.10.0</springfox.version>
 	</properties>
 
 	<profiles>
